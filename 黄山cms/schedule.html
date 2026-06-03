@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定时上下架调度 - 黄山旅游AIGC内容管理平台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                    </svg>
+                </div>
+                <span class="platform-title">黄山旅游AIGC内容管理平台</span>
+            </div>
+
+            <div class="header-middle">
+                <div class="search-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
+                    <input type="text" class="search-input" placeholder="搜索内容 (Ctrl + K)" disabled
+                        style="cursor: not-allowed;">
+                    <span class="search-shortcut">Ctrl + K</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button class="header-action-btn" onclick="showLockToast('编辑功能暂未开放')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
+                </button>
+                <button class="header-action-btn" onclick="showLockToast('通知中心暂未开放')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+                    </svg>
+                </button>
+                <button class="header-action-btn" onclick="showLockToast('设置板块暂未开放')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                    </svg>
+                </button>
+                <div class="user-profile" onclick="showLockToast('个人主页暂未开放')">
+                    <div class="avatar-circle">孔</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('个人空间暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="5" width="12" height="12" rx="1.5" fill="#4682b4" opacity="0.8" />
+                            <rect x="9" y="9" width="12" height="12" rx="1.5" fill="#1e90ff" />
+                        </svg>
+                        <span>个人空间</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('企业空间暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
+                        </svg>
+                        <span>企业空间</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('待办中心暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm3 14H8v-2h7v2zm2-4H8v-2h10v2zm0-4H8V7h10v2z" />
+                            <circle cx="17" cy="17" r="4" fill="#10b981" />
+                            <path d="M16 17l1 1 2-2" stroke="#ffffff" stroke-width="1.5" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span>待办中心</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('分发中心暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z" />
+                            <polygon points="12,11 15,11 15,8 18,12 15,16 15,13 12,13" fill="#3b82f6" />
+                        </svg>
+                        <span>分发中心</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('发现模块暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                            <rect x="6" y="7" width="7" height="1.5" rx="0.5" fill="#708090" />
+                            <rect x="6" y="10" width="5" height="1.5" rx="0.5" fill="#708090" />
+                        </svg>
+                        <span>发现</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('绘图中心暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 14h10v-3H7v3zm11-6H6c-1.1 0-2 .9-2 2v6h16v-6c0-1.1-.9-2-2-2zm-5 13h-2v-4h2v4z"
+                                fill="#708090" />
+                            <rect x="4" y="3" width="16" height="5" rx="1" fill="#475569" />
+                        </svg>
+                        <span>绘图</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('内容标签暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z" />
+                        </svg>
+                        <span>内容标签</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('视频中心暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4zm-9 11V9l5 3-5 3z" />
+                        </svg>
+                        <span>视频</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('群发任务暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                            <circle cx="17" cy="17" r="4" fill="#64748b" />
+                            <path d="M16 17l1 1 2-2" stroke="#ffffff" stroke-width="1.5" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span>群发任务</span>
+                    </a>
+                    <a href="javascript:void(0)" class="nav-item active">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            <circle cx="12" cy="12" r="3" fill="none" stroke="#1677ff" stroke-width="1.5" />
+                        </svg>
+                        <span>内容管理</span>
+                    </a>
+                </div>
+                <div class="nav-group-bottom">
+                    <a href="javascript:void(0)" class="nav-item locked" onclick="showLockToast('应用中心暂不可点击')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" />
+                        </svg>
+                        <span>应用中心</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>内容管理</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item" id="subnav-topic">
+                        <a href="index.html">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            </svg>
+                            专题管理
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="subnav-tag">
+                        <a href="tag.html">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z" />
+                            </svg>
+                            标签运营
+                        </a>
+                    </li>
+                    <li class="sub-nav-item active" id="subnav-schedule">
+                        <a href="schedule.html">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                            </svg>
+                            定时上下架调度
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="subnav-banner">
+                        <a href="banner.html">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                            </svg>
+                            Banner管理
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="subnav-campaign">
+                        <a href="campaign.html">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                            </svg>
+                            活动管理
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <div class="workspace-header">
+                    <div class="workspace-title-section">
+                        <h1>定时上下架调度</h1>
+                        <p>运营人员可对通过审核的资产配置即时或秒级定时上下架调度机制</p>
+                    </div>
+                </div>
+                <div class="canvas-body">
+                    <div class="scheduling-layout">
+                        <!-- Upper Form Card -->
+                        <div class="enterprise-card" style="padding: 20px;">
+                            <h3
+                                style="font-size: 13.5px; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 14px;">
+                                新建调度排程</h3>
+                            <form onsubmit="saveSchedule(event)"
+                                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                <div class="form-group">
+                                    <label for="schedTargetType">调度目标类型</label>
+                                    <select id="schedTargetType" class="form-control" onchange="loadTargetOptions()"
+                                        required>
+                                        <option value="banner">Banner</option>
+                                        <option value="专题">专题</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="schedAction">上下架动作</label>
+                                    <select id="schedAction" class="form-control" onchange="loadTargetOptions()"
+                                        required>
+                                        <option value="上架">定时上架</option>
+                                        <option value="下架">定时下架</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="schedTargetId">选择调度目标</label>
+                                    <select id="schedTargetId" class="form-control" required>
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="schedTime">上下架调度执行时间（精确到秒）</label>
+                                    <input type="datetime-local" step="1" id="schedTime" class="form-control" required>
+                                </div>
+                                <div class="form-group"
+                                    style="justify-content: flex-end; flex-direction: row; align-items: flex-end; grid-column: span 2;">
+                                    <button type="submit" class="btn btn-primary" style="height: 34px;">添加调度任务</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Lower Table Card -->
+                        <div class="enterprise-card">
+                            <div
+                                style="padding: 12px 16px; background-color: #f8fafc; font-weight: 700; font-size:13px; border-bottom: 1px solid var(--border-color);">
+                                当前挂载的调度任务队列
+                            </div>
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>调度目标类型</th>
+                                        <th>目标名称 (ID)</th>
+                                        <th>调度类型</th>
+                                        <th>预计触发时间</th>
+                                        <th>调度状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scheduleTableBody">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast warning overlay -->
+    <div id="lockToast" class="lock-toast">
+        <svg viewBox="0 0 24 24" id="lockToastIcon"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        let schedulesList = [];
+
+        function loadSchedules() {
+            schedulesList = dbGet('hscms_schedules', []);
+            renderSchedulesTable();
+        }
+
+        function loadTargetOptions() {
+            const type = document.getElementById('schedTargetType').value;
+            const action = document.getElementById('schedAction').value;
+            const targetSelect = document.getElementById('schedTargetId');
+            targetSelect.innerHTML = '';
+            targetSelect.disabled = false;
+
+            let filteredList = [];
+
+            if (type === 'banner') {
+                const banners = dbGet('hscms_banners', []);
+                if (action === '上架') {
+                    // Timer online -> select disabled banners
+                    filteredList = banners.filter(b => b.status === '禁用');
+                } else if (action === '下架') {
+                    // Timer offline -> select enabled banners
+                    filteredList = banners.filter(b => b.status === '启用' || !b.status);
+                }
+
+                filteredList.forEach(b => {
+                    const option = document.createElement('option');
+                    option.value = b.id;
+                    option.textContent = `${b.title} (ID: ${b.id})`;
+                    targetSelect.appendChild(option);
+                });
+            } else if (type === '专题') {
+                const topics = dbGet('hscms_topics', []);
+                if (action === '上架') {
+                    // Timer online -> select disabled topics
+                    filteredList = topics.filter(t => t.status === '禁用');
+                } else if (action === '下架') {
+                    // Timer offline -> select enabled topics
+                    filteredList = topics.filter(t => t.status === '启用');
+                }
+
+                filteredList.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t.id;
+                    option.textContent = `${t.name} (ID: ${t.id})`;
+                    targetSelect.appendChild(option);
+                });
+            }
+
+            if (filteredList.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = `暂无符合条件的${action === '上架' ? '未启用' : '已启用'}调度目标`;
+                targetSelect.appendChild(option);
+                targetSelect.disabled = true;
+            }
+        }
+
+        function renderSchedulesTable() {
+            const body = document.getElementById('scheduleTableBody');
+            body.innerHTML = schedulesList.map(s => {
+                const targetType = s.targetType || '素材';
+                const targetName = s.targetName || s.assetId;
+                const targetId = s.targetId || s.assetId;
+
+                return `
+                    <tr>
+                        <td>
+                            <span class="badge" style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">${targetType}</span>
+                        </td>
+                        <td style="font-weight: 600;">
+                            ${targetName}
+                            <span style="font-family: 'Outfit'; font-size: 11px; color: var(--text-light); margin-left: 4px;">(${targetId})</span>
+                        </td>
+                        <td>
+                            <span class="badge ${s.type === '上架' ? 'badge-success' : 'badge-danger'}">${s.type}</span>
+                        </td>
+                        <td style="font-family: 'Outfit';">${s.time}</td>
+                        <td>
+                            <span class="badge ${s.status === '等待中' ? 'badge-warning' : 'badge-success'}">${s.status}</span>
+                        </td>
+                        <td>
+                            ${s.status === '等待中' ? `
+                                <span class="action-link" onclick="triggerScheduleInstantly(${s.id})">立即触发</span>
+                                <span class="action-link danger" onclick="deleteSchedule(${s.id})">取消</span>
+                            ` : `<span style="color:var(--text-light);">已触发归档</span>`}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function saveSchedule(event) {
+            event.preventDefault();
+            const targetType = document.getElementById('schedTargetType').value;
+            const targetIdVal = document.getElementById('schedTargetId').value;
+            if (!targetIdVal) {
+                showLockToast('错误：当前没有可供选择的调度目标！');
+                return;
+            }
+            const targetId = parseInt(targetIdVal);
+            const actionType = document.getElementById('schedAction').value;
+            const timeRaw = document.getElementById('schedTime').value.replace('T', ' ');
+
+            // Verify datetime is in the future
+            const selectTime = new Date(document.getElementById('schedTime').value).getTime();
+            const nowTime = new Date().getTime();
+            if (selectTime <= nowTime) {
+                showLockToast('错误：调度执行时间必须在当前时间之后！');
+                return;
+            }
+
+            let targetName = '';
+            if (targetType === 'banner') {
+                const banners = dbGet('hscms_banners', []);
+                const b = banners.find(x => x.id === targetId);
+                if (!b) return;
+                targetName = b.title;
+
+                // State validation for Banners
+                if (actionType === '上架' && b.status === '启用') {
+                    showLockToast('只有未启用的 Banner 才可以进行定时上架！');
+                    return;
+                }
+                if (actionType === '下架' && b.status === '禁用') {
+                    showLockToast('只有启用的 Banner 才可以定时下架！');
+                    return;
+                }
+            } else if (targetType === '专题') {
+                const topics = dbGet('hscms_topics', []);
+                const t = topics.find(x => x.id === targetId);
+                if (!t) return;
+                targetName = t.name;
+
+                // State validation for Topics
+                if (actionType === '上架' && t.status === '启用') {
+                    showLockToast('只有未启用的专题才可以进行定时上架！');
+                    return;
+                }
+                if (actionType === '下架' && t.status === '禁用') {
+                    showLockToast('只有启用的专题才可以定时下架！');
+                    return;
+                }
+            }
+
+            const newId = schedulesList.length ? Math.max(...schedulesList.map(s => s.id)) + 1 : 1;
+            schedulesList.push({
+                id: newId,
+                targetType,
+                targetId,
+                targetName,
+                type: actionType,
+                time: timeRaw,
+                status: '等待中'
+            });
+
+            dbSave('hscms_schedules', schedulesList);
+
+            document.getElementById('schedTime').value = '';
+
+            showLockToast('定时上下架调度任务挂载成功！', true);
+            loadSchedules();
+        }
+
+        function triggerScheduleInstantly(id) {
+            const sched = schedulesList.find(s => s.id === id);
+            if (!sched) return;
+
+            const targetType = sched.targetType;
+            const targetId = sched.targetId;
+            const action = sched.type;
+
+            if (targetType) {
+                if (targetType === '专题') {
+                    const topics = dbGet('hscms_topics', []);
+                    const t = topics.find(x => x.id === targetId);
+                    if (t) {
+                        if (action === '上架' && t.status === '启用') {
+                            showLockToast('执行失败：该专题已处于启用状态！');
+                            return;
+                        }
+                        if (action === '下架' && t.status === '禁用') {
+                            showLockToast('执行失败：该专题已处于禁用状态！');
+                            return;
+                        }
+                        t.status = (action === '上架') ? '启用' : '禁用';
+                        dbSave('hscms_topics', topics);
+                    } else {
+                        showLockToast('执行失败：找不到对应的专题！');
+                        return;
+                    }
+                } else if (targetType === 'banner') {
+                    const banners = dbGet('hscms_banners', []);
+                    const b = banners.find(x => x.id === targetId);
+                    if (b) {
+                        if (action === '上架' && b.status === '启用') {
+                            showLockToast('执行失败：该 Banner 已处于启用状态！');
+                            return;
+                        }
+                        if (action === '下架' && b.status === '禁用') {
+                            showLockToast('执行失败：该 Banner 已处于禁用状态！');
+                            return;
+                        }
+                        b.status = (action === '上架') ? '启用' : '禁用';
+                        dbSave('hscms_banners', banners);
+                    } else {
+                        showLockToast('执行失败：找不到对应的 Banner！');
+                        return;
+                    }
+                }
+            }
+
+            sched.status = '已触发';
+            dbSave('hscms_schedules', schedulesList);
+            showLockToast(`调度执行成功！${sched.type}同步至前台，Redis 缓存及前台静态缓存已自动刷新。`, true);
+            loadSchedules();
+        }
+
+        function deleteSchedule(id) {
+            schedulesList = schedulesList.filter(s => s.id !== id);
+            dbSave('hscms_schedules', schedulesList);
+            showLockToast('调度任务已取消', true);
+            loadSchedules();
+        }
+
+        // Init load
+        loadSchedules();
+        loadTargetOptions();
+    </script>
+</body>
+
+</html>
