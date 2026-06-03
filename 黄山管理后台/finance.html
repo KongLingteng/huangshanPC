@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 交易财务分账</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Finance custom styling */
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .config-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 800px) {
+            .config-card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .config-panel {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .config-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .config-percentage-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        .config-percentage-input {
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .lock-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        /* Gateway spinner */
+        .gateway-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            display: none;
+        }
+        .gateway-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            width: 380px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .gateway-pulse {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #10b981;
+            margin: 0 auto 16px auto;
+            animation: pulse 1.2s infinite ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 20px;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+        .payment-lock-badge {
+            background-color: #fef2f2;
+            color: #ef4444;
+            border: 1px solid #fee2e2;
+        }
+        .payment-ready-badge {
+            background-color: #ecfdf5;
+            color: #10b981;
+            border: 1px solid #d1fae5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>大盘首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>UGC社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>资产版权确权</span>
+                    </a>
+                    <a href="finance.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易财务分账</span>
+                    </a>
+                    <a href="user-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户资质审核</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>财务结算</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item active" id="tabQueueNav">
+                        <a href="javascript:void(0)" onclick="switchTab('queue')">
+                            提现结算队列
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabHistoryNav">
+                        <a href="javascript:void(0)" onclick="switchTab('history')">
+                            打款清算历史
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabConfigNav">
+                        <a href="javascript:void(0)" onclick="switchTab('config')">
+                            分成策略配置
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <!-- TAB 1: WITHDRAWALS QUEUE -->
+                <div id="queueTab" class="tab-content active" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>提现结算清算队列</h1>
+                            <p>审核供稿人提现提报，系统自动核算 T+7 资金解冻锁与最低 100 元提现阈值限制。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-body">
+                        <!-- Table -->
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>申请单号/用户</th>
+                                        <th>结算主体</th>
+                                        <th>申请提现金额</th>
+                                        <th>收款支付账户</th>
+                                        <th>提现申请日期</th>
+                                        <th>T+7 资金解冻锁</th>
+                                        <th>起提安全核验</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="queueTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: CLEARANCE HISTORY -->
+                <div id="historyTab" class="tab-content" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>打款清算流水记录</h1>
+                            <p>查询已打款、已清结算的财务划账历史，以及因安全合规原因被退回的记录。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-body">
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>单号/用户</th>
+                                        <th>结算主体</th>
+                                        <th>提现金额</th>
+                                        <th>收款支付账户</th>
+                                        <th>申请日期</th>
+                                        <th>交易结果</th>
+                                        <th>清算回执说明</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: SPLIT CONFIGURATION -->
+                <div id="configTab" class="tab-content" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>分成清算配额配置</h1>
+                            <p>配置供稿人上传素材被C端用户订购后的分成占比，修改后立即对新交易生效。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-body">
+                        <div class="config-card-grid">
+                            <!-- Individual Creator config -->
+                            <div class="config-panel">
+                                <div class="config-section-title">个人独立创作者分成比</div>
+                                <form onsubmit="saveSplitConfig(event, '个人')">
+                                    <div class="config-percentage-row">
+                                        <div class="form-group" style="flex:1;">
+                                            <label>作者获得 (%)</label>
+                                            <input type="number" id="splitCreatorVal" class="form-control config-percentage-input" min="0" max="100" required>
+                                        </div>
+                                        <div style="font-size:24px; color:#cbd5e1; margin-top:20px;">:</div>
+                                        <div class="form-group" style="flex:1;">
+                                            <label>平台抽成 (%)</label>
+                                            <input type="number" id="splitCreatorPlatform" class="form-control config-percentage-input" disabled value="30">
+                                        </div>
+                                    </div>
+                                    <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:16px;">
+                                        当前分成比设定：创作者结算时将自动打款收益的份额，平台保留管理及技术运维抽成。
+                                    </p>
+                                    <button type="submit" class="btn btn-primary">保存个人分成比</button>
+                                </form>
+                            </div>
+
+                            <!-- Institutional config -->
+                            <div class="config-panel">
+                                <div class="config-section-title">签约合作机构分成比</div>
+                                <form onsubmit="saveSplitConfig(event, '机构')">
+                                    <div class="config-percentage-row">
+                                        <div class="form-group" style="flex:1;">
+                                            <label>机构获得 (%)</label>
+                                            <input type="number" id="splitOrgVal" class="form-control config-percentage-input" min="0" max="100" required>
+                                        </div>
+                                        <div style="font-size:24px; color:#cbd5e1; margin-top:20px;">:</div>
+                                        <div class="form-group" style="flex:1;">
+                                            <label>平台抽成 (%)</label>
+                                            <input type="number" id="splitOrgPlatform" class="form-control config-percentage-input" disabled value="20">
+                                        </div>
+                                    </div>
+                                    <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:16px;">
+                                        适用于文旅传媒等拥有独立法人主体资质的战略级机构，支持大额公对公打款开票。
+                                    </p>
+                                    <button type="submit" class="btn btn-primary">保存机构分成比</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL 1: REJECT WITHDRAWAL DIALOG -->
+    <div id="rejectWdrModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>驳回提现申请</h3>
+                <button class="modal-close-btn" onclick="closeModal('rejectWdrModal')">&times;</button>
+            </div>
+            <form id="rejectWdrForm" onsubmit="submitRejectWdr(event)">
+                <input type="hidden" id="rejectWdrId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>驳回原因说明</label>
+                        <select id="wdrRejectSelect" class="form-control" onchange="toggleCustomReason()">
+                            <option value="提现账户姓名与资质认证的真实姓名不符">提现账户姓名与资质认证的真实姓名不符</option>
+                            <option value="结算账户状态异常，网关通信失败">结算账户状态异常，网关通信失败</option>
+                            <option value="涉嫌作弊刷量，账号收益被冻结查验">涉嫌作弊刷量，账号收益被冻结查验</option>
+                            <option value="自定义原因">自定义驳回退回意见...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="customReasonWrapper" style="display:none;">
+                        <label>自定义退回意见</label>
+                        <textarea id="wdrRejectCustom" class="form-control" placeholder="请输入具体退回处理意见"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('rejectWdrModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认退回</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BANK GATEWAY INTERACTIVE MODAL -->
+    <div id="gatewayOverlay" class="gateway-overlay">
+        <div class="gateway-box">
+            <div class="gateway-pulse">￥</div>
+            <h3 style="font-size:15px; color:#1e293b; font-weight:700;" id="gatewayTitle">正在连接银行网关...</h3>
+            <p style="font-size:12px; color:#64748b; margin-top:8px;" id="gatewayDesc">建立 SSL 安全通道与三方通道清算握手</p>
+            <div style="margin-top:16px;" id="gatewaySpinnerArea">
+                <div style="width: 24px; height: 24px; border:3px solid #f3f3f3; border-top: 3px solid #10b981; border-radius:50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Default Split Ratios
+        const DEFAULT_SPLIT_RATIOS = {
+            '个人': 70,
+            '机构': 80
+        };
+
+        function switchTab(tab) {
+            document.getElementById('tabQueueNav').classList.remove('active');
+            document.getElementById('tabHistoryNav').classList.remove('active');
+            document.getElementById('tabConfigNav').classList.remove('active');
+
+            document.getElementById('queueTab').classList.remove('active');
+            document.getElementById('historyTab').classList.remove('active');
+            document.getElementById('configTab').classList.remove('active');
+
+            if (tab === 'queue') {
+                document.getElementById('tabQueueNav').classList.add('active');
+                document.getElementById('queueTab').classList.add('active');
+                loadQueue();
+            } else if (tab === 'history') {
+                document.getElementById('tabHistoryNav').classList.add('active');
+                document.getElementById('historyTab').classList.add('active');
+                loadHistory();
+            } else if (tab === 'config') {
+                document.getElementById('tabConfigNav').classList.add('active');
+                document.getElementById('configTab').classList.add('active');
+                loadConfigForm();
+            }
+        }
+
+        // Auto update platform split values when user inputs creator values
+        document.getElementById('splitCreatorVal').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value) || 0;
+            if (val >= 0 && val <= 100) {
+                document.getElementById('splitCreatorPlatform').value = 100 - val;
+            }
+        });
+        document.getElementById('splitOrgVal').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value) || 0;
+            if (val >= 0 && val <= 100) {
+                document.getElementById('splitOrgPlatform').value = 100 - val;
+            }
+        });
+
+        // Config loads
+        function loadConfigForm() {
+            const config = dbGet('hscms_split_config', DEFAULT_SPLIT_RATIOS);
+            document.getElementById('splitCreatorVal').value = config['个人'];
+            document.getElementById('splitCreatorPlatform').value = 100 - config['个人'];
+            document.getElementById('splitOrgVal').value = config['机构'];
+            document.getElementById('splitOrgPlatform').value = 100 - config['机构'];
+        }
+
+        function saveSplitConfig(e, type) {
+            e.preventDefault();
+            const config = dbGet('hscms_split_config', DEFAULT_SPLIT_RATIOS);
+            
+            if (type === '个人') {
+                const val = parseInt(document.getElementById('splitCreatorVal').value);
+                config['个人'] = val;
+            } else {
+                const val = parseInt(document.getElementById('splitOrgVal').value);
+                config['机构'] = val;
+            }
+
+            dbSave('hscms_split_config', config);
+            showLockToast(`${type}分成配额参数保存生效！`, true);
+            loadConfigForm();
+        }
+
+        // ==========================================
+        // QUEUE LOGIC & T+7 / 100 LIMIT INTERCEPTS
+        // ==========================================
+        function loadQueue() {
+            const withdrawals = dbGet('hscms_withdrawals', []);
+            const pending = withdrawals.filter(w => w.status === '待审批');
+
+            const tbody = document.getElementById('queueTableBody');
+            tbody.innerHTML = '';
+
+            if (pending.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">当前无待处理提现单</td></tr>`;
+                return;
+            }
+
+            // Reference date for check is simulated current local date: 2026-06-02 (based on metadata)
+            const simulatedCurrentTime = new Date('2026-06-02 23:59:59').getTime();
+
+            pending.forEach(w => {
+                const tr = document.createElement('tr');
+                
+                // Calculate date delta (T+7 check)
+                const applyDate = new Date(w.applyTime).getTime();
+                const deltaDays = (simulatedCurrentTime - applyDate) / (1000 * 3600 * 24);
+                const isT7Pass = deltaDays >= 7;
+
+                // Amount check (100 RMB limit)
+                const isAmountPass = w.amount >= 100.00;
+
+                // T+7 Pill
+                let t7Badge = `<span class="badge payment-ready-badge lock-indicator">🔓 已解冻 (满 ${Math.floor(deltaDays)}天)</span>`;
+                if (!isT7Pass) {
+                    t7Badge = `<span class="badge payment-lock-badge lock-indicator" title="申请日期为 ${w.applyTime}，未达 7 天">🔒 冻结中 (剩余 ${Math.ceil(7 - deltaDays)}天)</span>`;
+                }
+
+                // Minimum Limit Pill
+                let minBadge = `<span class="badge payment-ready-badge">✔ 符合</span>`;
+                if (!isAmountPass) {
+                    minBadge = `<span class="badge payment-lock-badge" title="未达100元起提限额">❌ 拦截 (低于100元)</span>`;
+                }
+
+                // Operations (Block button if conditions aren't met)
+                let actionBtns = '';
+                if (isT7Pass && isAmountPass) {
+                    actionBtns = `
+                        <a href="javascript:void(0)" class="action-link" onclick="approveWithdrawalFlow('${w.id}')">清算打款</a>
+                        <a href="javascript:void(0)" class="action-link danger" onclick="triggerRejectWdrModal('${w.id}')">驳回退回</a>
+                    `;
+                } else {
+                    // Block click with tooltip
+                    let blockReason = '';
+                    if (!isT7Pass && !isAmountPass) blockReason = '未满 7 天且金额不足 100 元';
+                    else if (!isT7Pass) blockReason = '冻结锁尚未解除（未满7天）';
+                    else blockReason = '未达到最低起提标准';
+
+                    actionBtns = `
+                        <span style="color:#9ca3af; font-size:12px; cursor:not-allowed;" title="由于 ${blockReason}，打款被拦截屏蔽">⚠️ 清算受限</span>
+                        <a href="javascript:void(0)" class="action-link danger" style="margin-left:10px;" onclick="triggerRejectWdrModal('${w.id}')">驳回退回</a>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <strong style="color:#1f2937;">${w.id}</strong>
+                        <div style="font-size:11px; color:#64748b;">户名: ${w.user}</div>
+                    </td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#475569;">${w.userType}</span></td>
+                    <td><strong style="color:#111827; font-size:14px;">￥${w.amount.toFixed(2)}</strong></td>
+                    <td><code>${w.account}</code></td>
+                    <td style="color:#64748b; font-size:12px;">${w.applyTime}</td>
+                    <td>${t7Badge}</td>
+                    <td>${minBadge}</td>
+                    <td>${actionBtns}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // HISTORY VIEW
+        // ==========================================
+        function loadHistory() {
+            const withdrawals = dbGet('hscms_withdrawals', []);
+            const history = withdrawals.filter(w => w.status !== '待审批');
+
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+
+            if (history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">暂无历史打款清算记录</td></tr>`;
+                return;
+            }
+
+            history.forEach(w => {
+                const tr = document.createElement('tr');
+                
+                let resultBadge = `<span class="badge badge-success">清算成功</span>`;
+                let memo = `<span style="color:#475569; font-size:12px;">银行电汇回执：TRX_${Math.floor(1000000 + Math.random() * 9000000)}已归档</span>`;
+                
+                if (w.status === '已驳回') {
+                    resultBadge = `<span class="badge badge-danger">已驳回退回</span>`;
+                    memo = `<span style="color:#ef4444; font-size:12px;">退回说明：${w.rejectReason}</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <strong style="color:#334155;">${w.id}</strong>
+                        <div style="font-size:11px; color:#64748b;">户名: ${w.user}</div>
+                    </td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#475569;">${w.userType}</span></td>
+                    <td><strong style="color:#334155;">￥${w.amount.toFixed(2)}</strong></td>
+                    <td><code>${w.account}</code></td>
+                    <td style="color:#64748b; font-size:12px;">${w.applyTime}</td>
+                    <td>${resultBadge}</td>
+                    <td>${memo}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Interactive Gateway Payment Clearance Simulation
+        function approveWithdrawalFlow(wdrId) {
+            const gatewayOverlay = document.getElementById('gatewayOverlay');
+            const title = document.getElementById('gatewayTitle');
+            const desc = document.getElementById('gatewayDesc');
+
+            gatewayOverlay.style.display = 'flex';
+            title.textContent = '连接银行备付金账户网关...';
+            desc.textContent = '校验付款账户 SSL 加密证书';
+
+            setTimeout(() => {
+                title.textContent = '正在核对收款银行联行号与卡号...';
+                desc.textContent = '向三方结算网关提交批量清算包';
+
+                setTimeout(() => {
+                    title.textContent = '结算指令执行成功！';
+                    desc.textContent = '网关划拨清算流水已返回成功回执';
+
+                    setTimeout(() => {
+                        gatewayOverlay.style.display = 'none';
+                        finalizeWithdrawal(wdrId);
+                    }, 800);
+                }, 1000);
+            }, 1000);
+        }
+
+        function finalizeWithdrawal(wdrId) {
+            const withdrawals = dbGet('hscms_withdrawals', []);
+            const wIdx = withdrawals.findIndex(w => w.id === wdrId);
+
+            if (wIdx !== -1) {
+                withdrawals[wIdx].status = '已打款';
+                dbSave('hscms_withdrawals', withdrawals);
+
+                // Push message to the recipient user in hscms_users
+                const sysMsgs = dbGet('hscms_system_messages', []);
+                const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                // Locate matching user in default db to deliver system msg
+                let targetUser = 'USER_8820'; // fallback
+                if (withdrawals[wIdx].user === '大峡谷探险家') targetUser = 'USER_5541';
+                else if (withdrawals[wIdx].user === '徽风文化传媒') targetUser = 'USER_6672';
+
+                sysMsgs.push({
+                    id: newMsgId,
+                    userId: targetUser,
+                    title: '提现打款到账通知',
+                    content: `您的提现申请（金额：${withdrawals[wIdx].amount.toFixed(2)}元）已成功通过平台电汇网关清算打款，已汇入您的结算账号：${withdrawals[wIdx].account}。请留意账单信息。`,
+                    time: timeStr,
+                    read: false
+                });
+                dbSave('hscms_system_messages', sysMsgs);
+
+                showLockToast('银行网关打款成功，资金回执已被归档！', true);
+                loadQueue();
+            }
+        }
+
+        // Reject modal triggers
+        function triggerRejectWdrModal(wdrId) {
+            document.getElementById('rejectWdrId').value = wdrId;
+            document.getElementById('wdrRejectSelect').value = '提现账户姓名与资质认证的真实姓名不符';
+            document.getElementById('customReasonWrapper').style.display = 'none';
+            document.getElementById('wdrRejectCustom').value = '';
+            openModal('rejectWdrModal');
+        }
+
+        function toggleCustomReason() {
+            const select = document.getElementById('wdrRejectSelect').value;
+            const wrapper = document.getElementById('customReasonWrapper');
+            if (select === '自定义原因') {
+                wrapper.style.display = 'block';
+            } else {
+                wrapper.style.display = 'none';
+            }
+        }
+
+        function submitRejectWdr(e) {
+            e.preventDefault();
+            const wdrId = document.getElementById('rejectWdrId').value;
+            const selectReason = document.getElementById('wdrRejectSelect').value;
+            const customReason = document.getElementById('wdrRejectCustom').value.trim();
+
+            let finalReason = selectReason;
+            if (selectReason === '自定义原因') {
+                if (!customReason) {
+                    alert('请输入自定义退回说明！');
+                    return;
+                }
+                finalReason = customReason;
+            }
+
+            const withdrawals = dbGet('hscms_withdrawals', []);
+            const wIdx = withdrawals.findIndex(w => w.id === wdrId);
+
+            if (wIdx !== -1) {
+                withdrawals[wIdx].status = '已驳回';
+                withdrawals[wIdx].rejectReason = finalReason;
+                dbSave('hscms_withdrawals', withdrawals);
+
+                // Push message to notification database
+                const sysMsgs = dbGet('hscms_system_messages', []);
+                const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                let targetUser = 'USER_8820';
+                if (withdrawals[wIdx].user === '大峡谷探险家') targetUser = 'USER_5541';
+                else if (withdrawals[wIdx].user === '徽风文化传媒') targetUser = 'USER_6672';
+
+                sysMsgs.push({
+                    id: newMsgId,
+                    userId: targetUser,
+                    title: '提现审批退回公告',
+                    content: `很抱歉，您的提现单（单号：${wdrId}，金额：${withdrawals[wIdx].amount.toFixed(2)}元）在审批核验时被退回。退回原因：【${finalReason}】。资金已退回您的可提余额。`,
+                    time: timeStr,
+                    read: false
+                });
+                dbSave('hscms_system_messages', sysMsgs);
+
+                showLockToast('提现单驳回成功，退回告知已推送至用户侧', true);
+                closeModal('rejectWdrModal');
+                loadQueue();
+            }
+        }
+
+        // Init page load
+        loadQueue();
+    </script>
+</body>
+</html>

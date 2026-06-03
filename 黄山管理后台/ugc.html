@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - UGC社区运营</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* UGC custom tab view styles */
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .sensitive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .word-cat-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .word-cat-header {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .word-tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .word-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #334155;
+            transition: all 0.15s ease;
+        }
+        .word-tag:hover {
+            border-color: #cbd5e1;
+            background-color: #f1f5f9;
+        }
+        .word-tag-remove {
+            color: #94a3b8;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .word-tag-remove:hover {
+            color: #ef4444;
+        }
+        .post-preview-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+        }
+        .post-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-width: 320px;
+        }
+        .post-title-text {
+            font-weight: 600;
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .post-body-text {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>大盘首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>UGC社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>资产版权确权</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易财务分账</span>
+                    </a>
+                    <a href="user-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户资质审核</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>社区运营</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item active" id="tabPostNav">
+                        <a href="javascript:void(0)" onclick="switchTab('posts')">
+                            帖子与评论管理
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabWordNav">
+                        <a href="javascript:void(0)" onclick="switchTab('words')">
+                            敏感词库配置
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabBlacklistNav">
+                        <a href="javascript:void(0)" onclick="switchTab('blacklist')">
+                            用户黑名单
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <!-- TAB 1: POSTS & COMMENTS -->
+                <div id="postsTab" class="tab-content active" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>帖子与评论多维管理</h1>
+                            <p>集中检索移动端 UGC 社区内容，人工干预争议性或低俗帖子内容</p>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-body">
+                        <!-- Search Filters -->
+                        <div class="search-row">
+                            <div class="search-col">
+                                <label>发布人 ID</label>
+                                <input type="text" id="filterAuthor" class="form-control" style="width:140px;" placeholder="例如 USER_8820">
+                            </div>
+                            <div class="search-col">
+                                <label>合规状态</label>
+                                <select id="filterStatus" class="form-control" style="width:120px;">
+                                    <option value="全部">全部</option>
+                                    <option value="正常">正常</option>
+                                    <option value="已下架">已下架</option>
+                                </select>
+                            </div>
+                            <div class="search-col">
+                                <label>热度排序</label>
+                                <select id="filterHeat" class="form-control" style="width:140px;">
+                                    <option value="默认">默认排序</option>
+                                    <option value="views">按浏览数从高到低</option>
+                                    <option value="comments">按评论数从高到低</option>
+                                </select>
+                            </div>
+                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                                <button class="btn btn-primary" onclick="loadPostsList()">查询</button>
+                                <button class="btn" onclick="resetPostFilters()">重置</button>
+                            </div>
+                        </div>
+
+                        <!-- Posts Table -->
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>帖子内容</th>
+                                        <th>类型</th>
+                                        <th>发布人ID</th>
+                                        <th>发帖时间</th>
+                                        <th>热度值 (浏览/评论)</th>
+                                        <th>合规状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="postsTableBody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: SENSITIVE WORDS -->
+                <div id="wordsTab" class="tab-content" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>敏感词库动态维护</h1>
+                            <p>配置内容安全敏感词，支持随时追加、删除或批量导入</p>
+                        </div>
+                        <div class="workspace-actions">
+                            <button class="btn btn-primary" onclick="openAddWordModal()">新增敏感词</button>
+                            <button class="btn" onclick="openBatchImportModal()">批量导入词库</button>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-body">
+                        <div class="sensitive-grid">
+                            <!-- Category cards -->
+                            <div class="word-cat-card">
+                                <div class="word-cat-header" style="color:#ef4444;">
+                                    <span>政治类</span>
+                                    <span class="badge" style="background:#fee2e2; color:#ef4444;" id="count-政治">0</span>
+                                </div>
+                                <div class="word-tag-container" id="container-政治"></div>
+                            </div>
+                            
+                            <div class="word-cat-card">
+                                <div class="word-cat-header" style="color:#a855f7;">
+                                    <span>色情类</span>
+                                    <span class="badge" style="background:#f3e8ff; color:#a855f7;" id="count-色情">0</span>
+                                </div>
+                                <div class="word-tag-container" id="container-色情"></div>
+                            </div>
+                            
+                            <div class="word-cat-card">
+                                <div class="word-cat-header" style="color:#f97316;">
+                                    <span>暴恐类</span>
+                                    <span class="badge" style="background:#ffedd5; color:#f97316;" id="count-暴恐">0</span>
+                                </div>
+                                <div class="word-tag-container" id="container-暴恐"></div>
+                            </div>
+                            
+                            <div class="word-cat-card">
+                                <div class="word-cat-header" style="color:#3b82f6;">
+                                    <span>涉密类</span>
+                                    <span class="badge" style="background:#dbeafe; color:#3b82f6;" id="count-涉密">0</span>
+                                </div>
+                                <div class="word-tag-container" id="container-涉密"></div>
+                            </div>
+
+                            <div class="word-cat-card">
+                                <div class="word-cat-header" style="color:#64748b;">
+                                    <span>侵权广告类</span>
+                                    <span class="badge" style="background:#f1f5f9; color:#64748b;" id="count-侵权">0</span>
+                                </div>
+                                <div class="word-tag-container" id="container-侵权"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: USER BLACKLIST -->
+                <div id="blacklistTab" class="tab-content" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>封禁用户黑名单</h1>
+                            <p>对频繁散布违规言论的异常账号进行强制限制，支持一键移除限制</p>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-body">
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>用户 ID</th>
+                                        <th>封禁时间</th>
+                                        <th>封禁缘由</th>
+                                        <th>惩罚周期</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="blacklistTableBody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL 1: FORCE SHIELD POST -->
+    <div id="shieldModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>人工下架/屏蔽干预</h3>
+                <button class="modal-close-btn" onclick="closeModal('shieldModal')">&times;</button>
+            </div>
+            <form id="shieldForm" onsubmit="submitShieldPost(event)">
+                <input type="hidden" id="shieldPostId">
+                <div class="modal-body">
+                    <p style="font-size:12.5px; color:#475569; margin-bottom:12px;" id="shieldPostDetails"></p>
+                    <div class="form-group">
+                        <label>封禁下架原因</label>
+                        <select id="shieldReasonSelect" class="form-control" onchange="toggleCustomReason()">
+                            <option value="发布垃圾广告或商业推广">发布垃圾广告或商业推广</option>
+                            <option value="包含争议性、偏激低俗言论">包含争议性、偏激低俗言论</option>
+                            <option value="含有侵权、涉密或违禁词汇">含有侵权、涉密或违禁词汇</option>
+                            <option value="自定义原因">自定义下架原因...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="customReasonWrapper" style="display:none;">
+                        <label>自定义下架原因描述</label>
+                        <textarea id="shieldCustomReason" class="form-control" placeholder="请详细录入违规说明，将通过系统通知推送给作者"></textarea>
+                    </div>
+                    <div class="form-group" style="flex-direction:row; gap:8px; align-items:center; margin-top:8px;">
+                        <input type="checkbox" id="banUserCheckbox" style="width:16px; height:16px; cursor:pointer;">
+                        <label for="banUserCheckbox" style="cursor:pointer; font-weight:normal;">同时将该用户拉入黑名单封禁限制</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('shieldModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认强制下架</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADD SENSITIVE WORD -->
+    <div id="addWordModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>新增安全敏感词</h3>
+                <button class="modal-close-btn" onclick="closeModal('addWordModal')">&times;</button>
+            </div>
+            <form id="addWordForm" onsubmit="submitAddWord(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>敏感词</label>
+                        <input type="text" id="newWordText" class="form-control" required placeholder="如：发票代开">
+                    </div>
+                    <div class="form-group">
+                        <label>词汇类别</label>
+                        <select id="newWordCategory" class="form-control">
+                            <option value="政治">政治类</option>
+                            <option value="色情">色情类</option>
+                            <option value="暴恐">暴恐类</option>
+                            <option value="涉密">涉密类</option>
+                            <option value="侵权">侵权广告类</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>替换占位词</label>
+                        <input type="text" id="newWordReplacement" class="form-control" value="***">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('addWordModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">保存词汇</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: BATCH IMPORT -->
+    <div id="batchImportModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>批量导入词库</h3>
+                <button class="modal-close-btn" onclick="closeModal('batchImportModal')">&times;</button>
+            </div>
+            <form id="batchImportForm" onsubmit="submitBatchImport(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>选择类别</label>
+                        <select id="importCategory" class="form-control">
+                            <option value="政治">政治类</option>
+                            <option value="色情">色情类</option>
+                            <option value="暴恐">暴恐类</option>
+                            <option value="涉密">涉密类</option>
+                            <option value="侵权">侵权广告类</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>词库文本 (每行一个词，或用逗号分隔)</label>
+                        <textarea id="importWordsTextarea" class="form-control" style="height:150px;" required placeholder="敏感词A&#10;敏感词B&#10;敏感词C..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('batchImportModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">解析并追加导入</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Tab switching logic
+        function switchTab(tab) {
+            // Manage active classes on subbar
+            document.getElementById('tabPostNav').classList.remove('active');
+            document.getElementById('tabWordNav').classList.remove('active');
+            document.getElementById('tabBlacklistNav').classList.remove('active');
+
+            // Hide all tab views
+            document.getElementById('postsTab').classList.remove('active');
+            document.getElementById('wordsTab').classList.remove('active');
+            document.getElementById('blacklistTab').classList.remove('active');
+
+            if (tab === 'posts') {
+                document.getElementById('tabPostNav').classList.add('active');
+                document.getElementById('postsTab').classList.add('active');
+                loadPostsList();
+            } else if (tab === 'words') {
+                document.getElementById('tabWordNav').classList.add('active');
+                document.getElementById('wordsTab').classList.add('active');
+                loadSensitiveWords();
+            } else if (tab === 'blacklist') {
+                document.getElementById('tabBlacklistNav').classList.add('active');
+                document.getElementById('blacklistTab').classList.add('active');
+                loadBlacklist();
+            }
+        }
+
+        // ==========================================
+        // TAB 1: POSTS & COMMENTS MANAGEMENT
+        // ==========================================
+        function loadPostsList() {
+            const posts = dbGet('hscms_ugc_posts', []);
+            const filterAuthor = document.getElementById('filterAuthor').value.trim();
+            const filterStatus = document.getElementById('filterStatus').value;
+            const filterHeat = document.getElementById('filterHeat').value;
+
+            let filtered = posts;
+
+            // Apply filter author
+            if (filterAuthor) {
+                filtered = filtered.filter(p => p.authorId.toLowerCase().includes(filterAuthor.toLowerCase()));
+            }
+
+            // Apply status
+            if (filterStatus !== '全部') {
+                filtered = filtered.filter(p => p.status === filterStatus);
+            }
+
+            // Apply heat sorting
+            if (filterHeat === 'views') {
+                filtered.sort((a, b) => b.views - a.views);
+            } else if (filterHeat === 'comments') {
+                filtered.sort((a, b) => b.comments - a.comments);
+            }
+
+            const tbody = document.getElementById('postsTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的帖子数据</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const tr = document.createElement('tr');
+                
+                // Status badge
+                let statusBadge = `<span class="badge badge-success">正常</span>`;
+                let actionBtn = `<a href="javascript:void(0)" class="action-link danger" onclick="triggerShieldModal(${p.id})">下架屏蔽</a>`;
+                
+                if (p.status === '已下架') {
+                    statusBadge = `<span class="badge badge-danger" title="原因：${p.shieldReason || '未录入'}">已下架</span>`;
+                    actionBtn = `<span style="color:#9ca3af; font-size: 12px; cursor: not-allowed;" title="原因：${p.shieldReason}">已人工干预</span>`;
+                }
+
+                // Media layout preview
+                let mediaLayout = '';
+                if (p.mediaUrl) {
+                    if (p.mediaUrl.endsWith('.mp4') || p.type === '视频') {
+                        // Video mock thumbnail
+                        mediaLayout = `<div style="display:flex; align-items:center; gap:8px;">
+                            <div style="position:relative; width:44px; height:44px; background:#1e293b; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px;">
+                                ▶ VIDEO
+                            </div>
+                            <div class="post-details">
+                                <span class="post-title-text">${p.title}</span>
+                                <span class="post-body-text">${p.content}</span>
+                            </div>
+                        </div>`;
+                    } else {
+                        // Image thumbnail
+                        mediaLayout = `<div style="display:flex; align-items:center; gap:8px;">
+                            <img class="post-preview-img" src="${p.mediaUrl}" alt="Post image">
+                            <div class="post-details">
+                                <span class="post-title-text">${p.title}</span>
+                                <span class="post-body-text">${p.content}</span>
+                            </div>
+                        </div>`;
+                    }
+                } else {
+                    // Plain text
+                    mediaLayout = `<div class="post-details">
+                        <span class="post-title-text" style="font-weight: 500;">${p.title || '无标题'}</span>
+                        <span class="post-body-text">${p.content}</span>
+                    </div>`;
+                }
+
+                tr.innerHTML = `
+                    <td>${mediaLayout}</td>
+                    <td><span class="badge" style="background:#e0f2fe; color:#0369a1;">${p.type}</span></td>
+                    <td><code>${p.authorId}</code></td>
+                    <td style="color:#64748b; font-size:12px;">${p.publishTime}</td>
+                    <td>
+                        <span style="font-weight:600; color:#475569;">${p.views}</span> 浏览 / 
+                        <span style="font-weight:600; color:#475569;">${p.comments}</span> 评论
+                    </td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        ${actionBtn}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetPostFilters() {
+            document.getElementById('filterAuthor').value = '';
+            document.getElementById('filterStatus').value = '全部';
+            document.getElementById('filterHeat').value = '默认';
+            loadPostsList();
+        }
+
+        // Trigger force shield ban modal
+        function triggerShieldModal(postId) {
+            const posts = dbGet('hscms_ugc_posts', []);
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            document.getElementById('shieldPostId').value = postId;
+            document.getElementById('shieldPostDetails').textContent = `即将下架帖子：《${post.title || '无标题'}》，作者 ID：${post.authorId}`;
+            document.getElementById('shieldReasonSelect').value = '发布垃圾广告或商业推广';
+            document.getElementById('customReasonWrapper').style.display = 'none';
+            document.getElementById('shieldCustomReason').value = '';
+            document.getElementById('banUserCheckbox').checked = false;
+
+            openModal('shieldModal');
+        }
+
+        function toggleCustomReason() {
+            const select = document.getElementById('shieldReasonSelect').value;
+            const wrapper = document.getElementById('customReasonWrapper');
+            if (select === '自定义原因') {
+                wrapper.style.display = 'block';
+            } else {
+                wrapper.style.display = 'none';
+            }
+        }
+
+        function submitShieldPost(e) {
+            e.preventDefault();
+            const postId = parseInt(document.getElementById('shieldPostId').value);
+            const selectReason = document.getElementById('shieldReasonSelect').value;
+            const customReason = document.getElementById('shieldCustomReason').value.trim();
+            const banUser = document.getElementById('banUserCheckbox').checked;
+
+            let finalReason = selectReason;
+            if (selectReason === '自定义原因') {
+                if (!customReason) {
+                    alert('请输入自定义下架原因！');
+                    return;
+                }
+                finalReason = customReason;
+            }
+
+            const posts = dbGet('hscms_ugc_posts', []);
+            const postIdx = posts.findIndex(p => p.id === postId);
+
+            if (postIdx !== -1) {
+                posts[postIdx].status = '已下架';
+                posts[postIdx].shieldReason = finalReason;
+                dbSave('hscms_ugc_posts', posts);
+
+                // Push system notification message to author
+                const sysMsgs = dbGet('hscms_system_messages', []);
+                const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                sysMsgs.push({
+                    id: newMsgId,
+                    userId: posts[postIdx].authorId,
+                    title: '内容下架告知书',
+                    content: `您的帖子《${posts[postIdx].title || '无标题'}》涉嫌违规，原因：【${finalReason}】。现已被平台强制下架。如有异议请联系客服。`,
+                    time: timeStr,
+                    read: false
+                });
+                dbSave('hscms_system_messages', sysMsgs);
+
+                // Ban user if checked
+                if (banUser) {
+                    const blacklist = dbGet('hscms_blacklist', []);
+                    const isBanned = blacklist.some(b => b.userId === posts[postIdx].authorId);
+                    if (!isBanned) {
+                        blacklist.push({
+                            userId: posts[postIdx].authorId,
+                            banTime: timeStr,
+                            reason: `发布屏蔽贴：${finalReason}`,
+                            duration: '永久'
+                        });
+                        dbSave('hscms_blacklist', blacklist);
+
+                        // Demote user role to common user in database
+                        const users = dbGet('hscms_users', []);
+                        const userIdx = users.findIndex(u => u.userId === posts[postIdx].authorId);
+                        if (userIdx !== -1) {
+                            users[userIdx].role = '普通用户';
+                            dbSave('hscms_users', users);
+                        }
+                    }
+                }
+
+                showLockToast('内容强制下架成功，系统消息已自动推送！', true);
+                closeModal('shieldModal');
+                loadPostsList();
+            }
+        }
+
+        // ==========================================
+        // TAB 2: SENSITIVE WORDS MANAGEMENT
+        // ==========================================
+        function loadSensitiveWords() {
+            const words = dbGet('hscms_sensitive_words', []);
+            const categories = ['政治', '色情', '暴恐', '涉密', '侵权'];
+
+            categories.forEach(cat => {
+                const container = document.getElementById(`container-${cat}`);
+                const countBadge = document.getElementById(`count-${cat}`);
+                container.innerHTML = '';
+                
+                const catWords = words.filter(w => w.category === cat);
+                countBadge.textContent = catWords.length;
+
+                if (catWords.length === 0) {
+                    container.innerHTML = `<span style="font-size:12px; color:#cbd5e1; font-style:italic;">暂无词汇</span>`;
+                } else {
+                    catWords.forEach(w => {
+                        const tag = document.createElement('span');
+                        tag.className = 'word-tag';
+                        tag.innerHTML = `
+                            <span>${w.word} ➔ ${w.replacement}</span>
+                            <span class="word-tag-remove" onclick="deleteSensitiveWord(${w.id})">&times;</span>
+                        `;
+                        container.appendChild(tag);
+                    });
+                }
+            });
+        }
+
+        function openAddWordModal() {
+            document.getElementById('newWordText').value = '';
+            document.getElementById('newWordCategory').value = '政治';
+            document.getElementById('newWordReplacement').value = '***';
+            openModal('addWordModal');
+        }
+
+        function submitAddWord(e) {
+            e.preventDefault();
+            const text = document.getElementById('newWordText').value.trim();
+            const cat = document.getElementById('newWordCategory').value;
+            const replacement = document.getElementById('newWordReplacement').value.trim() || '***';
+
+            if (!text) return;
+
+            const words = dbGet('hscms_sensitive_words', []);
+            const maxId = words.length > 0 ? Math.max(...words.map(w => w.id)) : 0;
+
+            if (words.some(w => w.word.toLowerCase() === text.toLowerCase())) {
+                alert('该敏感词已在词库中！');
+                return;
+            }
+
+            words.push({
+                id: maxId + 1,
+                word: text,
+                category: cat,
+                replacement: replacement
+            });
+
+            dbSave('hscms_sensitive_words', words);
+            showLockToast('敏感词添加成功！', true);
+            closeModal('addWordModal');
+            loadSensitiveWords();
+        }
+
+        function openBatchImportModal() {
+            document.getElementById('importCategory').value = '政治';
+            document.getElementById('importWordsTextarea').value = '';
+            openModal('batchImportModal');
+        }
+
+        function submitBatchImport(e) {
+            e.preventDefault();
+            const cat = document.getElementById('importCategory').value;
+            const rawText = document.getElementById('importWordsTextarea').value;
+
+            // Split by lines or commas
+            const parsed = rawText
+                .split(/[\n,，]+/)
+                .map(w => w.trim())
+                .filter(w => w.length > 0);
+
+            if (parsed.length === 0) {
+                alert('解析出 0 个词汇，请确认格式！');
+                return;
+            }
+
+            const words = dbGet('hscms_sensitive_words', []);
+            let maxId = words.length > 0 ? Math.max(...words.map(w => w.id)) : 0;
+            let addedCount = 0;
+
+            parsed.forEach(w => {
+                const exists = words.some(existing => existing.word.toLowerCase() === w.toLowerCase());
+                if (!exists) {
+                    maxId++;
+                    words.push({
+                        id: maxId,
+                        word: w,
+                        category: cat,
+                        replacement: '***'
+                    });
+                    addedCount++;
+                }
+            });
+
+            dbSave('hscms_sensitive_words', words);
+            showLockToast(`导入完成！成功追加 ${addedCount} 个词汇`, true);
+            closeModal('batchImportModal');
+            loadSensitiveWords();
+        }
+
+        function deleteSensitiveWord(wordId) {
+            let words = dbGet('hscms_sensitive_words', []);
+            words = words.filter(w => w.id !== wordId);
+            dbSave('hscms_sensitive_words', words);
+            loadSensitiveWords();
+        }
+
+        // ==========================================
+        // TAB 3: BLACKLIST MANAGEMENT
+        // ==========================================
+        function loadBlacklist() {
+            const blacklist = dbGet('hscms_blacklist', []);
+            const tbody = document.getElementById('blacklistTableBody');
+            tbody.innerHTML = '';
+
+            if (blacklist.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#9ca3af; padding: 24px;">黑名单为空，无被封禁账号</td></tr>`;
+                return;
+            }
+
+            blacklist.forEach(b => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><code>${b.userId}</code></td>
+                    <td style="color:#64748b; font-size:12px;">${b.banTime}</td>
+                    <td style="color:#475569;">${b.reason}</td>
+                    <td><span class="badge badge-danger">${b.duration}</span></td>
+                    <td>
+                        <a href="javascript:void(0)" class="action-link" onclick="removeBlacklist('${b.userId}')">解除封禁</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function removeBlacklist(userId) {
+            let blacklist = dbGet('hscms_blacklist', []);
+            blacklist = blacklist.filter(b => b.userId !== userId);
+            dbSave('hscms_blacklist', blacklist);
+
+            // Re-grant default roles if appropriate
+            const users = dbGet('hscms_users', []);
+            const userIdx = users.findIndex(u => u.userId === userId);
+            if (userIdx !== -1) {
+                // Return to default
+                users[userIdx].role = '供稿人(未认证)';
+                dbSave('hscms_users', users);
+            }
+
+            showLockToast(`用户 ${userId} 已成功解除封禁限制`, true);
+            loadBlacklist();
+        }
+
+        // Init page load
+        loadPostsList();
+    </script>
+</body>
+</html>

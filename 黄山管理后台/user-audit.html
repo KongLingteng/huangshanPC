@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 用户资质合规审核</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* User Audit custom styling */
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .search-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .user-avatar-rect {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background-color: #f1f5f9;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            object-fit: cover;
+            border: 1px solid #cbd5e1;
+        }
+        .attachment-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 12px;
+        }
+        .attachment-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+        /* Document Preview Modal styling */
+        .preview-doc-card {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            margin-top: 12px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .preview-seal {
+            position: absolute;
+            bottom: 15px;
+            right: 25px;
+            width: 80px;
+            height: 80px;
+            border: 2px solid #ef4444;
+            border-radius: 50%;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            transform: rotate(-15deg);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        .preview-doc-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            color: #64748b;
+        }
+        .preview-doc-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .preview-doc-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>大盘首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>UGC社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>资产版权确权</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易财务分账</span>
+                    </a>
+                    <a href="user-audit.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户资质审核</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>用户审核</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item active" id="tabPendingNav">
+                        <a href="javascript:void(0)" onclick="switchTab('待审核')">
+                            资质审核待办
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabHistoryNav">
+                        <a href="javascript:void(0)" onclick="switchTab('历史记录')">
+                            资质核验历史
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabProfilesNav">
+                        <a href="javascript:void(0)" onclick="switchTab('profiles')">
+                            用户合规干预
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <!-- VIEW 1: QUALIFICATIONS QUEUE (PENDING/HISTORY) -->
+                <div id="qualificationsView" class="tab-content active" style="width:100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1 id="pageTitle">供稿资质入驻审核</h1>
+                            <p>核验申请成为平台供稿人（个人或企业机构）的实名及法人资质证件材料。</p>
+                        </div>
+                    </div>
+
+                    <div class="canvas-body">
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>申请ID/主体类别</th>
+                                        <th>核验名称/企业名称</th>
+                                        <th>证件号码/社会代码</th>
+                                        <th>资质证明文件</th>
+                                        <th>申请时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="qualificationsTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: PROFILE INTERVENTION -->
+                <div id="profilesView" class="tab-content" style="width:100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>用户基础信息合规</h1>
+                            <p>检索 C 端用户头像、昵称、签名合规性，对含有色情、争议广告信息的档案进行一键重置处理。</p>
+                        </div>
+                    </div>
+
+                    <div class="canvas-body">
+                        <!-- Search Filters -->
+                        <div class="search-row">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:11px;">模糊检索 (用户ID/昵称)</label>
+                                <input type="text" id="searchUserQuery" class="form-control" style="width:220px;" placeholder="检索昵称或用户ID...">
+                            </div>
+                            <button class="btn btn-primary" onclick="loadUsersList()">查询</button>
+                            <button class="btn" onclick="resetUserSearch()">重置</button>
+                        </div>
+
+                        <!-- Users profile table -->
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>头像</th>
+                                        <th>用户 ID</th>
+                                        <th>用户昵称</th>
+                                        <th>个人简介/签名</th>
+                                        <th>用户角色权限</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL 1: ATTACHMENT PREVIEW -->
+    <div id="previewModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>资质原件查验视图</h3>
+                <button class="modal-close-btn" onclick="closeModal('previewModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-doc-card">
+                    <div class="preview-doc-icon" id="previewIcon">📄</div>
+                    <div class="preview-doc-title" id="previewTitle">营业执照.jpg</div>
+                    <div class="preview-doc-meta" id="previewMeta">国家工商行政管理局核发统一证明</div>
+                    <div class="preview-seal" id="previewSeal">审核备查章</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('previewModal')">关闭预览</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: REJECT QUALIFICATION -->
+    <div id="rejectQualModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>资质入驻驳回</h3>
+                <button class="modal-close-btn" onclick="closeModal('rejectQualModal')">&times;</button>
+            </div>
+            <form id="rejectQualForm" onsubmit="submitRejectQual(event)">
+                <input type="hidden" id="rejectQualId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>驳回退回缘由</label>
+                        <select id="qualRejectSelect" class="form-control" onchange="toggleCustomReason()">
+                            <option value="上传的身份证件照片模糊，信息无法清晰核对">上传的身份证件照片模糊，信息无法清晰核对</option>
+                            <option value="企业营业执照名称或社会信用代码与提报数据不符">企业营业执照名称或社会信用代码与提报数据不符</option>
+                            <option value="机构法人授权书缺乏企业有效公章，驳回处理">机构法人授权书缺乏企业有效公章，驳回处理</option>
+                            <option value="自定义原因">自定义驳回缘由...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="customReasonWrapper" style="display:none;">
+                        <label>自定义说明描述</label>
+                        <textarea id="qualRejectCustom" class="form-control" placeholder="请输入具体驳回整改说明"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('rejectQualModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认驳回</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        let currentTab = '待审核';
+
+        function switchTab(tab) {
+            document.getElementById('tabPendingNav').classList.remove('active');
+            document.getElementById('tabHistoryNav').classList.remove('active');
+            document.getElementById('tabProfilesNav').classList.remove('active');
+
+            document.getElementById('qualificationsView').classList.remove('active');
+            document.getElementById('profilesView').classList.remove('active');
+
+            if (tab === '待审核') {
+                document.getElementById('tabPendingNav').classList.add('active');
+                document.getElementById('qualificationsView').classList.add('active');
+                document.getElementById('pageTitle').textContent = '供稿资质入驻审核 - 待办队列';
+                currentTab = '待审核';
+                loadQualifications();
+            } else if (tab === '历史记录') {
+                document.getElementById('tabHistoryNav').classList.add('active');
+                document.getElementById('qualificationsView').classList.add('active');
+                document.getElementById('pageTitle').textContent = '供稿资质入驻审核 - 历史核验';
+                currentTab = '历史';
+                loadQualifications();
+            } else if (tab === 'profiles') {
+                document.getElementById('tabProfilesNav').classList.add('active');
+                document.getElementById('profilesView').classList.add('active');
+                loadUsersList();
+            }
+        }
+
+        // ==========================================
+        // QUALIFICATIONS WORKBENCH
+        // ==========================================
+        function loadQualifications() {
+            const qualifications = dbGet('hscms_qualifications', []);
+            let filtered = [];
+
+            if (currentTab === '待审核') {
+                filtered = qualifications.filter(q => q.status === '待审核');
+            } else {
+                filtered = qualifications.filter(q => q.status !== '待审核');
+            }
+
+            const tbody = document.getElementById('qualificationsTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">当前队列中无入驻申请记录</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(q => {
+                const tr = document.createElement('tr');
+                
+                // Attachments links
+                let attachLayout = '';
+                q.attachments.forEach(file => {
+                    attachLayout += `<a href="javascript:void(0)" class="attachment-link" onclick="openAttachmentPreview('${file}', '${q.applicant}', '${q.type}')">📎 ${file}</a> `;
+                });
+
+                // Status Badge
+                let statusBadge = `<span class="badge badge-warning">待人工审核</span>`;
+                if (q.status === '已通过') {
+                    statusBadge = `<span class="badge badge-success">审核通过</span>`;
+                } else if (q.status === '已驳回') {
+                    statusBadge = `<span class="badge badge-danger" title="驳回原因：${q.rejectReason}">已驳回</span>`;
+                }
+
+                // Action controls
+                let actionBtns = '';
+                if (q.status === '待审核') {
+                    actionBtns = `
+                        <a href="javascript:void(0)" class="action-link" onclick="approveQualification('${q.id}')">通过认证</a>
+                        <a href="javascript:void(0)" class="action-link danger" onclick="triggerRejectQualModal('${q.id}')">驳回申请</a>
+                    `;
+                } else {
+                    actionBtns = `<span style="color:#9ca3af; font-size:12px;">已核验归档</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <strong style="color:#334155;">${q.id}</strong>
+                        <div style="font-size:11px; color:#64748b;">类型: <span class="badge" style="background:#e0f2fe; color:#0369a1; padding:1px 6px;">${q.type}</span></div>
+                    </td>
+                    <td><strong style="color:#1f2937;">${q.applicant}</strong></td>
+                    <td><code>${q.idNumber}</code></td>
+                    <td>${attachLayout}</td>
+                    <td style="color:#64748b; font-size:12px;">${q.submitTime}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtns}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Open attachment file visual preview modal
+        function openAttachmentPreview(filename, applicant, type) {
+            const previewIcon = document.getElementById('previewIcon');
+            const previewTitle = document.getElementById('previewTitle');
+            const previewMeta = document.getElementById('previewMeta');
+            const previewSeal = document.getElementById('previewSeal');
+
+            previewTitle.textContent = filename;
+
+            if (filename.includes('身份证')) {
+                previewIcon.textContent = '🪪';
+                previewMeta.textContent = `中华人民共和国公民身份证明 —— 持有人: 【${applicant}】`;
+                previewSeal.textContent = '公安部身份印鉴';
+            } else if (filename.includes('营业执照')) {
+                previewIcon.textContent = '🏢';
+                previewMeta.textContent = `中华人民共和国市场监督管理总局营业执照 —— 登记主体: 【${applicant}】`;
+                previewSeal.textContent = '企业登记核准章';
+            } else {
+                previewIcon.textContent = '📄';
+                previewMeta.textContent = `法人代表授权签署声明书及授权说明文件 (${type})`;
+                previewSeal.textContent = '企业核对专用章';
+            }
+
+            openModal('previewModal');
+        }
+
+        function approveQualification(qualId) {
+            const qualifications = dbGet('hscms_qualifications', []);
+            const qIdx = qualifications.findIndex(q => q.id === qualId);
+
+            if (qIdx !== -1) {
+                qualifications[qIdx].status = '已通过';
+                dbSave('hscms_qualifications', qualifications);
+
+                // Elevate target user role to Certified Contributor (认证供稿人)
+                const users = dbGet('hscms_users', []);
+                const uIdx = users.findIndex(u => u.userId === qualifications[qIdx].userId);
+                if (uIdx !== -1) {
+                    users[uIdx].role = '认证供稿人';
+                    dbSave('hscms_users', users);
+                }
+
+                // Push message notification
+                const sysMsgs = dbGet('hscms_system_messages', []);
+                const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                sysMsgs.push({
+                    id: newMsgId,
+                    userId: qualifications[qIdx].userId,
+                    title: '供稿人资质审核通过信',
+                    content: `恭喜！您的【${qualifications[qIdx].type}】供稿入驻资质（核查名称：${qualifications[qIdx].applicant}）已通过平台实名合规核验。您的供稿权限已开启，现在可以提存版权资产获取收益。`,
+                    time: timeStr,
+                    read: false
+                });
+                dbSave('hscms_system_messages', sysMsgs);
+
+                showLockToast('入驻资质审批通过，供稿人权限已启用发放！', true);
+                loadQualifications();
+            }
+        }
+
+        // Rejections
+        function triggerRejectQualModal(qualId) {
+            document.getElementById('rejectQualId').value = qualId;
+            document.getElementById('qualRejectSelect').value = '上传的身份证件照片模糊，信息无法清晰核对';
+            document.getElementById('customReasonWrapper').style.display = 'none';
+            document.getElementById('qualRejectCustom').value = '';
+            openModal('rejectQualModal');
+        }
+
+        function toggleCustomReason() {
+            const select = document.getElementById('qualRejectSelect').value;
+            const wrapper = document.getElementById('customReasonWrapper');
+            if (select === '自定义原因') {
+                wrapper.style.display = 'block';
+            } else {
+                wrapper.style.display = 'none';
+            }
+        }
+
+        function submitRejectQual(e) {
+            e.preventDefault();
+            const qualId = document.getElementById('rejectQualId').value;
+            const selectReason = document.getElementById('qualRejectSelect').value;
+            const customReason = document.getElementById('qualRejectCustom').value.trim();
+
+            let finalReason = selectReason;
+            if (selectReason === '自定义原因') {
+                if (!customReason) {
+                    alert('请输入具体驳回退回意见！');
+                    return;
+                }
+                finalReason = customReason;
+            }
+
+            const qualifications = dbGet('hscms_qualifications', []);
+            const qIdx = qualifications.findIndex(q => q.id === qualId);
+
+            if (qIdx !== -1) {
+                qualifications[qIdx].status = '已驳回';
+                qualifications[qIdx].rejectReason = finalReason;
+                dbSave('hscms_qualifications', qualifications);
+
+                // Push message notification
+                const sysMsgs = dbGet('hscms_system_messages', []);
+                const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                sysMsgs.push({
+                    id: newMsgId,
+                    userId: qualifications[qIdx].userId,
+                    title: '供稿资质申请退回信',
+                    content: `很抱歉，您的【${qualifications[qIdx].type}】供稿入驻资质提报审核未通过。退回意见：【${finalReason}】。请修改数据后重新上传证照进行核验。`,
+                    time: timeStr,
+                    read: false
+                });
+                dbSave('hscms_system_messages', sysMsgs);
+
+                showLockToast('入驻资质申请已驳回，退回消息已传达。', true);
+                closeModal('rejectQualModal');
+                loadQualifications();
+            }
+        }
+
+        // ==========================================
+        // PROFILE COMPLIANCE INTERVENTION
+        // ==========================================
+        function loadUsersList() {
+            const users = dbGet('hscms_users', []);
+            const query = document.getElementById('searchUserQuery').value.trim().toLowerCase();
+
+            let filtered = users;
+            if (query) {
+                filtered = filtered.filter(u => u.userId.toLowerCase().includes(query) || u.nickname.toLowerCase().includes(query));
+            }
+
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#9ca3af; padding: 24px;">未匹配到符合条件的用户账户</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(u => {
+                const tr = document.createElement('tr');
+                
+                // Avatar preview
+                let avatarPill = '';
+                if (u.avatar) {
+                    avatarPill = `<img class="user-avatar-rect" src="${u.avatar}" alt="Avatar">`;
+                } else {
+                    avatarPill = `<div class="user-avatar-rect" style="background:#e2e8f0; color:#475569;">重</div>`;
+                }
+
+                tr.innerHTML = `
+                    <td>${avatarPill}</td>
+                    <td><code>${u.userId}</code></td>
+                    <td><strong style="color:#1f2937;">${u.nickname}</strong></td>
+                    <td style="color:#475569; max-width: 280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${u.bio}">${u.bio || '无签名'}</td>
+                    <td><span class="badge" style="background:#eef2f6; color:#4f46e5; border:1px solid #e0e7ff;">${u.role}</span></td>
+                    <td>
+                        <a href="javascript:void(0)" class="action-link danger" onclick="resetViolationProfile('${u.userId}')">重置违规信息</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetUserSearch() {
+            document.getElementById('searchUserQuery').value = '';
+            loadUsersList();
+        }
+
+        // Wipes out nickname, avatar, and bio
+        function resetViolationProfile(userId) {
+            const users = dbGet('hscms_users', []);
+            const uIdx = users.findIndex(u => u.userId === userId);
+
+            if (uIdx !== -1) {
+                // Wiping out profile
+                const defaultName = `用户_${userId.replace('USER_', '')}`;
+                users[uIdx].nickname = defaultName;
+                users[uIdx].avatar = '';
+                users[uIdx].bio = '内容违规，已被系统重置。';
+                
+                dbSave('hscms_users', users);
+
+                // Push message notification
+                const sysMsgs = dbGet('hscms_system_messages', []);
+                const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                sysMsgs.push({
+                    id: newMsgId,
+                    userId: userId,
+                    title: '个人资料信息重置警示书',
+                    content: `警告：您的个人资料（昵称、头像或简介）因含有不合规、色情广告或违禁用词，已被运营人员强制重置归零。请修改为合规的个人信息，多次违规将面临封号处罚。`,
+                    time: timeStr,
+                    read: false
+                });
+                dbSave('hscms_system_messages', sysMsgs);
+
+                showLockToast(`已一键重置用户 ${userId} 的不合规档案信息并下发警示书！`, true);
+                loadUsersList();
+            }
+        }
+
+        // Init page load
+        loadQualifications();
+    </script>
+</body>
+</html>

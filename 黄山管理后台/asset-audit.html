@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 资产确权审核</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Asset Audit custom styling */
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .meta-detail-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .hash-code {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #475569;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .hash-code:hover {
+            background-color: #cbd5e1;
+        }
+        .blockchain-badge {
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .blockchain-badge:hover {
+            transform: scale(1.05);
+        }
+        /* Ledger card mock styles */
+        .ledger-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.6;
+            border: 1px solid #334155;
+            margin-top: 12px;
+        }
+        .ledger-line {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #334155;
+            padding: 4px 0;
+        }
+        .ledger-line:last-child {
+            border-bottom: none;
+        }
+        .ledger-label {
+            color: #94a3b8;
+        }
+        .ledger-value {
+            color: #38bdf8;
+            word-break: break-all;
+            text-align: right;
+            max-width: 240px;
+        }
+        /* Progress loading overlay */
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            display: none;
+        }
+        .progress-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            width: 380px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .progress-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color);
+            transition: width 0.1s linear;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>大盘首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>UGC社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>资产版权确权</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易财务分账</span>
+                    </a>
+                    <a href="user-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户资质审核</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>资产确权</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item active" id="tabPendingNav">
+                        <a href="javascript:void(0)" onclick="switchTab('待审核')">
+                            待审核队列
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabApprovedNav">
+                        <a href="javascript:void(0)" onclick="switchTab('审核成功')">
+                            确权成功历史
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabRejectedNav">
+                        <a href="javascript:void(0)" onclick="switchTab('已驳回')">
+                            已驳回记录
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <!-- SINGLE DYNAMIC TABLE CONTAINER -->
+                <div class="workspace-header">
+                    <div class="workspace-title-section">
+                        <h1 id="pageTitle">资产确权审核队列</h1>
+                        <p id="pageDescription">人工审核创作者提交的原创素材，系统将自动发起蚂蚁区块链存证与国家版权局DCI 3.0编号自动申领。</p>
+                    </div>
+                    <div class="workspace-actions">
+                        <span class="badge badge-success" style="padding: 6px 12px; font-weight:600;">DCI 3.0 接口：就绪</span>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <!-- Assets table -->
+                    <div class="enterprise-card">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th>资产详情 (名称/元数据)</th>
+                                    <th>提交人/类别</th>
+                                    <th>提交时间</th>
+                                    <th>区块链存证</th>
+                                    <th>DCI 确权编码</th>
+                                    <th>合规状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assetsTableBody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL 1: BLOCKCHAIN LEDGER PREVIEW -->
+    <div id="ledgerModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>蚂蚁区块链存证凭证查验</h3>
+                <button class="modal-close-btn" onclick="closeModal('ledgerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:12px; color:#475569;">该资产哈希及所有者信息已完成去中心化不可篡改存证：</p>
+                <div class="ledger-box" id="ledgerContent">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('ledgerModal')">关闭查验</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ASSET REJECT DIALOG -->
+    <div id="rejectModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>驳回版权登记申请</h3>
+                <button class="modal-close-btn" onclick="closeModal('rejectModal')">&times;</button>
+            </div>
+            <form id="rejectForm" onsubmit="submitRejectAsset(event)">
+                <input type="hidden" id="rejectAssetId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>驳回原因</label>
+                        <select id="rejectReasonSelect" class="form-control" onchange="toggleCustomReason()">
+                            <option value="图片/视频分辨率不足，未达高清供稿标准">图片/视频分辨率不足，未达高清供稿标准</option>
+                            <option value="资产内容存在显著的外部水印、版权争议">资产内容存在显著的外部水印、版权争议</option>
+                            <option value="作品分类提报有误，请修改属性重新提报">作品分类提报有误，请修改属性重新提报</option>
+                            <option value="自定义原因">自定义驳回说明...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="customReasonWrapper" style="display:none;">
+                        <label>自定义驳回说明</label>
+                        <textarea id="rejectCustomReason" class="form-control" placeholder="请输入具体的审核退回意见"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('rejectModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认驳回</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MOCK DCI CLAIM PROGRESS SCREEN -->
+    <div id="progressOverlay" class="progress-overlay">
+        <div class="progress-box">
+            <div class="progress-spinner"></div>
+            <h3 style="font-size:15px; color:#1e293b; font-weight:700;" id="progressTitle">正在核验作品指纹...</h3>
+            <p style="font-size:12px; color:#64748b; margin-top:8px;" id="progressDesc">已触发蚂蚁链不可逆智能合约锁定</p>
+            <div class="progress-bar-container">
+                <div id="progressBarFill" class="progress-bar-fill"></div>
+            </div>
+            <span style="font-size:11px; color:#94a3b8;" id="progressPercentage">0%</span>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        let currentTab = '待审核';
+
+        function switchTab(status) {
+            currentTab = status;
+            
+            // UI tab class
+            document.getElementById('tabPendingNav').classList.remove('active');
+            document.getElementById('tabApprovedNav').classList.remove('active');
+            document.getElementById('tabRejectedNav').classList.remove('active');
+
+            if (status === '待审核') {
+                document.getElementById('tabPendingNav').classList.add('active');
+                document.getElementById('pageTitle').textContent = '资产版权确权 - 待审核队列';
+            } else if (status === '审核成功') {
+                document.getElementById('tabApprovedNav').classList.add('active');
+                document.getElementById('pageTitle').textContent = '资产版权确权 - 确权成功历史';
+            } else if (status === '已驳回') {
+                document.getElementById('tabRejectedNav').classList.add('active');
+                document.getElementById('pageTitle').textContent = '资产版权确权 - 已驳回记录';
+            }
+
+            loadAssetsList();
+        }
+
+        function loadAssetsList() {
+            const assets = dbGet('hscms_asset_submissions', []);
+            const filtered = assets.filter(a => a.status === currentTab);
+
+            const tbody = document.getElementById('assetsTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">当前队列中无作品记录</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(a => {
+                const tr = document.createElement('tr');
+                
+                // Blockchain Badge
+                let chainBadge = `<span style="color:#9ca3af; font-size:12px;">-</span>`;
+                if (a.antChainId && a.antChainId !== '-') {
+                    chainBadge = `<span class="badge blockchain-badge" style="background:#e0f2fe; color:#0284c7; border:1px solid #bae6fd;" onclick="inspectLedger('${a.id}')" title="点击查验蚂蚁链存证">${a.antChainId}</span>`;
+                }
+
+                // DCI Badge
+                let dciLayout = `<span style="color:#9ca3af; font-size:12px;">-</span>`;
+                if (a.dciCode && a.dciCode !== '-') {
+                    dciLayout = `<code class="hash-code" style="color:#1677ff;" title="中国版权保护中心核发">${a.dciCode}</code>`;
+                }
+
+                // Status Pill
+                let statusPill = `<span class="badge badge-warning">待人工审核</span>`;
+                if (a.status === '审核成功') {
+                    statusPill = `<span class="badge badge-success">确权成功</span>`;
+                } else if (a.status === '已驳回') {
+                    statusPill = `<span class="badge badge-danger" title="驳回原因：${a.rejectReason}">已驳回</span>`;
+                }
+
+                // Action Columns
+                let actionColumn = '';
+                if (a.status === '待审核') {
+                    actionColumn = `
+                        <a href="javascript:void(0)" class="action-link" onclick="approveAssetFlow('${a.id}')">通过并发证</a>
+                        <a href="javascript:void(0)" class="action-link danger" onclick="triggerRejectModal('${a.id}')">驳回申请</a>
+                    `;
+                } else {
+                    actionColumn = `<span style="color:#9ca3af; font-size:12px;">已归档</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:600; color:#1f2937;">${a.title}</div>
+                        <div class="meta-detail-row">
+                            <span>ID: <code>${a.id}</code></span>
+                            <span>指纹 SHA-256: <code class="hash-code" onclick="navigator.clipboard.writeText('${a.hash}'); alert('哈希值已复制到剪贴板！');">${a.hash.substring(0, 16)}...</code></span>
+                        </div>
+                    </td>
+                    <td>
+                        <strong style="color:#334155;">${a.author}</strong>
+                        <div style="font-size:11px; color:#64748b;">${a.authorType}创作者</div>
+                    </td>
+                    <td style="color:#64748b; font-size:12px;">${a.submitTime}</td>
+                    <td>${chainBadge}</td>
+                    <td>${dciLayout}</td>
+                    <td>${statusPill}</td>
+                    <td>${actionColumn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Ledger inspect modal popup
+        function inspectLedger(assetId) {
+            const assets = dbGet('hscms_asset_submissions', []);
+            const a = assets.find(item => item.id === assetId);
+            if (!a) return;
+
+            const ledgerContent = document.getElementById('ledgerContent');
+            ledgerContent.innerHTML = `
+                <div class="ledger-line"><span class="ledger-label">区块存证单号:</span><span class="ledger-value">${a.antChainId}</span></div>
+                <div class="ledger-line"><span class="ledger-label">存证高度 (Height):</span><span class="ledger-value">#12,940,105</span></div>
+                <div class="ledger-line"><span class="ledger-label">素材所有权人:</span><span class="ledger-value">【${a.author}】 (${a.authorType})</span></div>
+                <div class="ledger-line"><span class="ledger-label">文件指纹 (SHA-256):</span><span class="ledger-value">${a.hash}</span></div>
+                <div class="ledger-line"><span class="ledger-label">上链确权时间:</span><span class="ledger-value">${a.submitTime}</span></div>
+                <div class="ledger-line"><span class="ledger-label">节点签名 (Signature):</span><span class="ledger-value">0x7f23c91a...b2e04e9c7d42</span></div>
+            `;
+
+            openModal('ledgerModal');
+        }
+
+        // Simulated asynchronous DCI 3.0 approval flow with progress overlay
+        function approveAssetFlow(assetId) {
+            const progressOverlay = document.getElementById('progressOverlay');
+            const fill = document.getElementById('progressBarFill');
+            const title = document.getElementById('progressTitle');
+            const desc = document.getElementById('progressDesc');
+            const percentText = document.getElementById('progressPercentage');
+
+            progressOverlay.style.display = 'flex';
+            fill.style.width = '0%';
+            percentText.textContent = '0%';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                fill.style.width = progress + '%';
+                percentText.textContent = progress + '%';
+
+                if (progress === 20) {
+                    title.textContent = '正在读取文件哈希指纹...';
+                    desc.textContent = '读取 SHA-256：国家中心接口通信中';
+                } else if (progress === 50) {
+                    title.textContent = '正在呼叫国家版权保护中心 DCI 3.0...';
+                    desc.textContent = 'DCI 登记网关对接，生成版权标识代码';
+                } else if (progress === 80) {
+                    title.textContent = '正在下发数字版权存证标识(DCI)...';
+                    desc.textContent = '回写国家级确权证书档案库，下发通知';
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        finalizeApproval(assetId);
+                        progressOverlay.style.display = 'none';
+                    }, 200);
+                }
+            }, 80);
+        }
+
+        function finalizeApproval(assetId) {
+            const assets = dbGet('hscms_asset_submissions', []);
+            const aIdx = assets.findIndex(a => a.id === assetId);
+
+            if (aIdx !== -1) {
+                // Generate simulated DCI code
+                const randomDCI = `DCI-2026-X${Math.floor(1000 + Math.random() * 9000)}Y${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`;
+                assets[aIdx].status = '审核成功';
+                assets[aIdx].dciCode = randomDCI;
+                dbSave('hscms_asset_submissions', assets);
+
+                // Push system message notification
+                const sysMsgs = dbGet('hscms_system_messages', []);
+                const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                sysMsgs.push({
+                    id: newMsgId,
+                    userId: assets[aIdx].author === '黄山行者' ? 'USER_8820' : 'USER_6672', // Mock map to user ids
+                    title: 'DCI版权申领发证成功通知',
+                    content: `恭喜！您上传的原创作品《${assets[aIdx].title}》已审核通过并成功在国家版权保护中心确权，核发 DCI 码：【${randomDCI}】。已关联您的供稿人账户。`,
+                    time: timeStr,
+                    read: false
+                });
+                dbSave('hscms_system_messages', sysMsgs);
+
+                // Auto elevate corresponding user to "认证供稿人" (Certified Contributor)
+                const users = dbGet('hscms_users', []);
+                const matchUser = assets[aIdx].author === '黄山行者' ? 'USER_8820' : 'USER_6672';
+                const uIdx = users.findIndex(u => u.userId === matchUser);
+                if (uIdx !== -1) {
+                    users[uIdx].role = '认证供稿人';
+                    dbSave('hscms_users', users);
+                }
+
+                showLockToast(`作品审核通过，国家 DCI 标识【${randomDCI}】申领并发放成功！`, true);
+                loadAssetsList();
+            }
+        }
+
+        // Reject popup triggers
+        function triggerRejectModal(assetId) {
+            document.getElementById('rejectAssetId').value = assetId;
+            document.getElementById('rejectReasonSelect').value = '图片/视频分辨率不足，未达高清供稿标准';
+            document.getElementById('customReasonWrapper').style.display = 'none';
+            document.getElementById('rejectCustomReason').value = '';
+            openModal('rejectModal');
+        }
+
+        function toggleCustomReason() {
+            const select = document.getElementById('rejectReasonSelect').value;
+            const wrapper = document.getElementById('customReasonWrapper');
+            if (select === '自定义原因') {
+                wrapper.style.display = 'block';
+            } else {
+                wrapper.style.display = 'none';
+            }
+        }
+
+        function submitRejectAsset(e) {
+            e.preventDefault();
+            const assetId = document.getElementById('rejectAssetId').value;
+            const selectReason = document.getElementById('rejectReasonSelect').value;
+            const customReason = document.getElementById('rejectCustomReason').value.trim();
+
+            let finalReason = selectReason;
+            if (selectReason === '自定义原因') {
+                if (!customReason) {
+                    alert('请输入具体的驳回说明！');
+                    return;
+                }
+                finalReason = customReason;
+            }
+
+            const assets = dbGet('hscms_asset_submissions', []);
+            const aIdx = assets.findIndex(a => a.id === assetId);
+
+            if (aIdx !== -1) {
+                assets[aIdx].status = '已驳回';
+                assets[aIdx].rejectReason = finalReason;
+                dbSave('hscms_asset_submissions', assets);
+
+                // Push system message notification
+                const sysMsgs = dbGet('hscms_system_messages', []);
+                const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                sysMsgs.push({
+                    id: newMsgId,
+                    userId: assets[aIdx].author === '黄山行者' ? 'USER_8820' : 'USER_6672',
+                    title: '版权确权申请驳回退回书',
+                    content: `抱歉，您上传的作品《${assets[aIdx].title}》确权申请审核未通过。退回原因：【${finalReason}】。请修改后重新上传。`,
+                    time: timeStr,
+                    read: false
+                });
+                dbSave('hscms_system_messages', sysMsgs);
+
+                showLockToast('版权申领已驳回退回，退回告知书已送达。', true);
+                closeModal('rejectModal');
+                loadAssetsList();
+            }
+        }
+
+        // Init page
+        loadAssetsList();
+    </script>
+</body>
+</html>
