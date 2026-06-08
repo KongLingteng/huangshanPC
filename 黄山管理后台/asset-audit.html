@@ -451,9 +451,13 @@
                     actionColumn = `
                         <a href="javascript:void(0)" class="action-link" onclick="approveAssetFlow('${a.id}')">通过并发证</a>
                         <a href="javascript:void(0)" class="action-link danger" onclick="triggerRejectModal('${a.id}')">驳回申请</a>
+                        <a href="asset-detail.html?id=${a.id}" class="action-link" style="margin-left: 8px;" target="_blank">详情</a>
                     `;
                 } else {
-                    actionColumn = `<span style="color:#9ca3af; font-size:12px;">已归档</span>`;
+                    actionColumn = `
+                        <span style="color:#9ca3af; font-size:12px;">已归档</span>
+                        <a href="asset-detail.html?id=${a.id}" class="action-link" style="margin-left: 8px;" target="_blank">详情</a>
+                    `;
                 }
 
                 tr.innerHTML = `

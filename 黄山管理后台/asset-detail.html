@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 资产确权详情</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .detail-layout {
+            display: flex;
+            gap: 24px;
+            height: calc(100vh - var(--header-height));
+            padding: 24px;
+            overflow-y: auto;
+            align-items: flex-start;
+        }
+        .preview-box {
+            flex: 1.2;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            min-height: 500px;
+            width: 100%;
+        }
+        .preview-title-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .preview-title-bar h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .preview-container {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 380px;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .preview-video-container {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background: #000;
+        }
+        .preview-video {
+            width: 100%;
+            display: block;
+        }
+        .preview-article {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 24px;
+            max-width: 600px;
+            line-height: 1.8;
+            font-size: 14px;
+            color: #334155;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            height: 360px;
+            overflow-y: auto;
+            text-align: left;
+        }
+        .preview-article h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .info-panel {
+            flex: 0.8;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .info-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .info-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .info-value {
+            font-size: 13.5px;
+            color: #1e293b;
+            font-weight: 500;
+        }
+        .hash-code {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: #475569;
+            font-size: 11.5px;
+            word-break: break-all;
+            display: inline-block;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        .hash-code:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        .proof-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            width: fit-content;
+        }
+        .proof-badge.yes {
+            background-color: rgba(2, 132, 199, 0.1);
+            color: #0284c7;
+            border: 1px solid rgba(2, 132, 199, 0.2);
+        }
+        .proof-badge.no {
+            background-color: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+        }
+        /* Ledger card mock styles */
+        .ledger-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            line-height: 1.6;
+            border: 1px solid #334155;
+            margin-top: 8px;
+        }
+        .ledger-line {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #334155;
+            padding: 4px 0;
+            gap: 12px;
+        }
+        .ledger-line:last-child {
+            border-bottom: none;
+        }
+        .ledger-label {
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+        .ledger-value {
+            color: #38bdf8;
+            word-break: break-all;
+            text-align: right;
+        }
+        .back-btn-container {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- DETAIL CANVAS -->
+            <main class="workspace-canvas" style="overflow-y: auto;">
+                <div class="detail-layout">
+                    <!-- LEFT PREVIEW AREA -->
+                    <div class="preview-box">
+                        <div class="back-btn-container">
+                            <button class="btn" onclick="history.back()">&larr; 返回素材审核队列</button>
+                        </div>
+                        <div class="preview-title-bar">
+                            <h2 id="assetTitle">素材加载中...</h2>
+                            <span id="assetTypeBadge" class="badge" style="background:#e0f2fe; color:#0369a1;">图片</span>
+                        </div>
+                        <div class="preview-container" id="previewContainer">
+                            <!-- Render dynamic preview component -->
+                            <div style="color: var(--text-light); font-size:13px;">正在加载素材预览...</div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT PROPERTY PANEL -->
+                    <div class="info-panel">
+                        <div class="info-section-title">素材基本信息</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">素材标识 ID</span>
+                                <span class="info-value" id="infoId">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">作品申请人</span>
+                                <span class="info-value" id="infoAuthor">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">创作者身份</span>
+                                <span class="info-value" id="infoAuthorType">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">提交申请时间</span>
+                                <span class="info-value" id="infoSubmitTime">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">审核状态</span>
+                                <span class="info-value" id="infoStatus">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">作品原文件指纹 (SHA-256)</span>
+                                <span class="hash-code" id="infoHash" onclick="copyText(this.textContent)">-</span>
+                            </div>
+                        </div>
+
+                        <div class="info-section-title" style="margin-top: 10px;">版权确权状态</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">确权上架模式</span>
+                                <div id="infoProofBadge" class="proof-badge no">常规上架</div>
+                            </div>
+                            <div id="proofDetailsSection" style="display:none; flex-direction:column; gap:16px;">
+                                <div class="info-item">
+                                    <span class="info-label">蚂蚁链存证区块 ID</span>
+                                    <span class="info-value" id="infoAntChain">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">国家版权 DCI 确权登记码</span>
+                                    <span class="info-value" style="font-family: monospace; font-weight:700; color:#1677ff;" id="infoDci">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">链存证数据查验</span>
+                                    <div class="ledger-box" id="ledgerContent">
+                                        <!-- Render simulated node verification details -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="noProofWarning" style="display:block; padding: 12px; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 12px; color: #64748b; line-height: 1.5;">
+                                ⚠️ 该素材在提报时，创作者选择了<strong>常规非确权上架</strong>模式。平台仅执行常规内容合规审核，不进行区块链存证登记及 DCI 确权编号申领。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadAssetDetail();
+        });
+
+        function loadAssetDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const assetId = urlParams.get('id');
+            if (!assetId) {
+                alert('未指定资产ID！');
+                return;
+            }
+
+            const submissions = dbGet('hscms_asset_submissions', []);
+            const a = submissions.find(item => item.id === assetId);
+
+            if (!a) {
+                document.getElementById('previewContainer').innerHTML = `
+                    <div style="color: #ef4444; font-weight:600; font-size:14px;">找不到指定的资产素材提报记录！</div>
+                `;
+                return;
+            }
+
+            // Render right side attributes panel
+            document.getElementById('assetTitle').textContent = a.title;
+            document.getElementById('infoId').textContent = a.id;
+            document.getElementById('infoAuthor').textContent = a.author;
+            document.getElementById('infoAuthorType').textContent = a.authorType === '个人' ? '个人独立创作者' : '签约合作机构';
+            document.getElementById('infoSubmitTime').textContent = a.submitTime;
+            document.getElementById('infoHash').textContent = a.hash;
+
+            // Render status
+            let statusText = '';
+            if (a.status === '待审核') {
+                statusText = '<span class="badge badge-warning">待人工审核</span>';
+            } else if (a.status === '审核成功') {
+                statusText = '<span class="badge badge-success">审核通过已发布</span>';
+            } else if (a.status === '已驳回') {
+                statusText = `<span class="badge badge-danger" title="驳回原因：${a.rejectReason || '未录入'}">已审核驳回</span>`;
+            }
+            document.getElementById('infoStatus').innerHTML = statusText;
+
+            // Render proof info
+            const proofBadge = document.getElementById('infoProofBadge');
+            const proofDetails = document.getElementById('proofDetailsSection');
+            const noProofWarn = document.getElementById('noProofWarning');
+
+            if (a.needProof === '是') {
+                proofBadge.className = 'proof-badge yes';
+                proofBadge.textContent = '确权上架';
+                proofDetails.style.display = 'flex';
+                noProofWarn.style.display = 'none';
+
+                document.getElementById('infoAntChain').textContent = a.antChainId || '-';
+                document.getElementById('infoDci').textContent = a.dciCode || '-';
+
+                // Fill block ledger details
+                const ledgerContent = document.getElementById('ledgerContent');
+                if (a.status === '审核成功') {
+                    ledgerContent.innerHTML = `
+                        <div class="ledger-line"><span class="ledger-label">存证区块ID:</span><span class="ledger-value">${a.antChainId}</span></div>
+                        <div class="ledger-line"><span class="ledger-label">区块高度:</span><span class="ledger-value">#12,940,105</span></div>
+                        <div class="ledger-line"><span class="ledger-label">存证所有人:</span><span class="ledger-value">${a.author}</span></div>
+                        <div class="ledger-line"><span class="ledger-label">数据指纹:</span><span class="ledger-value">${a.hash.substring(0, 16)}...</span></div>
+                        <div class="ledger-line"><span class="ledger-label">节点数字签名:</span><span class="ledger-value">0x7f23c91a...b2e04e9c7d42</span></div>
+                    `;
+                } else if (a.status === '待审核') {
+                    ledgerContent.innerHTML = `
+                        <div style="color:#94a3b8; font-style:italic; font-size:11.5px; text-align:center;">素材尚未审核通过。审核通过后将自动上链登记生成区块回执。</div>
+                    `;
+                } else {
+                    ledgerContent.innerHTML = `
+                        <div style="color:#ef4444; font-style:italic; font-size:11.5px; text-align:center;">审核已被驳回，暂不上链存证。</div>
+                    `;
+                }
+            } else {
+                proofBadge.className = 'proof-badge no';
+                proofBadge.textContent = '常规上架';
+                proofDetails.style.display = 'none';
+                noProofWarn.style.display = 'block';
+            }
+
+            // Render preview based on title / metadata
+            const previewContainer = document.getElementById('previewContainer');
+            const title = a.title.toLowerCase();
+            const typeBadge = document.getElementById('assetTypeBadge');
+
+            if (title.includes('视频') || title.includes('镜头') || title.includes('短片')) {
+                // Video asset
+                typeBadge.textContent = '视频';
+                typeBadge.style.background = '#f5e1fd';
+                typeBadge.style.color = '#8b5cf6';
+                previewContainer.innerHTML = `
+                    <div class="preview-video-container">
+                        <video class="preview-video" controls poster="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop">
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                            您的浏览器不支持 video 标签。
+                        </video>
+                    </div>
+                `;
+            } else if (title.includes('路线图') || title.includes('攻略') || title.includes('手册') || title.includes('文章')) {
+                // Article or document asset
+                typeBadge.textContent = '文章';
+                typeBadge.style.background = '#fef3c7';
+                typeBadge.style.color = '#d97706';
+
+                let docTitle = a.title;
+                let docContent = '';
+                if (title.includes('路线图')) {
+                    docContent = `
+                        <p><strong>一、 黄山核心日游精品游览路线推荐</strong></p>
+                        <p>清晨从云谷寺搭乘云谷新索道平稳上山，途径始信峰、黑虎松，饱览千峰竞秀、万壑峥嵘的雄浑奇观；中午抵达北海景区，打卡散花坞、欣赏梦笔生花奇景。</p>
+                        <p>午后翻越光明顶，远眺鳌鱼峰与天都峰，随后在鳌鱼洞体验曲径通幽；傍晚漫步至玉屏楼前，在迎客松下留下珍贵合照，领略黄山松的坚韧挺拔与岁月沧桑。</p>
+                        <br>
+                        <p><strong>二、 行前准备及注意事项</strong></p>
+                        <p>1. 气温多变：黄山山顶早晚温差较大，建议携带防风保暖外套及轻便雨衣。<br>
+                        2. 科学登山：阶梯陡峭，建议穿着抓地防滑的专业运动鞋，并携带登山杖减轻膝盖压力。<br>
+                        3. 环保出行：请勿在景区非吸烟区吸烟，妥善丢弃废弃垃圾，共同维护黄山洁净生态。</p>
+                    `;
+                } else {
+                    docContent = `
+                        <p><strong>前言：探索奇松与怪石的徽派美学</strong></p>
+                        <p>黄山以奇松、怪石、云海、温泉、冬雪“五绝”闻名于世。本文档整理了关于黄山摄影取景与构图的专业攻略指南，特别针对冬雪气候下的光影效果进行了详细剖析。</p>
+                        <p>对于大部分摄影博主而言，狮子峰、始信峰、排云亭是捕捉雾凇与绝壁松针的黄金拍摄机位，建议使用中长焦镜头以凸显黄山山水的国画意境。</p>
+                    `;
+                }
+
+                previewContainer.innerHTML = `
+                    <div class="preview-article">
+                        <h3>${docTitle}</h3>
+                        <div style="font-size:13px; color:#64748b; text-align:center; margin-bottom:16px; border-bottom:1px solid #f1f5f9; padding-bottom:8px;">原作者授权预览版 (Text Preview)</div>
+                        ${docContent}
+                    </div>
+                `;
+            } else {
+                // Image asset
+                typeBadge.textContent = '图片';
+                typeBadge.style.background = '#e0f2fe';
+                typeBadge.style.color = '#0284c7';
+
+                let imageUrl = '';
+                if (title.includes('迎客松')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=800&auto=format&fit=crop';
+                } else if (title.includes('秋色') || title.includes('云谷')) {
+                    imageUrl = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop';
+                } else {
+                    imageUrl = 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop';
+                }
+
+                previewContainer.innerHTML = `
+                    <img class="preview-image" src="${imageUrl}" alt="Asset Image Preview">
+                `;
+            }
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert('复制成功！');
+        }
+    </script>
+</body>
+</html>

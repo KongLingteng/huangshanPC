@@ -202,7 +202,26 @@
                     </div>
                     
                     <div class="canvas-body">
-                        <!-- Table -->
+                        <!-- Queue Search Filters -->
+                        <div class="search-row">
+                            <div class="search-col">
+                                <label>户名 / 单号</label>
+                                <input type="text" id="filterQueueUser" class="form-control" style="width:180px;" placeholder="输入户名或单号">
+                            </div>
+                            <div class="search-col">
+                                <label>结算主体</label>
+                                <select id="filterQueueType" class="form-control" style="width:120px;">
+                                    <option value="全部">全部</option>
+                                    <option value="个人">个人</option>
+                                    <option value="机构">机构</option>
+                                </select>
+                            </div>
+                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                                <button class="btn btn-primary" onclick="loadQueue()">查询</button>
+                                <button class="btn" onclick="resetQueueFilters()">重置</button>
+                            </div>
+                        </div>
+
                         <div class="enterprise-card">
                             <table class="enterprise-table">
                                 <thead>
@@ -235,6 +254,26 @@
                     </div>
                     
                     <div class="canvas-body">
+                        <!-- History Search Filters -->
+                        <div class="search-row">
+                            <div class="search-col">
+                                <label>户名 / 单号</label>
+                                <input type="text" id="filterHistUser" class="form-control" style="width:180px;" placeholder="输入户名或单号">
+                            </div>
+                            <div class="search-col">
+                                <label>交易结果</label>
+                                <select id="filterHistStatus" class="form-control" style="width:150px;">
+                                    <option value="全部">全部</option>
+                                    <option value="已打款">清算成功</option>
+                                    <option value="已驳回">已驳回退回</option>
+                                </select>
+                            </div>
+                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                                <button class="btn btn-primary" onclick="loadHistory()">查询</button>
+                                <button class="btn" onclick="resetHistFilters()">重置</button>
+                            </div>
+                        </div>
+
                         <div class="enterprise-card">
                             <table class="enterprise-table">
                                 <thead>
@@ -443,13 +482,29 @@
         // ==========================================
         function loadQueue() {
             const withdrawals = dbGet('hscms_withdrawals', []);
-            const pending = withdrawals.filter(w => w.status === '待审批');
+            let pending = withdrawals.filter(w => w.status === '待审批');
+
+            // Apply filters
+            const filterUserEl = document.getElementById('filterQueueUser');
+            const filterTypeEl = document.getElementById('filterQueueType');
+            const userFilter = filterUserEl ? filterUserEl.value.trim().toLowerCase() : '';
+            const typeFilter = filterTypeEl ? filterTypeEl.value : '全部';
+
+            if (userFilter) {
+                pending = pending.filter(w => 
+                    w.id.toLowerCase().includes(userFilter) || 
+                    w.user.toLowerCase().includes(userFilter)
+                );
+            }
+            if (typeFilter !== '全部') {
+                pending = pending.filter(w => w.userType === typeFilter);
+            }
 
             const tbody = document.getElementById('queueTableBody');
             tbody.innerHTML = '';
 
             if (pending.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">当前无待处理提现单</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的待处理提现单</td></tr>`;
                 return;
             }
 
@@ -516,18 +571,42 @@
             });
         }
 
+        function resetQueueFilters() {
+            const filterUserEl = document.getElementById('filterQueueUser');
+            const filterTypeEl = document.getElementById('filterQueueType');
+            if (filterUserEl) filterUserEl.value = '';
+            if (filterTypeEl) filterTypeEl.value = '全部';
+            loadQueue();
+        }
+
         // ==========================================
         // HISTORY VIEW
         // ==========================================
         function loadHistory() {
             const withdrawals = dbGet('hscms_withdrawals', []);
-            const history = withdrawals.filter(w => w.status !== '待审批');
+            let history = withdrawals.filter(w => w.status !== '待审批');
+
+            // Apply filters
+            const filterUserEl = document.getElementById('filterHistUser');
+            const filterStatusEl = document.getElementById('filterHistStatus');
+            const userFilter = filterUserEl ? filterUserEl.value.trim().toLowerCase() : '';
+            const statusFilter = filterStatusEl ? filterStatusEl.value : '全部';
+
+            if (userFilter) {
+                history = history.filter(w => 
+                    w.id.toLowerCase().includes(userFilter) || 
+                    w.user.toLowerCase().includes(userFilter)
+                );
+            }
+            if (statusFilter !== '全部') {
+                history = history.filter(w => w.status === statusFilter);
+            }
 
             const tbody = document.getElementById('historyTableBody');
             tbody.innerHTML = '';
 
             if (history.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">暂无历史打款清算记录</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的历史清算记录</td></tr>`;
                 return;
             }
 
@@ -556,6 +635,14 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function resetHistFilters() {
+            const filterUserEl = document.getElementById('filterHistUser');
+            const filterStatusEl = document.getElementById('filterHistStatus');
+            if (filterUserEl) filterUserEl.value = '';
+            if (filterStatusEl) filterStatusEl.value = '全部';
+            loadHistory();
         }
 
         // Interactive Gateway Payment Clearance Simulation

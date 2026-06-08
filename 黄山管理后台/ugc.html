@@ -250,11 +250,19 @@
                         <div class="search-row">
                             <div class="search-col">
                                 <label>发布人 ID</label>
-                                <input type="text" id="filterAuthor" class="form-control" style="width:140px;" placeholder="例如 USER_8820">
+                                <input type="text" id="filterAuthor" class="form-control" style="width:120px;" placeholder="例如 USER_8820">
+                            </div>
+                            <div class="search-col">
+                                <label>发布人昵称</label>
+                                <input type="text" id="filterNickname" class="form-control" style="width:120px;" placeholder="例如 黄山行者">
+                            </div>
+                            <div class="search-col">
+                                <label>帖子关键字</label>
+                                <input type="text" id="filterKeyword" class="form-control" style="width:140px;" placeholder="检索标题/内容">
                             </div>
                             <div class="search-col">
                                 <label>合规状态</label>
-                                <select id="filterStatus" class="form-control" style="width:120px;">
+                                <select id="filterStatus" class="form-control" style="width:100px;">
                                     <option value="全部">全部</option>
                                     <option value="正常">正常</option>
                                     <option value="已下架">已下架</option>
@@ -282,6 +290,7 @@
                                         <th>帖子内容</th>
                                         <th>类型</th>
                                         <th>发布人ID</th>
+                                        <th>发布人昵称</th>
                                         <th>发帖时间</th>
                                         <th>热度值 (浏览/评论)</th>
                                         <th>合规状态</th>
@@ -365,11 +374,24 @@
                     </div>
                     
                     <div class="canvas-body">
+                        <!-- Blacklist Search Filters -->
+                        <div class="search-row">
+                            <div class="search-col">
+                                <label>用户 ID / 昵称</label>
+                                <input type="text" id="filterBlacklistUser" class="form-control" style="width:200px;" placeholder="输入ID或昵称搜索">
+                            </div>
+                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                                <button class="btn btn-primary" onclick="loadBlacklist()">查询</button>
+                                <button class="btn" onclick="resetBlacklistFilters()">重置</button>
+                            </div>
+                        </div>
+
                         <div class="enterprise-card">
                             <table class="enterprise-table">
                                 <thead>
                                     <tr>
                                         <th>用户 ID</th>
+                                        <th>用户昵称</th>
                                         <th>封禁时间</th>
                                         <th>封禁缘由</th>
                                         <th>惩罚周期</th>
@@ -668,7 +690,15 @@
         // ==========================================
         function loadPostsList() {
             const posts = dbGet('hscms_ugc_posts', []);
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const userMap = {};
+            users.forEach(u => {
+                userMap[u.userId] = u.nickname;
+            });
+
             const filterAuthor = document.getElementById('filterAuthor').value.trim();
+            const filterNickname = document.getElementById('filterNickname').value.trim();
+            const filterKeyword = document.getElementById('filterKeyword').value.trim();
             const filterStatus = document.getElementById('filterStatus').value;
             const filterHeat = document.getElementById('filterHeat').value;
 
@@ -677,6 +707,23 @@
             // Apply filter author
             if (filterAuthor) {
                 filtered = filtered.filter(p => p.authorId.toLowerCase().includes(filterAuthor.toLowerCase()));
+            }
+
+            // Apply filter nickname
+            if (filterNickname) {
+                filtered = filtered.filter(p => {
+                    const nick = userMap[p.authorId] || '';
+                    return nick.toLowerCase().includes(filterNickname.toLowerCase());
+                });
+            }
+
+            // Apply filter keyword
+            if (filterKeyword) {
+                filtered = filtered.filter(p => {
+                    const titleMatch = p.title && p.title.toLowerCase().includes(filterKeyword.toLowerCase());
+                    const contentMatch = p.content && p.content.toLowerCase().includes(filterKeyword.toLowerCase());
+                    return titleMatch || contentMatch;
+                });
             }
 
             // Apply status
@@ -695,7 +742,7 @@
             tbody.innerHTML = '';
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的帖子数据</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的帖子数据</td></tr>`;
                 return;
             }
 
@@ -743,10 +790,12 @@
                     </div>`;
                 }
 
+                const nick = userMap[p.authorId] || '未知用户';
                 tr.innerHTML = `
                     <td>${mediaLayout}</td>
                     <td><span class="badge" style="background:#e0f2fe; color:#0369a1;">${p.type}</span></td>
                     <td><code>${p.authorId}</code></td>
+                    <td><span style="font-weight:500; color:#475569;">${nick}</span></td>
                     <td style="color:#64748b; font-size:12px;">${p.publishTime}</td>
                     <td>
                         <span style="font-weight:600; color:#475569;">${p.views}</span> 浏览 / 
@@ -763,6 +812,8 @@
 
         function resetPostFilters() {
             document.getElementById('filterAuthor').value = '';
+            document.getElementById('filterNickname').value = '';
+            document.getElementById('filterKeyword').value = '';
             document.getElementById('filterStatus').value = '全部';
             document.getElementById('filterHeat').value = '默认';
             loadPostsList();
@@ -989,18 +1040,38 @@
         // ==========================================
         function loadBlacklist() {
             const blacklist = dbGet('hscms_blacklist', []);
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const userMap = {};
+            users.forEach(u => {
+                userMap[u.userId] = u.nickname;
+            });
+
+            // 获取搜索关键字
+            const searchInput = document.getElementById('filterBlacklistUser') ? document.getElementById('filterBlacklistUser').value.trim() : '';
+
+            let filtered = blacklist;
+            if (searchInput) {
+                filtered = filtered.filter(b => {
+                    const nick = userMap[b.userId] || '';
+                    return b.userId.toLowerCase().includes(searchInput.toLowerCase()) || 
+                           nick.toLowerCase().includes(searchInput.toLowerCase());
+                });
+            }
+
             const tbody = document.getElementById('blacklistTableBody');
             tbody.innerHTML = '';
 
-            if (blacklist.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#9ca3af; padding: 24px;">黑名单为空，无被封禁账号</td></tr>`;
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#9ca3af; padding: 24px;">无匹配的黑名单账号</td></tr>`;
                 return;
             }
 
-            blacklist.forEach(b => {
+            filtered.forEach(b => {
                 const tr = document.createElement('tr');
+                const nick = userMap[b.userId] || '未知用户';
                 tr.innerHTML = `
                     <td><code>${b.userId}</code></td>
+                    <td><span style="font-weight:500; color:#475569;">${nick}</span></td>
                     <td style="color:#64748b; font-size:12px;">${b.banTime}</td>
                     <td style="color:#475569;">${b.reason}</td>
                     <td><span class="badge badge-danger">${b.duration}</span></td>
@@ -1010,6 +1081,14 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function resetBlacklistFilters() {
+            const filterEl = document.getElementById('filterBlacklistUser');
+            if (filterEl) {
+                filterEl.value = '';
+            }
+            loadBlacklist();
         }
 
         function removeBlacklist(userId) {
