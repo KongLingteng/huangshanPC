@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 订单管理</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .pagination-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .pagination-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+        }
+        .form-tip {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>订单管理</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item active" id="tabMaterialNav">
+                        <a href="javascript:void(0)" onclick="switchTab('materials')">
+                            素材订单
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabProofNav">
+                        <a href="javascript:void(0)" onclick="switchTab('proofs')">
+                            确权订单
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <!-- TAB 1: MATERIAL ORDERS -->
+                <div id="materialsTab" class="tab-content active" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>素材交易订单</h1>
+                            <p>管理用户在平台上购买版权摄影或视频素材的订单日志，提供订单检索与售后退款操作。</p>
+                        </div>
+                    </div>
+
+                    <div class="canvas-body">
+                        <!-- Search Filters -->
+                        <div class="search-row">
+                            <div class="search-col">
+                                <label>检索关键词</label>
+                                <input type="text" id="matKeyword" class="form-control" style="width:200px;" placeholder="订单ID/素材名/买家ID...">
+                            </div>
+                            <div class="search-col">
+                                <label>交易渠道</label>
+                                <select id="matChannel" class="form-control" style="width:120px;">
+                                    <option value="全部">全部渠道</option>
+                                    <option value="支付宝">支付宝</option>
+                                    <option value="微信支付">微信支付</option>
+                                </select>
+                            </div>
+                            <div class="search-col">
+                                <label>订单状态</label>
+                                <select id="matStatus" class="form-control" style="width:120px;">
+                                    <option value="全部">全部状态</option>
+                                    <option value="已完成">已完成</option>
+                                    <option value="已退款">已退款</option>
+                                </select>
+                            </div>
+                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                                <button class="btn btn-primary" onclick="searchMaterialOrders()">查询</button>
+                                <button class="btn" onclick="resetMaterialSearch()">重置</button>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>订单 ID</th>
+                                        <th>素材名称</th>
+                                        <th>实付金额</th>
+                                        <th>买家 ID</th>
+                                        <th>支付渠道</th>
+                                        <th>交易时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="materialTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                            
+                            <!-- Pagination -->
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:12px 16px; border-top:1px solid var(--border-color);">
+                                <div style="font-size:12px; color:var(--text-muted);" id="materialPageInfo">
+                                    共 0 条，第 1/1 页
+                                </div>
+                                <div class="pagination-buttons" id="materialPaginationButtons" style="display:flex; gap:6px;">
+                                    <!-- Dynamic buttons -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: PROOF ORDERS -->
+                <div id="proofsTab" class="tab-content" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>存证确权订单</h1>
+                            <p>管理用户为提报上架作品购买的区块链存证/DCI确权证书服务订单，并支持为处理中的订单手动录入证书编号。</p>
+                        </div>
+                    </div>
+
+                    <div class="canvas-body">
+                        <!-- Search Filters -->
+                        <div class="search-row">
+                            <div class="search-col">
+                                <label>检索关键词</label>
+                                <input type="text" id="proofKeyword" class="form-control" style="width:200px;" placeholder="订单ID/作品名称/申请主体...">
+                            </div>
+                            <div class="search-col">
+                                <label>证书状态</label>
+                                <select id="proofStatus" class="form-control" style="width:120px;">
+                                    <option value="全部">全部状态</option>
+                                    <option value="已出证">已出证</option>
+                                    <option value="处理中">处理中</option>
+                                </select>
+                            </div>
+                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                                <button class="btn btn-primary" onclick="searchProofOrders()">查询</button>
+                                <button class="btn" onclick="resetProofSearch()">重置</button>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>订单 ID</th>
+                                        <th>确权作品名称</th>
+                                        <th>申请主体</th>
+                                        <th>确权费</th>
+                                        <th>证书状态</th>
+                                        <th>证书编号</th>
+                                        <th>交易时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="proofTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                            
+                            <!-- Pagination -->
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:12px 16px; border-top:1px solid var(--border-color);">
+                                <div style="font-size:12px; color:var(--text-muted);" id="proofPageInfo">
+                                    共 0 条，第 1/1 页
+                                </div>
+                                <div class="pagination-buttons" id="proofPaginationButtons" style="display:flex; gap:6px;">
+                                    <!-- Dynamic buttons -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: ENTER CERTIFICATE -->
+    <div id="certModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>录入区块链确权证书</h3>
+                <button class="modal-close-btn" onclick="closeModal('certModal')">&times;</button>
+            </div>
+            <form id="certForm" onsubmit="submitCert(event)">
+                <input type="hidden" id="certOrderId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label style="font-weight: 600;">确权订单号</label>
+                        <input type="text" id="certOrderIdDisplay" class="form-control" readonly style="background-color: #f1f5f9;">
+                    </div>
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600;">作品名称</label>
+                        <input type="text" id="certWorkNameDisplay" class="form-control" readonly style="background-color: #f1f5f9;">
+                    </div>
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600;">证书编号 (DCI 规范)</label>
+                        <input type="text" id="certNoInput" class="form-control" required placeholder="例如：DCI-2026-F6672">
+                        <span class="form-tip">请输入该作品在蚂蚁链/版权中心登记的唯一DCI证书号</span>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 16px;">
+                    <button type="button" class="btn" onclick="closeModal('certModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认出证</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Pagination states
+        let materialPage = 1;
+        let proofPage = 1;
+        const pageSize = 5;
+
+        // Filtered Lists
+        let filteredMaterials = [];
+        let filteredProofs = [];
+
+        // On Load
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadMaterialOrders();
+            loadProofOrders();
+
+            // Support Route tab
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialTab = urlParams.get('tab') || 'materials';
+            switchTab(initialTab);
+        });
+
+        // Switch Tab UI
+        function switchTab(tab) {
+            document.getElementById('tabMaterialNav').classList.remove('active');
+            document.getElementById('tabProofNav').classList.remove('active');
+            document.getElementById('materialsTab').classList.remove('active');
+            document.getElementById('proofsTab').classList.remove('active');
+
+            if (tab === 'materials') {
+                document.getElementById('tabMaterialNav').classList.add('active');
+                document.getElementById('materialsTab').classList.add('active');
+            } else if (tab === 'proofs') {
+                document.getElementById('tabProofNav').classList.add('active');
+                document.getElementById('proofsTab').classList.add('active');
+            }
+        }
+
+        // ==========================================
+        // 1. MATERIAL ORDERS LOGIC
+        // ==========================================
+        function loadMaterialOrders() {
+            const rawOrders = dbGet('hscms_material_orders', DEFAULT_MATERIAL_ORDERS);
+            filteredMaterials = rawOrders;
+            renderMaterialTable();
+        }
+
+        function renderMaterialTable() {
+            const tbody = document.getElementById('materialTableBody');
+            tbody.innerHTML = '';
+
+            const totalRecords = filteredMaterials.length;
+            const totalPages = Math.ceil(totalRecords / pageSize) || 1;
+
+            if (materialPage > totalPages) {
+                materialPage = totalPages;
+            }
+
+            const startIdx = (materialPage - 1) * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, totalRecords);
+            const pageRecords = filteredMaterials.slice(startIdx, endIdx);
+
+            document.getElementById('materialPageInfo').textContent = `共 ${totalRecords} 条记录，当前第 ${materialPage}/${totalPages} 页`;
+            renderPaginationButtons('material', totalPages);
+
+            if (pageRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">未检索到符合条件的素材订单记录！</td></tr>`;
+                return;
+            }
+
+            pageRecords.forEach(o => {
+                const tr = document.createElement('tr');
+                
+                const statusBadge = o.status === '已完成'
+                    ? `<span class="badge badge-success">交易成功</span>`
+                    : `<span class="badge badge-danger">已退款</span>`;
+
+                const actionBtn = o.status === '已完成'
+                    ? `<a href="javascript:void(0)" class="action-link danger" onclick="refundMaterialOrder('${o.orderId}')">退款</a>`
+                    : `<span style="color:#9ca3af; font-size:12px;">已处理</span>`;
+
+                tr.innerHTML = `
+                    <td><code>${o.orderId}</code></td>
+                    <td><strong style="color:#1f2937;">${o.materialName}</strong></td>
+                    <td><span style="font-weight:600; color:#10b981;">￥${o.price.toFixed(2)}</span></td>
+                    <td><code>${o.buyerId}</code></td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#475569;">${o.channel}</span></td>
+                    <td style="color:#64748b; font-size:12px;">${o.time}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function refundMaterialOrder(orderId) {
+            if (confirm(`确定要为素材订单 ${orderId} 办理退款吗？退款后状态将变更为“已退款”，且不可撤销！`)) {
+                const rawOrders = dbGet('hscms_material_orders', DEFAULT_MATERIAL_ORDERS);
+                const idx = rawOrders.findIndex(o => o.orderId === orderId);
+                if (idx !== -1) {
+                    rawOrders[idx].status = '已退款';
+                    dbSave('hscms_material_orders', rawOrders);
+                    showLockToast(`订单 ${orderId} 退款手续已成功办理！`, true);
+                    
+                    // Keep original search filters
+                    const keyword = document.getElementById('matKeyword').value.trim().toLowerCase();
+                    const channel = document.getElementById('matChannel').value;
+                    const status = document.getElementById('matStatus').value;
+                    
+                    // Filter again
+                    filteredMaterials = rawOrders.filter(o => {
+                        const matchesKeyword = !keyword || 
+                            o.orderId.toLowerCase().includes(keyword) || 
+                            o.materialName.toLowerCase().includes(keyword) || 
+                            o.buyerId.toLowerCase().includes(keyword);
+                        const matchesChannel = channel === '全部' || o.channel === channel;
+                        const matchesStatus = status === '全部' || o.status === status;
+                        return matchesKeyword && matchesChannel && matchesStatus;
+                    });
+                    
+                    renderMaterialTable();
+                }
+            }
+        }
+
+        function searchMaterialOrders() {
+            const rawOrders = dbGet('hscms_material_orders', DEFAULT_MATERIAL_ORDERS);
+            const keyword = document.getElementById('matKeyword').value.trim().toLowerCase();
+            const channel = document.getElementById('matChannel').value;
+            const status = document.getElementById('matStatus').value;
+
+            filteredMaterials = rawOrders.filter(o => {
+                const matchesKeyword = !keyword || 
+                    o.orderId.toLowerCase().includes(keyword) || 
+                    o.materialName.toLowerCase().includes(keyword) || 
+                    o.buyerId.toLowerCase().includes(keyword);
+                const matchesChannel = channel === '全部' || o.channel === channel;
+                const matchesStatus = status === '全部' || o.status === status;
+                return matchesKeyword && matchesChannel && matchesStatus;
+            });
+
+            materialPage = 1;
+            renderMaterialTable();
+        }
+
+        function resetMaterialSearch() {
+            document.getElementById('matKeyword').value = '';
+            document.getElementById('matChannel').value = '全部';
+            document.getElementById('matStatus').value = '全部';
+            loadMaterialOrders();
+            materialPage = 1;
+        }
+
+        // ==========================================
+        // 2. PROOF ORDERS LOGIC
+        // ==========================================
+        function loadProofOrders() {
+            const rawOrders = dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
+            filteredProofs = rawOrders;
+            renderProofTable();
+        }
+
+        function renderProofTable() {
+            const tbody = document.getElementById('proofTableBody');
+            tbody.innerHTML = '';
+
+            const totalRecords = filteredProofs.length;
+            const totalPages = Math.ceil(totalRecords / pageSize) || 1;
+
+            if (proofPage > totalPages) {
+                proofPage = totalPages;
+            }
+
+            const startIdx = (proofPage - 1) * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, totalRecords);
+            const pageRecords = filteredProofs.slice(startIdx, endIdx);
+
+            document.getElementById('proofPageInfo').textContent = `共 ${totalRecords} 条记录，当前第 ${proofPage}/${totalPages} 页`;
+            renderPaginationButtons('proof', totalPages);
+
+            if (pageRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">未检索到符合条件的存证确权订单记录！</td></tr>`;
+                return;
+            }
+
+            pageRecords.forEach(o => {
+                const tr = document.createElement('tr');
+                
+                const statusBadge = o.status === '已出证'
+                    ? `<span class="badge badge-success">已出证</span>`
+                    : `<span class="badge badge-warning">处理中</span>`;
+
+                const certSpan = o.status === '已出证'
+                    ? `<code style="font-weight:600; color:#3b82f6;">${o.certNo}</code>`
+                    : `<span style="color:#9ca3af;">链上存证中...</span>`;
+
+                const actionBtn = o.status === '处理中'
+                    ? `<a href="javascript:void(0)" class="action-link" onclick="openCertModal('${o.orderId}', '${o.workName.replace(/'/g, "\\'")}')">确认出证</a>`
+                    : `<span style="color:#9ca3af; font-size:12px;">确权已锚定</span>`;
+
+                tr.innerHTML = `
+                    <td><code>${o.orderId}</code></td>
+                    <td><strong style="color:#1f2937;">${o.workName}</strong></td>
+                    <td><span style="font-weight:500; color:#475569;">${o.applicant}</span></td>
+                    <td><span style="font-weight:600; color:#4f46e5;">￥${o.price.toFixed(2)}</span></td>
+                    <td>${statusBadge}</td>
+                    <td>${certSpan}</td>
+                    <td style="color:#64748b; font-size:12px;">${o.time}</td>
+                    <td>${actionBtn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function searchProofOrders() {
+            const rawOrders = dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
+            const keyword = document.getElementById('proofKeyword').value.trim().toLowerCase();
+            const status = document.getElementById('proofStatus').value;
+
+            filteredProofs = rawOrders.filter(o => {
+                const matchesKeyword = !keyword || 
+                    o.orderId.toLowerCase().includes(keyword) || 
+                    o.workName.toLowerCase().includes(keyword) || 
+                    o.applicant.toLowerCase().includes(keyword);
+                const matchesStatus = status === '全部' || o.status === status;
+                return matchesKeyword && matchesStatus;
+            });
+
+            proofPage = 1;
+            renderProofTable();
+        }
+
+        function resetProofSearch() {
+            document.getElementById('proofKeyword').value = '';
+            document.getElementById('proofStatus').value = '全部';
+            loadProofOrders();
+            proofPage = 1;
+        }
+
+        function openCertModal(orderId, workName) {
+            document.getElementById('certOrderId').value = orderId;
+            document.getElementById('certOrderIdDisplay').value = orderId;
+            document.getElementById('certWorkNameDisplay').value = workName;
+            document.getElementById('certNoInput').value = '';
+            openModal('certModal');
+        }
+
+        function submitCert(e) {
+            e.preventDefault();
+            const orderId = document.getElementById('certOrderId').value;
+            const certNo = document.getElementById('certNoInput').value.trim();
+
+            if (!certNo) return;
+
+            const rawOrders = dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
+            const idx = rawOrders.findIndex(o => o.orderId === orderId);
+            if (idx !== -1) {
+                rawOrders[idx].status = '已出证';
+                rawOrders[idx].certNo = certNo;
+                dbSave('hscms_proof_orders', rawOrders);
+                showLockToast(`订单 ${orderId} 已成功登记链上证书并完成确权出证！`, true);
+                closeModal('certModal');
+
+                // Keep original filters
+                const keyword = document.getElementById('proofKeyword').value.trim().toLowerCase();
+                const status = document.getElementById('proofStatus').value;
+                filteredProofs = rawOrders.filter(o => {
+                    const matchesKeyword = !keyword || 
+                        o.orderId.toLowerCase().includes(keyword) || 
+                        o.workName.toLowerCase().includes(keyword) || 
+                        o.applicant.toLowerCase().includes(keyword);
+                    const matchesStatus = status === '全部' || o.status === status;
+                    return matchesKeyword && matchesStatus;
+                });
+
+                renderProofTable();
+            }
+        }
+
+        // ==========================================
+        // PAGINATION CORE ENGINE
+        // ==========================================
+        function renderPaginationButtons(prefix, totalPages) {
+            const buttonsContainer = document.getElementById(`${prefix}PaginationButtons`);
+            buttonsContainer.innerHTML = '';
+
+            const isMaterial = prefix === 'material';
+            const curPage = isMaterial ? materialPage : proofPage;
+
+            // Prev
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.textContent = '上一页';
+            prevBtn.disabled = curPage === 1;
+            prevBtn.onclick = () => {
+                if (isMaterial) {
+                    materialPage--;
+                    renderMaterialTable();
+                } else {
+                    proofPage--;
+                    renderProofTable();
+                }
+            };
+            buttonsContainer.appendChild(prevBtn);
+
+            // Pages
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn ${curPage === i ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => {
+                    if (isMaterial) {
+                        materialPage = i;
+                        renderMaterialTable();
+                    } else {
+                        proofPage = i;
+                        renderProofTable();
+                    }
+                };
+                buttonsContainer.appendChild(pageBtn);
+            }
+
+            // Next
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.textContent = '下一页';
+            nextBtn.disabled = curPage === totalPages;
+            nextBtn.onclick = () => {
+                if (isMaterial) {
+                    materialPage++;
+                    renderMaterialTable();
+                } else {
+                    proofPage++;
+                    renderProofTable();
+                }
+            };
+            buttonsContainer.appendChild(nextBtn);
+        }
+    </script>
+</body>
+</html>

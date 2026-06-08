@@ -210,6 +210,67 @@ const DEFAULT_CAMPAIGN_WORKS = [
     { id: 9, campaignId: 2, content: '视频记录了黄山雾凇在雪后的绝美景象，纯洁无瑕。', mediaType: '视频', attachment: '雪后黄山雾凇晶莹.mp4', author: '黄山行者', time: '2026-12-05 15:40:00' }
 ];
 
+const DEFAULT_MATERIAL_ORDERS = [
+    { orderId: 'ORD_2026_9001', materialName: '迎客松日出云海.jpg', price: 99.00, buyerId: 'USER_8820', channel: '支付宝', time: '2026-06-01 09:12:00', status: '已完成' },
+    { orderId: 'ORD_2026_9002', materialName: '西海峡谷航拍短片.mp4', price: 299.00, buyerId: 'USER_5541', channel: '微信支付', time: '2026-06-02 10:45:00', status: '已完成' },
+    { orderId: 'ORD_2026_9003', materialName: '雪后飞来石AIGC大图.png', price: 150.00, buyerId: 'USER_6672', channel: '支付宝', time: '2026-06-03 14:20:00', status: '已完成' },
+    { orderId: 'ORD_2026_9004', materialName: '翡翠谷夏日溪流慢视频.mp4', price: 199.00, buyerId: 'USER_1001', channel: '微信支付', time: '2026-06-04 16:30:00', status: '已退款' },
+    { orderId: 'ORD_2026_9005', materialName: '宏村古建筑摄影组图.zip', price: 350.00, buyerId: 'USER_1002', channel: '支付宝', time: '2026-06-05 11:10:00', status: '已完成' },
+    { orderId: 'ORD_2026_9006', materialName: '光明顶云海星空延时.mp4', price: 499.00, buyerId: 'USER_1003', channel: '微信支付', time: '2026-06-05 18:22:00', status: '已完成' },
+    { orderId: 'ORD_2026_9007', materialName: '始信峰冬雪松针特写.jpg', price: 88.00, buyerId: 'USER_1005', channel: '支付宝', time: '2026-06-06 08:05:00', status: '已完成' },
+    { orderId: 'ORD_2026_9008', materialName: '呈坎八卦村航拍全景.png', price: 180.00, buyerId: 'USER_1006', channel: '微信支付', time: '2026-06-07 13:40:00', status: '已完成' }
+];
+
+const DEFAULT_PROOF_ORDERS = [
+    { orderId: 'PRF_2026_8001', workName: '迎客松晨曦全景摄影图', applicant: '张建国', price: 200.00, time: '2026-06-01 09:30:00', status: '已出证', certNo: 'DCI-2026-A9901' },
+    { orderId: 'PRF_2026_8002', workName: '飞来石雪景AIGC润色大片', applicant: '黄山松石文化传媒有限公司', price: 500.00, time: '2026-06-01 16:12:00', status: '已出证', certNo: 'DCI-2026-B8872' },
+    { orderId: 'PRF_2026_8003', workName: '西海大峡谷奇石探秘视频', applicant: '王小二', price: 200.00, time: '2026-05-28 10:15:00', status: '已出证', certNo: 'DCI-2026-C5541' },
+    { orderId: 'PRF_2026_8004', workName: '翡翠谷绿潭水波特写', applicant: '李四', price: 200.00, time: '2026-06-02 11:20:00', status: '处理中', certNo: '-' },
+    { orderId: 'PRF_2026_8005', workName: '屯溪老街雨后石板路摄影', applicant: '徽风文化传媒', price: 500.00, time: '2026-06-03 15:40:00', status: '已出证', certNo: 'DCI-2026-D1004' },
+    { orderId: 'PRF_2026_8006', workName: '新安江渔火航拍短片', applicant: '安徽文旅工作室', price: 500.00, time: '2026-06-04 09:05:00', status: '处理中', certNo: '-' },
+    { orderId: 'PRF_2026_8007', workName: '木梨硆云海古村落水彩画', applicant: '黄山行者', price: 200.00, time: '2026-06-05 14:18:00', status: '已出证', certNo: 'DCI-2026-E8820' },
+    { orderId: 'PRF_2026_8008', workName: '光明顶星轨百张堆栈图', applicant: '松涛入梦', price: 200.00, time: '2026-06-06 20:30:00', status: '处理中', certNo: '-' }
+];
+
+const DEFAULT_CONTRACTS = {
+    userAgreement: `<h2>黄山数字资产运营平台用户服务协议</h2>
+<p>欢迎您使用黄山数字资产平台。本协议由黄山数字平台（以下简称“本平台”）与所有使用本平台服务的用户共同缔结。</p>
+<p><strong>第一条 声明与承诺</strong></p>
+<p>用户注册本平台账户时，必须提供真实有效的实名资质。凡通过非合规手段获取账户权限者，本平台保留封禁其账号的权利。</p>
+<p><strong>第二条 知识产权及授权许可</strong></p>
+<p>本平台所展示的所有摄影、视频、音频及文章资产，均归原创作者所有。任何用户购买下载后，仅获得本平台许可范围内的非排他性使用权，不得擅自传播或转授权。</p>`,
+    
+    privacyPolicy: `<h2>黄山数字平台用户隐私政策</h2>
+<p>本隐私政策旨在向您说明本平台如何收集、使用、存储和保护您的个人信息。</p>
+<p><strong>一、 信息的收集范围</strong></p>
+<p>1. 当您申请注册或进行实名认证时，我们需要收集您的姓名、身份证号、联系方式以及支付账户信息。<br>
+2. 当您进行 AIGC 能力操作时，系统会自动记录您调用的 API 记录及已用次数。</p>
+<p><strong>二、 信息安全保障</strong></p>
+<p>本平台采用行业领先的安全加密技术对供稿人资质材料及订单信息进行脱敏存储，承诺绝不向任何第三方恶意泄露您的私人敏感数据。</p>`,
+
+    consumerGuarantee: `<h2>消费者权益保障及退款政策</h2>
+<p>为保障黄山数字平台消费者的合法权益，制定以下保障条款：</p>
+<p><strong>1. 数字商品的特殊性说明</strong></p>
+<p>由于摄影图、视频素材等数字商品的易复制和不可收回性，所有素材订单一旦交易成功，原则上<em>不支持无理由退款</em>。</p>
+<p><strong>2. 例外退款条件</strong></p>
+<p>若消费者购买并付款后，下载的附件文件发生损坏、无法播放、无法解压，且本平台运营人员核实确定后，可向消费者发起退款并更改订单状态为“已退款”。</p>`,
+
+    assetListing: `<h2>数字资产上架与版权交易服务协议</h2>
+<p>本协议适用于申请将原创摄影、视频资产在黄山数字平台进行展示并出售的供稿人。</p>
+<p><strong>【上架准则】</strong></p>
+<p>1. 供稿人对其提报上架的所有作品必须拥有独立、完整的著作权。严禁从他人处盗用或进行未授权的二次创作。<br>
+2. 提报上架时可自愿选择是否关联“蚂蚁链存证/DCI确权服务”。选择确权服务需支付相应的区块链确权工本费，通过后可自动出具证书及证书编号。</p>`,
+
+    contributorContract: `<h2>黄山数字平台认证供稿人合作协议</h2>
+<p>甲方：黄山数字资产运营平台<br>
+乙方：认证供稿人（个人或机构）</p>
+<p>双方便就数字资产交易分成及合作事宜达成如下协议：</p>
+<p><strong>一、 收益分成策略</strong></p>
+<p>乙方上传的素材在平台售出后，甲方将扣除 20% 的平台技术维护费，乙方获得 80% 的实付分成。收益将结算至乙方的分成账户中，乙方可在每月 1-5 号申请提现结算。</p>
+<p><strong>二、 违约责任</strong></p>
+<p>如乙方因版权抄袭引发法律诉讼纠纷，需独立承担全部责任，甲方有权扣除其全部未提现分成收益并封禁其供稿权限。</p>`
+};
+
 // Database Initialization
 function initDatabase() {
     dbGet('hscms_topics', DEFAULT_TOPICS);
@@ -241,6 +302,11 @@ function initDatabase() {
     dbGet('hscms_users', DEFAULT_USERS);
     dbGet('hscms_system_messages', DEFAULT_SYSTEM_MESSAGES);
     dbGet('hscms_campaign_works', DEFAULT_CAMPAIGN_WORKS);
+    
+    // Decoupled tables for orders and contracts
+    dbGet('hscms_material_orders', DEFAULT_MATERIAL_ORDERS);
+    dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
+    dbGet('hscms_contracts', DEFAULT_CONTRACTS);
 }
 
 // Initialize on Script load

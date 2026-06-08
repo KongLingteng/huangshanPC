@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 合同政策配置</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .editor-container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            border: 1px solid var(--border-color);
+        }
+        .rich-editor-body {
+            font-family: var(--font-family);
+            font-size: 14px;
+            line-height: 1.6;
+            color: #334155;
+        }
+        .rich-editor-body h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 6px;
+        }
+        .rich-editor-body p {
+            margin-bottom: 12px;
+        }
+        .rich-editor-body strong {
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .rich-editor-body em {
+            font-style: italic;
+        }
+        .rich-editor-body br {
+            margin-bottom: 8px;
+        }
+        .sub-nav-item.active a {
+            background-color: #ffffff;
+            color: var(--primary-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR -->
+            <aside class="sub-sidebar" style="width:200px;">
+                <div class="sub-sidebar-title">
+                    <span>电子合同配置</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item active" id="menu_userAgreement">
+                        <a href="javascript:void(0)" onclick="selectContract('userAgreement')">
+                            用户服务协议
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="menu_privacyPolicy">
+                        <a href="javascript:void(0)" onclick="selectContract('privacyPolicy')">
+                            隐私政策
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="menu_consumerGuarantee">
+                        <a href="javascript:void(0)" onclick="selectContract('consumerGuarantee')">
+                            消费者保障协议
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="menu_assetListing">
+                        <a href="javascript:void(0)" onclick="selectContract('assetListing')">
+                            数字资产上架协议
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="menu_contributorContract">
+                        <a href="javascript:void(0)" onclick="selectContract('contributorContract')">
+                            认证供稿人合作协议
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <div class="workspace-header">
+                    <div class="workspace-title-section">
+                        <h1 id="contractTitle">用户服务协议配置</h1>
+                        <p>编辑并渲染黄山数字平台的官方合同或规范文档。支持格式编排及持久化数据库同步保存。</p>
+                    </div>
+                    <div class="workspace-actions">
+                        <button class="btn btn-primary" onclick="saveContractsToDatabase()">保存当前合同</button>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <div class="editor-container">
+                        <!-- Toolbar -->
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; background:#f8fafc; border-bottom:1px solid var(--border-color); padding:10px; border-radius: 8px 8px 0 0;">
+                            <button type="button" class="btn" onclick="execCmd('bold')" style="padding:4px 8px; min-width:32px; font-weight:bold; height:28px;" title="加粗">B</button>
+                            <button type="button" class="btn" onclick="execCmd('italic')" style="padding:4px 8px; min-width:32px; font-style:italic; height:28px;" title="斜体">I</button>
+                            <button type="button" class="btn" onclick="execCmd('underline')" style="padding:4px 8px; min-width:32px; text-decoration:underline; height:28px;" title="下划线">U</button>
+                            
+                            <div style="width:1px; height:18px; background:#cbd5e1; margin:0 4px;"></div>
+                            
+                            <select onchange="execCmd('fontSize', this.value)" class="form-control" style="width:90px; height:28px; padding:2px 6px; font-size:12px;">
+                                <option value="3">正常字号</option>
+                                <option value="2">较小</option>
+                                <option value="4">中等偏大</option>
+                                <option value="5">较大标题</option>
+                                <option value="6">超大标题</option>
+                            </select>
+                            
+                            <input type="color" onchange="execCmd('foreColor', this.value)" style="width:32px; height:28px; border:1px solid #cbd5e1; border-radius:4px; padding:1px; cursor:pointer;" title="文字颜色">
+                            
+                            <div style="width:1px; height:18px; background:#cbd5e1; margin:0 4px;"></div>
+                            
+                            <button type="button" class="btn" onclick="execCmd('removeFormat')" style="padding:4px 8px; font-size:11px; height:28px;" title="清除所选文本的格式样式">清除格式</button>
+                            <button type="button" class="btn" onclick="execCmd('undo')" style="padding:4px 8px; font-size:11px; height:28px;">撤销</button>
+                            <button type="button" class="btn" onclick="execCmd('redo')" style="padding:4px 8px; font-size:11px; height:28px;">重做</button>
+                        </div>
+                        
+                        <!-- Edit Field -->
+                        <div id="richEditor" contenteditable="true" class="rich-editor-body" style="min-height: 480px; background: #ffffff; padding: 24px; outline: none; overflow-y: auto; border-radius: 0 0 8px 8px;">
+                            <!-- HTML from localStorage -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        let currentContracts = {};
+        let activeContractKey = 'userAgreement';
+
+        const CONTRACT_TITLE_MAP = {
+            userAgreement: '用户服务协议配置',
+            privacyPolicy: '用户隐私政策配置',
+            consumerGuarantee: '消费者权益保障政策配置',
+            assetListing: '数字资产上架与版权交易协议配置',
+            contributorContract: '认证供稿人合作分成协议配置'
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            // Fetch contracts
+            currentContracts = dbGet('hscms_contracts', DEFAULT_CONTRACTS);
+            
+            // Initial render
+            const initialKey = 'userAgreement';
+            selectContract(initialKey);
+        });
+
+        function selectContract(key) {
+            // 1. Memory temporary save current editing html back to local object
+            const editor = document.getElementById('richEditor');
+            if (activeContractKey && editor) {
+                currentContracts[activeContractKey] = editor.innerHTML;
+            }
+
+            // 2. Switch active key
+            activeContractKey = key;
+
+            // 3. Highlight side sub menu
+            Object.keys(CONTRACT_TITLE_MAP).forEach(k => {
+                const el = document.getElementById(`menu_${k}`);
+                if (el) {
+                    if (k === key) {
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                    }
+                }
+            });
+
+            // 4. Update Header text
+            document.getElementById('contractTitle').textContent = CONTRACT_TITLE_MAP[key];
+
+            // 5. Load html to editor
+            editor.innerHTML = currentContracts[key] || '';
+            editor.focus();
+        }
+
+        function execCmd(command, val = null) {
+            document.execCommand(command, false, val);
+            document.getElementById('richEditor').focus();
+        }
+
+        function saveContractsToDatabase() {
+            // Save current editing item first
+            const editor = document.getElementById('richEditor');
+            if (activeContractKey && editor) {
+                currentContracts[activeContractKey] = editor.innerHTML;
+            }
+
+            // Save object to database
+            dbSave('hscms_contracts', currentContracts);
+            showLockToast('官方合同与政策协议配置已成功同步保存至数据库！', true);
+        }
+    </script>
+</body>
+</html>

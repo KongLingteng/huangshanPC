@@ -161,6 +161,14 @@
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         <span>用户</span>
                     </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
                 </div>
             </aside>
 
@@ -185,11 +193,49 @@
                             用户黑名单
                         </a>
                     </li>
+                    <li class="sub-nav-item" id="tabTopicNav">
+                        <a href="javascript:void(0)" onclick="switchTab('topics')">
+                            推荐话题
+                        </a>
+                    </li>
                 </ul>
             </aside>
 
             <!-- MAIN WORKSPACE -->
             <main class="workspace-canvas">
+                <!-- TAB 0: RECOMMENDED TOPICS -->
+                <div id="topicsTab" class="tab-content" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>推荐话题配置中心</h1>
+                            <p>维护 C 端移动社区的热门推荐话题，通过调整状态控制其在前端显示或隐藏，支持添加与删除话题。</p>
+                        </div>
+                        <div class="workspace-actions">
+                            <button class="btn btn-primary" onclick="openAddTopicModal()">新增热门话题</button>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-body">
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>话题 ID</th>
+                                        <th>话题名称</th>
+                                        <th>展示权重</th>
+                                        <th>关联作品数</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topicsTableBody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- TAB 1: POSTS & COMMENTS -->
                 <div id="postsTab" class="tab-content active" style="width: 100%;">
                     <div class="workspace-header">
@@ -446,6 +492,33 @@
         </div>
     </div>
 
+    <!-- MODAL 4: ADD TOPIC -->
+    <div id="addTopicModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>新增热门话题</h3>
+                <button class="modal-close-btn" onclick="closeModal('addTopicModal')">&times;</button>
+            </div>
+            <form id="addTopicForm" onsubmit="submitAddTopic(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label style="font-weight: 600;">话题名称</label>
+                        <input type="text" id="newTopicName" class="form-control" required placeholder="如：奇松怪石">
+                    </div>
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600;">展示权重</label>
+                        <input type="number" id="newTopicWeight" class="form-control" value="10" required min="1">
+                        <span class="form-tip">数字越大，在 C 端界面展示越靠前</span>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 16px;">
+                    <button type="button" class="btn" onclick="closeModal('addTopicModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">保存话题</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="lockToast" class="toast-container">
         <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
         <span id="lockToastText"></span>
@@ -459,13 +532,19 @@
             document.getElementById('tabPostNav').classList.remove('active');
             document.getElementById('tabWordNav').classList.remove('active');
             document.getElementById('tabBlacklistNav').classList.remove('active');
+            document.getElementById('tabTopicNav').classList.remove('active');
 
             // Hide all tab views
+            document.getElementById('topicsTab').classList.remove('active');
             document.getElementById('postsTab').classList.remove('active');
             document.getElementById('wordsTab').classList.remove('active');
             document.getElementById('blacklistTab').classList.remove('active');
 
-            if (tab === 'posts') {
+            if (tab === 'topics') {
+                document.getElementById('tabTopicNav').classList.add('active');
+                document.getElementById('topicsTab').classList.add('active');
+                loadTopicsList();
+            } else if (tab === 'posts') {
                 document.getElementById('tabPostNav').classList.add('active');
                 document.getElementById('postsTab').classList.add('active');
                 loadPostsList();
@@ -478,6 +557,110 @@
                 document.getElementById('blacklistTab').classList.add('active');
                 loadBlacklist();
             }
+        }
+
+        // ==========================================
+        // TAB 0: RECOMMENDED TOPICS MANAGEMENT
+        // ==========================================
+        function loadTopicsList() {
+            const topics = dbGet('hscms_topics', DEFAULT_TOPICS);
+            // Sort by weight descending
+            topics.sort((a, b) => b.weight - a.weight);
+
+            const tbody = document.getElementById('topicsTableBody');
+            tbody.innerHTML = '';
+
+            if (topics.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#9ca3af; padding: 24px;">暂无热门推荐话题，请添加！</td></tr>`;
+                return;
+            }
+
+            topics.forEach(t => {
+                const tr = document.createElement('tr');
+                
+                // Status badge
+                let statusBadge = '';
+                let actionBtn = '';
+                if (t.status === '启用') {
+                    statusBadge = `<span class="badge badge-success">展示中</span>`;
+                    actionBtn = `<a href="javascript:void(0)" class="action-link" onclick="toggleTopicStatus(${t.id})">隐藏话题</a>`;
+                } else {
+                    statusBadge = `<span class="badge badge-danger">隐藏中</span>`;
+                    actionBtn = `<a href="javascript:void(0)" class="action-link" onclick="toggleTopicStatus(${t.id})">显示话题</a>`;
+                }
+
+                tr.innerHTML = `
+                    <td><code>TOPIC_${String(t.id).padStart(4, '0')}</code></td>
+                    <td><strong style="color:#1f2937;"># ${t.name}</strong></td>
+                    <td><span style="font-weight:600; color:#475569;">${t.weight}</span></td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#475569;">${t.assets || 0}</span></td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        ${actionBtn}
+                        <a href="javascript:void(0)" class="action-link danger" style="margin-left: 12px;" onclick="deleteTopic(${t.id})">删除</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleTopicStatus(topicId) {
+            const topics = dbGet('hscms_topics', DEFAULT_TOPICS);
+            const idx = topics.findIndex(t => t.id === topicId);
+            if (idx !== -1) {
+                const currentStatus = topics[idx].status;
+                topics[idx].status = currentStatus === '启用' ? '禁用' : '启用';
+                dbSave('hscms_topics', topics);
+                showLockToast(`已成功${topics[idx].status === '启用' ? '显示' : '隐藏'}话题！`, true);
+                loadTopicsList();
+            }
+        }
+
+        function deleteTopic(topicId) {
+            if (confirm('确认删除该热门推荐话题吗？删除后将无法恢复。')) {
+                let topics = dbGet('hscms_topics', DEFAULT_TOPICS);
+                topics = topics.filter(t => t.id !== topicId);
+                dbSave('hscms_topics', topics);
+                showLockToast('话题已被成功删除！', true);
+                loadTopicsList();
+            }
+        }
+
+        function openAddTopicModal() {
+            document.getElementById('newTopicName').value = '';
+            document.getElementById('newTopicWeight').value = '10';
+            openModal('addTopicModal');
+        }
+
+        function submitAddTopic(e) {
+            e.preventDefault();
+            const name = document.getElementById('newTopicName').value.trim();
+            const weight = parseInt(document.getElementById('newTopicWeight').value) || 10;
+
+            if (!name) return;
+
+            const topics = dbGet('hscms_topics', DEFAULT_TOPICS);
+            
+            // Duplicate check
+            const exists = topics.some(t => t.name.toLowerCase() === name.toLowerCase());
+            if (exists) {
+                alert('该话题名称已存在，请勿重复添加！');
+                return;
+            }
+
+            const maxId = topics.length > 0 ? Math.max(...topics.map(t => t.id)) : 0;
+            topics.push({
+                id: maxId + 1,
+                name: name,
+                status: '启用',
+                weight: weight,
+                assets: 0
+            });
+
+            dbSave('hscms_topics', topics);
+            showLockToast('热门话题添加成功并已自动展示！', true);
+            closeModal('addTopicModal');
+            loadTopicsList();
         }
 
         // ==========================================
@@ -848,7 +1031,9 @@
         }
 
         // Init page load
-        loadPostsList();
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab') || 'posts';
+        switchTab(tab);
     </script>
 </body>
 </html>
