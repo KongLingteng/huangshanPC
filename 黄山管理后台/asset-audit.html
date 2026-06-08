@@ -217,6 +217,35 @@
                 </div>
 
                 <div class="canvas-body">
+                    <!-- Search Filters -->
+                    <div class="search-row" style="margin-bottom: 16px;">
+                        <div class="search-col">
+                            <label>检索关键词</label>
+                            <input type="text" id="assetKeyword" class="form-control" style="width:200px;" placeholder="资产名称/提交人/ID...">
+                        </div>
+                        <div class="search-col">
+                            <label>上架模式</label>
+                            <select id="searchProofMode" class="form-control" style="width:140px;">
+                                <option value="全部">全部上架模式</option>
+                                <option value="是">确权上架</option>
+                                <option value="否">常规上架</option>
+                            </select>
+                        </div>
+                        <div class="search-col">
+                            <label>素材类别</label>
+                            <select id="searchAssetType" class="form-control" style="width:120px;">
+                                <option value="全部">全部类型</option>
+                                <option value="图片">图片</option>
+                                <option value="视频">视频</option>
+                                <option value="文章">文章</option>
+                            </select>
+                        </div>
+                        <div class="search-col" style="flex-direction:row; gap:8px;">
+                            <button class="btn btn-primary" onclick="loadAssetsList()">查询</button>
+                            <button class="btn" onclick="resetAssetSearch()">重置</button>
+                        </div>
+                    </div>
+
                     <!-- Assets table -->
                     <div class="enterprise-card">
                         <table class="enterprise-table">
@@ -224,6 +253,7 @@
                                 <tr>
                                     <th>资产详情 (名称/元数据)</th>
                                     <th>提交人/类别</th>
+                                    <th>上架模式</th>
                                     <th>提交时间</th>
                                     <th>区块链存证</th>
                                     <th>DCI 确权编码</th>
@@ -337,14 +367,46 @@
         }
 
         function loadAssetsList() {
+            // Read advanced filter values
+            const keyword = document.getElementById('assetKeyword') ? document.getElementById('assetKeyword').value.trim().toLowerCase() : '';
+            const proofMode = document.getElementById('searchProofMode') ? document.getElementById('searchProofMode').value : '全部';
+            const assetType = document.getElementById('searchAssetType') ? document.getElementById('searchAssetType').value : '全部';
+
             const assets = dbGet('hscms_asset_submissions', []);
-            const filtered = assets.filter(a => a.status === currentTab);
+            let filtered = assets.filter(a => a.status === currentTab);
+
+            if (keyword) {
+                filtered = filtered.filter(a => 
+                    a.id.toLowerCase().includes(keyword) || 
+                    a.title.toLowerCase().includes(keyword) || 
+                    a.author.toLowerCase().includes(keyword) ||
+                    a.hash.toLowerCase().includes(keyword)
+                );
+            }
+
+            if (proofMode !== '全部') {
+                filtered = filtered.filter(a => a.needProof === proofMode);
+            }
+
+            if (assetType !== '全部') {
+                filtered = filtered.filter(a => {
+                    const t = a.title;
+                    if (assetType === '图片') {
+                        return t.includes('图') || t.includes('照片') || t.includes('摄影');
+                    } else if (assetType === '视频') {
+                        return t.includes('视频') || t.includes('镜头') || t.includes('片') || t.includes('影');
+                    } else if (assetType === '文章') {
+                        return t.includes('书') || t.includes('路线图') || t.includes('pdf') || t.includes('文章') || t.includes('手册') || t.includes('图（');
+                    }
+                    return true;
+                });
+            }
 
             const tbody = document.getElementById('assetsTableBody');
             tbody.innerHTML = '';
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">当前队列中无作品记录</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">当前队列中无作品记录</td></tr>`;
                 return;
             }
 
@@ -363,10 +425,22 @@
                     dciLayout = `<code class="hash-code" style="color:#1677ff;" title="中国版权保护中心核发">${a.dciCode}</code>`;
                 }
 
+                // Proof Mode Badge
+                let proofModeBadge = '';
+                if (a.needProof === '是') {
+                    proofModeBadge = `<span class="badge" style="background-color: rgba(2, 132, 199, 0.1); color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.2); font-weight:600;">确权上架</span>`;
+                } else {
+                    proofModeBadge = `<span class="badge" style="background-color: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1;">常规上架</span>`;
+                }
+
                 // Status Pill
                 let statusPill = `<span class="badge badge-warning">待人工审核</span>`;
                 if (a.status === '审核成功') {
-                    statusPill = `<span class="badge badge-success">确权成功</span>`;
+                    if (a.needProof === '是') {
+                        statusPill = `<span class="badge" style="background-color: rgba(22, 119, 255, 0.1); color: var(--primary-color); border: 1px solid rgba(22, 119, 255, 0.2);">确权成功</span>`;
+                    } else {
+                        statusPill = `<span class="badge badge-success">上架成功</span>`;
+                    }
                 } else if (a.status === '已驳回') {
                     statusPill = `<span class="badge badge-danger" title="驳回原因：${a.rejectReason}">已驳回</span>`;
                 }
@@ -394,6 +468,7 @@
                         <strong style="color:#334155;">${a.author}</strong>
                         <div style="font-size:11px; color:#64748b;">${a.authorType}创作者</div>
                     </td>
+                    <td>${proofModeBadge}</td>
                     <td style="color:#64748b; font-size:12px;">${a.submitTime}</td>
                     <td>${chainBadge}</td>
                     <td>${dciLayout}</td>
@@ -402,6 +477,13 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function resetAssetSearch() {
+            document.getElementById('assetKeyword').value = '';
+            document.getElementById('searchProofMode').value = '全部';
+            document.getElementById('searchAssetType').value = '全部';
+            loadAssetsList();
         }
 
         // Ledger inspect modal popup
@@ -425,6 +507,18 @@
 
         // Simulated asynchronous DCI 3.0 approval flow with progress overlay
         function approveAssetFlow(assetId) {
+            const assets = dbGet('hscms_asset_submissions', []);
+            const a = assets.find(item => item.id === assetId);
+            if (!a) return;
+
+            // Conventional review division
+            if (a.needProof === '否') {
+                if (confirm(`该素材（${a.title}）选择的是常规上架（不需存证确权）。\n确定要通过常规合规审核并直接将其发布上架售卖吗？`)) {
+                    finalizeApproval(assetId, false);
+                }
+                return;
+            }
+
             const progressOverlay = document.getElementById('progressOverlay');
             const fill = document.getElementById('progressBarFill');
             const title = document.getElementById('progressTitle');
@@ -455,22 +549,58 @@
                 if (progress >= 100) {
                     clearInterval(interval);
                     setTimeout(() => {
-                        finalizeApproval(assetId);
+                        finalizeApproval(assetId, true);
                         progressOverlay.style.display = 'none';
                     }, 200);
                 }
             }, 80);
         }
 
-        function finalizeApproval(assetId) {
+        function finalizeApproval(assetId, isProofed) {
             const assets = dbGet('hscms_asset_submissions', []);
             const aIdx = assets.findIndex(a => a.id === assetId);
 
             if (aIdx !== -1) {
-                // Generate simulated DCI code
-                const randomDCI = `DCI-2026-X${Math.floor(1000 + Math.random() * 9000)}Y${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`;
+                const author = assets[aIdx].author;
+                const title = assets[aIdx].title;
+                const authorUserId = author === '黄山行者' ? 'USER_8820' : 'USER_6672';
+
                 assets[aIdx].status = '审核成功';
-                assets[aIdx].dciCode = randomDCI;
+
+                let successMsg = '';
+                let toastMsg = '';
+
+                if (isProofed) {
+                    // Generate simulated DCI code
+                    const randomDCI = `DCI-2026-X${Math.floor(1000 + Math.random() * 9000)}Y${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`;
+                    assets[aIdx].dciCode = randomDCI;
+                    
+                    if (!assets[aIdx].antChainId || assets[aIdx].antChainId === '-') {
+                        assets[aIdx].antChainId = `AntChain_2026_${Math.floor(1000 + Math.random() * 9000)}Z`;
+                    }
+                    
+                    successMsg = `恭喜！您上传的原创作品《${title}》已审核通过并成功在国家版权保护中心确权，核发 DCI 码：【${randomDCI}】。已关联您的供稿人账户。`;
+                    toastMsg = `作品审核通过，国家 DCI 标识【${randomDCI}】申领并发放成功！`;
+
+                    // Auto elevate corresponding user to "认证供稿人" (Certified Contributor)
+                    const users = dbGet('hscms_users', []);
+                    const uIdx = users.findIndex(u => u.userId === authorUserId);
+                    if (uIdx !== -1) {
+                        users[uIdx].role = '认证供稿人';
+                        // Elevate identity
+                        if (users[uIdx].identity === '普通用户') {
+                            users[uIdx].identity = assets[aIdx].authorType === '个人' ? '个人供稿' : '机构供稿';
+                        }
+                        dbSave('hscms_users', users);
+                    }
+                } else {
+                    assets[aIdx].dciCode = '-';
+                    assets[aIdx].antChainId = '-';
+                    
+                    successMsg = `您好！您常规上架的作品《${title}》已成功通过平台常规合规审核，并正式上架售卖。该作品未选择区块链及 DCI 确权服务。`;
+                    toastMsg = `作品常规合规审核通过，已成功上架发布！`;
+                }
+
                 dbSave('hscms_asset_submissions', assets);
 
                 // Push system message notification
@@ -481,24 +611,15 @@
 
                 sysMsgs.push({
                     id: newMsgId,
-                    userId: assets[aIdx].author === '黄山行者' ? 'USER_8820' : 'USER_6672', // Mock map to user ids
-                    title: 'DCI版权申领发证成功通知',
-                    content: `恭喜！您上传的原创作品《${assets[aIdx].title}》已审核通过并成功在国家版权保护中心确权，核发 DCI 码：【${randomDCI}】。已关联您的供稿人账户。`,
+                    userId: authorUserId,
+                    title: isProofed ? 'DCI版权申领发证成功通知' : '常规作品审核上架成功通知',
+                    content: successMsg,
                     time: timeStr,
                     read: false
                 });
                 dbSave('hscms_system_messages', sysMsgs);
 
-                // Auto elevate corresponding user to "认证供稿人" (Certified Contributor)
-                const users = dbGet('hscms_users', []);
-                const matchUser = assets[aIdx].author === '黄山行者' ? 'USER_8820' : 'USER_6672';
-                const uIdx = users.findIndex(u => u.userId === matchUser);
-                if (uIdx !== -1) {
-                    users[uIdx].role = '认证供稿人';
-                    dbSave('hscms_users', users);
-                }
-
-                showLockToast(`作品审核通过，国家 DCI 标识【${randomDCI}】申领并发放成功！`, true);
+                showLockToast(toastMsg, true);
                 loadAssetsList();
             }
         }
