@@ -218,31 +218,31 @@
 
                 <div class="canvas-body">
                     <!-- Search Filters -->
-                    <div class="search-row" style="margin-bottom: 16px;">
-                        <div class="search-col">
+                    <div class="search-row" style="margin-bottom: 16px; flex-direction: column; align-items: flex-start; gap: 12px; width: fit-content; min-width: 280px; padding: 16px;">
+                        <div class="search-col" style="width: 100%;">
                             <label>检索关键词</label>
-                            <input type="text" id="assetKeyword" class="form-control" style="width:200px;" placeholder="资产名称/提交人/ID...">
+                            <input type="text" id="assetKeyword" class="form-control" style="width: 100%;" placeholder="资产名称/提交人/ID...">
                         </div>
-                        <div class="search-col">
+                        <div class="search-col" style="width: 100%;">
                             <label>上架模式</label>
-                            <select id="searchProofMode" class="form-control" style="width:140px;">
+                            <select id="searchProofMode" class="form-control" style="width: 100%;">
                                 <option value="全部">全部上架模式</option>
                                 <option value="是">确权上架</option>
                                 <option value="否">常规上架</option>
                             </select>
                         </div>
-                        <div class="search-col">
+                        <div class="search-col" style="width: 100%;">
                             <label>素材类别</label>
-                            <select id="searchAssetType" class="form-control" style="width:120px;">
+                            <select id="searchAssetType" class="form-control" style="width: 100%;">
                                 <option value="全部">全部类型</option>
                                 <option value="图片">图片</option>
                                 <option value="视频">视频</option>
                                 <option value="文章">文章</option>
                             </select>
                         </div>
-                        <div class="search-col" style="flex-direction:row; gap:8px;">
-                            <button class="btn btn-primary" onclick="loadAssetsList()">查询</button>
-                            <button class="btn" onclick="resetAssetSearch()">重置</button>
+                        <div class="search-col" style="flex-direction:row; gap:8px; width: 100%; margin-top: 4px;">
+                            <button class="btn btn-primary" onclick="loadAssetsList()" style="flex: 1; justify-content: center;">查询</button>
+                            <button class="btn" onclick="resetAssetSearch()" style="flex: 1; justify-content: center;">重置</button>
                         </div>
                     </div>
 
