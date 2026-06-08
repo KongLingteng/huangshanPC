@@ -153,22 +153,27 @@
             <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
             <aside class="sub-sidebar">
                 <div class="sub-sidebar-title">
-                    <span>用户审核</span>
+                    <span>用户管理</span>
                 </div>
                 <ul class="sub-nav-list">
-                    <li class="sub-nav-item active" id="tabPendingNav">
+                    <li class="sub-nav-item active" id="tabListNav">
+                        <a href="javascript:void(0)" onclick="switchTab('list')">
+                            用户列表
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabPendingNav">
                         <a href="javascript:void(0)" onclick="switchTab('待审核')">
-                            资质审核待办
+                            资质审核
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabHistoryNav">
                         <a href="javascript:void(0)" onclick="switchTab('历史记录')">
-                            资质核验历史
+                            审核历史
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabProfilesNav">
                         <a href="javascript:void(0)" onclick="switchTab('profiles')">
-                            用户合规干预
+                            合规检测
                         </a>
                     </li>
                 </ul>
@@ -176,8 +181,49 @@
 
             <!-- MAIN WORKSPACE -->
             <main class="workspace-canvas">
+                <!-- VIEW 0: USERS LIST -->
+                <div id="usersListView" class="tab-content active" style="width:100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>平台用户注册列表</h1>
+                            <p>检索并查看当前系统中所有已注册的用户档案（包括普通用户、认证供稿人等）。</p>
+                        </div>
+                    </div>
+
+                    <div class="canvas-body">
+                        <!-- Search Filters -->
+                        <div class="search-row">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:11px;">模糊检索 (用户ID/昵称)</label>
+                                <input type="text" id="searchListUserQuery" class="form-control" style="width:220px;" placeholder="检索昵称或用户ID...">
+                            </div>
+                            <button class="btn btn-primary" onclick="loadPlainUsersList()">查询</button>
+                            <button class="btn" onclick="resetPlainUserSearch()">重置</button>
+                        </div>
+
+                        <!-- Users list table -->
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>头像</th>
+                                        <th>用户 ID</th>
+                                        <th>用户昵称</th>
+                                        <th>个人简介/签名</th>
+                                        <th>用户角色权限</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="plainUsersTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- VIEW 1: QUALIFICATIONS QUEUE (PENDING/HISTORY) -->
-                <div id="qualificationsView" class="tab-content active" style="width:100%;">
+                <div id="qualificationsView" class="tab-content" style="width:100%;">
                     <div class="workspace-header">
                         <div class="workspace-title-section">
                             <h1 id="pageTitle">供稿资质入驻审核</h1>
@@ -314,14 +360,20 @@
         let currentTab = '待审核';
 
         function switchTab(tab) {
+            document.getElementById('tabListNav').classList.remove('active');
             document.getElementById('tabPendingNav').classList.remove('active');
             document.getElementById('tabHistoryNav').classList.remove('active');
             document.getElementById('tabProfilesNav').classList.remove('active');
 
+            document.getElementById('usersListView').classList.remove('active');
             document.getElementById('qualificationsView').classList.remove('active');
             document.getElementById('profilesView').classList.remove('active');
 
-            if (tab === '待审核') {
+            if (tab === 'list') {
+                document.getElementById('tabListNav').classList.add('active');
+                document.getElementById('usersListView').classList.add('active');
+                loadPlainUsersList();
+            } else if (tab === '待审核') {
                 document.getElementById('tabPendingNav').classList.add('active');
                 document.getElementById('qualificationsView').classList.add('active');
                 document.getElementById('pageTitle').textContent = '供稿资质入驻审核 - 待办队列';
@@ -617,8 +669,63 @@
             }
         }
 
+        // ==========================================
+        // PLAIN USERS LIST
+        // ==========================================
+        function loadPlainUsersList() {
+            const users = dbGet('hscms_users', []);
+            const blacklist = dbGet('hscms_blacklist', []);
+            const query = document.getElementById('searchListUserQuery').value.trim().toLowerCase();
+
+            let filtered = users;
+            if (query) {
+                filtered = filtered.filter(u => u.userId.toLowerCase().includes(query) || u.nickname.toLowerCase().includes(query));
+            }
+
+            const tbody = document.getElementById('plainUsersTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#9ca3af; padding: 24px;">未匹配到符合条件的用户账户</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(u => {
+                const tr = document.createElement('tr');
+                
+                // Avatar preview
+                let avatarPill = '';
+                if (u.avatar) {
+                    avatarPill = `<img class="user-avatar-rect" src="${u.avatar}" alt="Avatar">`;
+                } else {
+                    avatarPill = `<div class="user-avatar-rect" style="background:#e2e8f0; color:#475569;">重</div>`;
+                }
+
+                // Check ban status
+                const isBanned = blacklist.some(b => b.userId === u.userId);
+                const statusBadge = isBanned 
+                    ? `<span class="badge badge-danger">已封禁</span>` 
+                    : `<span class="badge badge-success">正常</span>`;
+
+                tr.innerHTML = `
+                    <td>${avatarPill}</td>
+                    <td><code>${u.userId}</code></td>
+                    <td><strong style="color:#1f2937;">${u.nickname}</strong></td>
+                    <td style="color:#475569; max-width: 280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${u.bio}">${u.bio || '无签名'}</td>
+                    <td><span class="badge" style="background:#eef2f6; color:#4f46e5; border:1px solid #e0e7ff;">${u.role}</span></td>
+                    <td>${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetPlainUserSearch() {
+            document.getElementById('searchListUserQuery').value = '';
+            loadPlainUsersList();
+        }
+
         // Init page load
-        loadQualifications();
+        switchTab('list');
     </script>
 </body>
 </html>
