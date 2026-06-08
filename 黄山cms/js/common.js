@@ -63,8 +63,8 @@ const DEFAULT_BANNERS = [
 ];
 
 const DEFAULT_CAMPAIGNS = [
-    { id: 1, title: '寻找最美迎客松摄影赛', start: '2026-06-01 00:00:00', end: '2026-06-30 23:59:59', visibility: '公开', status: '进行中' },
-    { id: 2, title: '黄山冬雪AIGC润色征集令', start: '2026-12-01 08:00:00', end: '2026-12-15 18:00:00', visibility: '不公开', status: '未开始' }
+    { id: 1, title: '寻找最美迎客松摄影赛', start: '2026-06-01 00:00:00', end: '2026-06-30 23:59:59', visibility: '公开', tag: '迎客松', status: '进行中' },
+    { id: 2, title: '黄山冬雪AIGC润色征集令', start: '2026-12-01 08:00:00', end: '2026-12-15 18:00:00', visibility: '不公开', tag: '冬雪', status: '未开始' }
 ];
 
 // DB Helper Methods
@@ -135,6 +135,21 @@ const DEFAULT_TOPIC_MATERIALS = {
     4: []
 };
 
+const DEFAULT_CAMPAIGN_WORKS = [
+    // 寻找最美迎客松摄影赛 (campaignId: 1)
+    { id: 1, campaignId: 1, content: '今天早晨在玉屏楼前拍的迎客松，云雾缭绕，仿若仙境。', mediaType: '图片', attachment: '迎客松日出云海.jpg', author: '黄山行者', time: '2026-06-02 08:30:00' },
+    { id: 2, campaignId: 1, content: '西海大峡谷的这棵奇松长在峭壁上，生命力极度顽强！', mediaType: '图片', attachment: '西海怪石奇松.jpg', author: '徽风文化传媒', time: '2026-06-03 14:15:30' },
+    { id: 3, campaignId: 1, content: '【高清视频投稿】上帝视角下的迎客松全景，云卷云舒气势恢宏。', mediaType: '视频', attachment: '迎客松全景俯瞰.mp4', author: '大峡谷探险家', time: '2026-06-05 10:00:12' },
+    { id: 4, campaignId: 1, content: '始信峰的雾凇松针特写，晶莹剔透，美得令人窒息。', mediaType: '图片', attachment: '始信峰冰晶松针.jpg', author: '摄影发烧友', time: '2026-06-06 09:40:00' },
+    { id: 5, campaignId: 1, content: '清晨的迎客松，松枝挂着露珠，阳光洒下来格外温暖。', mediaType: '图片', attachment: '晨露松枝特写.jpg', author: '山水墨客', time: '2026-06-07 07:15:22' },
+    { id: 6, campaignId: 1, content: '雨后初晴，莲花峰旁的奇松怪石在晚霞中如梦如幻。', mediaType: '图片', attachment: '莲花峰奇松晚霞.jpg', author: '云游四海', time: '2026-06-07 18:50:00' },
+    { id: 7, campaignId: 1, content: '光明顶旁的古松在松涛阵阵中向游人招手致意。', mediaType: '图片', attachment: '光明顶古松.jpg', author: '驴友阿强', time: '2026-06-08 11:20:00' },
+
+    // 黄山冬雪AIGC润色征集令 (campaignId: 2)
+    { id: 8, campaignId: 2, content: '冬雪覆顶的飞来石，犹如一颗巨大的白玉降临人间。', mediaType: '图片', attachment: '冬雪飞来石AIGC.jpg', author: '徽风文化传媒', time: '2026-12-02 11:30:00' },
+    { id: 9, campaignId: 2, content: '视频记录了黄山雾凇在雪后的绝美景象，纯洁无瑕。', mediaType: '视频', attachment: '雪后黄山雾凇奇景.mp4', author: '黄山行者', time: '2026-12-05 15:40:00' }
+];
+
 // Database Initialization
 function initDatabase() {
     dbGet('hscms_topics', DEFAULT_TOPICS);
@@ -155,6 +170,7 @@ function initDatabase() {
     dbGet('hscms_campaigns', DEFAULT_CAMPAIGNS);
     dbGet('hscms_materials', DEFAULT_MATERIALS);
     dbGet('hscms_topic_materials', DEFAULT_TOPIC_MATERIALS);
+    dbGet('hscms_campaign_works', DEFAULT_CAMPAIGN_WORKS);
 }
 
 // Initialize on Script load
