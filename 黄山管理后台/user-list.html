@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 用户列表</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .user-avatar-rect {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background-color: #f1f5f9;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            object-fit: cover;
+            border: 1px solid #cbd5e1;
+        }
+        .quota-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+            min-width: 140px;
+        }
+        .quota-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px dashed #f1f5f9;
+            padding-bottom: 2px;
+        }
+        .quota-label {
+            color: var(--text-muted);
+        }
+        .quota-val {
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-tip {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+            display: block;
+        }
+        .tab-content {
+            display: block;
+            width: 100%;
+        }
+        .pagination-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .pagination-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-audit.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>用户管理</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item active" id="tabListNav">
+                        <a href="javascript:void(0)">
+                            用户列表
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabPendingNav">
+                        <a href="user-audit.html?tab=pending">
+                            资质审核
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabHistoryNav">
+                        <a href="user-audit.html?tab=history">
+                            审核历史
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabProfilesNav">
+                        <a href="user-audit.html?tab=profiles">
+                            合规检测
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <div id="usersListView" class="tab-content">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>平台用户注册列表</h1>
+                            <p>检索并查看当前系统中所有已注册的用户档案，并对用户的 AIGC 各项能力的额度进行按需配置调整。</p>
+                        </div>
+                    </div>
+
+                    <div class="canvas-body">
+                        <!-- Search Filters -->
+                        <div class="search-row">
+                            <div class="search-col">
+                                <label>用户昵称</label>
+                                <input type="text" id="searchNickname" class="form-control" style="width:180px;" placeholder="模糊搜索昵称/ID...">
+                            </div>
+                            <div class="search-col">
+                                <label>用户身份</label>
+                                <select id="searchIdentity" class="form-control" style="width:140px;">
+                                    <option value="全部">全部身份</option>
+                                    <option value="普通用户">普通用户</option>
+                                    <option value="个人供稿">个人供稿</option>
+                                    <option value="机构供稿">机构供稿</option>
+                                </select>
+                            </div>
+                            <div class="search-col">
+                                <label>加入时间</label>
+                                <input type="date" id="searchJoinTime" class="form-control" style="width:160px;">
+                            </div>
+                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                                <button class="btn btn-primary" onclick="searchUsers()">查询</button>
+                                <button class="btn" onclick="resetSearch()">重置</button>
+                            </div>
+                        </div>
+
+                        <!-- Users list table -->
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>头像</th>
+                                        <th>用户 ID</th>
+                                        <th>用户昵称</th>
+                                        <th>AIGC能力额度 (已用/限制)</th>
+                                        <th>用户身份</th>
+                                        <th>加入时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                            
+                            <!-- Pagination -->
+                            <div class="pagination-container" style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:0 8px;">
+                                <div style="font-size:12px; color:var(--text-muted);" id="pageInfo">
+                                    共 0 条记录，当前第 1/1 页
+                                </div>
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <select id="pageSizeSelect" class="form-control" style="width:100px; padding:4px 8px;" onchange="changePageSize()">
+                                        <option value="5">5 条/页</option>
+                                        <option value="10">10 条/页</option>
+                                        <option value="20">20 条/页</option>
+                                    </select>
+                                    <div class="pagination-buttons" id="paginationButtons" style="display:flex; gap:6px;">
+                                        <!-- Dynamic buttons -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT QUOTA -->
+    <div id="quotaModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>配置 AIGC 能力额度</h3>
+                <button class="modal-close-btn" onclick="closeModal('quotaModal')">&times;</button>
+            </div>
+            <form id="quotaForm" onsubmit="submitQuotaChange(event)">
+                <input type="hidden" id="quotaUserId">
+                <div class="modal-body">
+                    <p style="font-size:12.5px; color:#475569; margin-bottom:16px; font-weight:600;" id="quotaUserDetails"></p>
+                    
+                    <div class="form-group">
+                        <label style="font-weight: 600;">AI 生文总额度</label>
+                        <input type="number" id="quotaTextLimit" class="form-control" required min="0" placeholder="请输入限制次数">
+                        <span class="form-tip" id="quotaTextTip">当前已用: 0 次</span>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600;">AI 生图总额度</label>
+                        <input type="number" id="quotaImageLimit" class="form-control" required min="0" placeholder="请输入限制次数">
+                        <span class="form-tip" id="quotaImageTip">当前已用: 0 次</span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600;">AI 生视频总额度</label>
+                        <input type="number" id="quotaVideoLimit" class="form-control" required min="0" placeholder="请输入限制次数">
+                        <span class="form-tip" id="quotaVideoTip">当前已用: 0 次</span>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 16px;">
+                    <button type="button" class="btn" onclick="closeModal('quotaModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">保存配置</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Pagination state
+        let currentPage = 1;
+        let pageSize = 5;
+        let filteredUsersList = [];
+
+        // Load users on init
+        window.addEventListener('DOMContentLoaded', () => {
+            loadUsersData();
+        });
+
+        function loadUsersData() {
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            filteredUsersList = users;
+            renderUsersTable();
+        }
+
+        function renderUsersTable() {
+            const blacklist = dbGet('hscms_blacklist', []);
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            // Calculate pagination parameters
+            const totalRecords = filteredUsersList.length;
+            const totalPages = Math.ceil(totalRecords / pageSize) || 1;
+            
+            // Adjust current page if out of bounds
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+            
+            const startIdx = (currentPage - 1) * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, totalRecords);
+            const pageRecords = filteredUsersList.slice(startIdx, endIdx);
+
+            // Update UI elements of pagination
+            document.getElementById('pageInfo').textContent = `共 ${totalRecords} 条记录，当前第 ${currentPage}/${totalPages} 页`;
+            renderPaginationButtons(totalPages);
+
+            if (pageRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的用户账户数据</td></tr>`;
+                return;
+            }
+
+            pageRecords.forEach(u => {
+                const tr = document.createElement('tr');
+                
+                // Avatar circle or word logo
+                let avatarPill = '';
+                if (u.avatar) {
+                    avatarPill = `<img class="user-avatar-rect" src="${u.avatar}" alt="Avatar">`;
+                } else {
+                    avatarPill = `<div class="user-avatar-rect" style="background:#e2e8f0; color:#475569;">重</div>`;
+                }
+
+                // Check blacklist state
+                const isBanned = blacklist.some(b => b.userId === u.userId);
+                const statusBadge = isBanned 
+                    ? `<span class="badge badge-danger">已封禁</span>` 
+                    : `<span class="badge badge-success">正常</span>`;
+
+                // Render AIGC Quota
+                const textLimit = u.aiTextLimit !== undefined ? u.aiTextLimit : 1000;
+                const textUsed = u.aiTextUsed !== undefined ? u.aiTextUsed : 0;
+                const imgLimit = u.aiImageLimit !== undefined ? u.aiImageLimit : 100;
+                const imgUsed = u.aiImageUsed !== undefined ? u.aiImageUsed : 0;
+                const vidLimit = u.aiVideoLimit !== undefined ? u.aiVideoLimit : 20;
+                const vidUsed = u.aiVideoUsed !== undefined ? u.aiVideoUsed : 0;
+
+                const identity = u.identity || '普通用户';
+                let identityColor = '#3b82f6';
+                if (identity === '个人供稿') identityColor = '#10b981';
+                if (identity === '机构供稿') identityColor = '#8b5cf6';
+
+                tr.innerHTML = `
+                    <td>${avatarPill}</td>
+                    <td><code>${u.userId}</code></td>
+                    <td><strong style="color:#1f2937;">${u.nickname}</strong></td>
+                    <td>
+                        <div class="quota-container">
+                            <div class="quota-item">
+                                <span class="quota-label">生文:</span>
+                                <span class="quota-val">${textUsed} / ${textLimit}</span>
+                            </div>
+                            <div class="quota-item">
+                                <span class="quota-label">生图:</span>
+                                <span class="quota-val">${imgUsed} / ${imgLimit}</span>
+                            </div>
+                            <div class="quota-item">
+                                <span class="quota-label">生视频:</span>
+                                <span class="quota-val">${vidUsed} / ${vidLimit}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge" style="background-color: ${identityColor}15; color: ${identityColor}; font-weight: 500;">
+                            ${identity}
+                        </span>
+                    </td>
+                    <td style="color:#64748b; font-size:12px;">${u.joinTime || '2026-05-01'}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <a href="javascript:void(0)" class="action-link" onclick="openQuotaModal('${u.userId}')">修改额度</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderPaginationButtons(totalPages) {
+            const buttonsContainer = document.getElementById('paginationButtons');
+            buttonsContainer.innerHTML = '';
+
+            // Previous Button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.textContent = '上一页';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderUsersTable();
+                }
+            };
+            buttonsContainer.appendChild(prevBtn);
+
+            // Page Number Buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn ${currentPage === i ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    renderUsersTable();
+                };
+                buttonsContainer.appendChild(pageBtn);
+            }
+
+            // Next Button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.textContent = '下一页';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderUsersTable();
+                }
+            };
+            buttonsContainer.appendChild(nextBtn);
+        }
+
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('pageSizeSelect').value);
+            currentPage = 1;
+            renderUsersTable();
+        }
+
+        // Search action
+        function searchUsers() {
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const nickname = document.getElementById('searchNickname').value.trim().toLowerCase();
+            const identity = document.getElementById('searchIdentity').value;
+            const joinTime = document.getElementById('searchJoinTime').value;
+
+            let result = users;
+
+            if (nickname) {
+                result = result.filter(u => u.userId.toLowerCase().includes(nickname) || u.nickname.toLowerCase().includes(nickname));
+            }
+
+            if (identity !== '全部') {
+                result = result.filter(u => (u.identity || '普通用户') === identity);
+            }
+
+            if (joinTime) {
+                // Exact date filter (YYYY-MM-DD)
+                result = result.filter(u => u.joinTime === joinTime);
+            }
+
+            filteredUsersList = result;
+            currentPage = 1;
+            renderUsersTable();
+        }
+
+        function resetSearch() {
+            document.getElementById('searchNickname').value = '';
+            document.getElementById('searchIdentity').value = '全部';
+            document.getElementById('searchJoinTime').value = '';
+            
+            loadUsersData();
+            currentPage = 1;
+        }
+
+        // Modal triggers
+        function openQuotaModal(userId) {
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const u = users.find(user => user.userId === userId);
+            if (!u) return;
+
+            document.getElementById('quotaUserId').value = userId;
+            document.getElementById('quotaUserDetails').textContent = `为用户 《${u.nickname}》(${u.userId}) 调整 AIGC 额度上限:`;
+
+            const textLimit = u.aiTextLimit !== undefined ? u.aiTextLimit : 1000;
+            const textUsed = u.aiTextUsed !== undefined ? u.aiTextUsed : 0;
+            const imgLimit = u.aiImageLimit !== undefined ? u.aiImageLimit : 100;
+            const imgUsed = u.aiImageUsed !== undefined ? u.aiImageUsed : 0;
+            const vidLimit = u.aiVideoLimit !== undefined ? u.aiVideoLimit : 20;
+            const vidUsed = u.aiVideoUsed !== undefined ? u.aiVideoUsed : 0;
+
+            document.getElementById('quotaTextLimit').value = textLimit;
+            document.getElementById('quotaTextTip').textContent = `已使用: ${textUsed} 次 (新设额度不可低于该值)`;
+            document.getElementById('quotaTextTip').dataset.used = textUsed;
+
+            document.getElementById('quotaImageLimit').value = imgLimit;
+            document.getElementById('quotaImageTip').textContent = `已使用: ${imgUsed} 次 (新设额度不可低于该值)`;
+            document.getElementById('quotaImageTip').dataset.used = imgUsed;
+
+            document.getElementById('quotaVideoLimit').value = vidLimit;
+            document.getElementById('quotaVideoTip').textContent = `已使用: ${vidUsed} 次 (新设额度不可低于该值)`;
+            document.getElementById('quotaVideoTip').dataset.used = vidUsed;
+
+            openModal('quotaModal');
+        }
+
+        function submitQuotaChange(e) {
+            e.preventDefault();
+            const userId = document.getElementById('quotaUserId').value;
+            
+            const newTextLimit = parseInt(document.getElementById('quotaTextLimit').value);
+            const newImageLimit = parseInt(document.getElementById('quotaImageLimit').value);
+            const newVideoLimit = parseInt(document.getElementById('quotaVideoLimit').value);
+
+            const textUsed = parseInt(document.getElementById('quotaTextTip').dataset.used);
+            const imgUsed = parseInt(document.getElementById('quotaImageTip').dataset.used);
+            const vidUsed = parseInt(document.getElementById('quotaVideoTip').dataset.used);
+
+            // Validation limits
+            if (newTextLimit < textUsed) {
+                showLockToast(`生文额度设置失败：新设上限不能低于已使用次数(${textUsed})！`, false);
+                return;
+            }
+            if (newImageLimit < imgUsed) {
+                showLockToast(`生图额度设置失败：新设上限不能低于已使用次数(${imgUsed})！`, false);
+                return;
+            }
+            if (newVideoLimit < vidUsed) {
+                showLockToast(`生视频额度设置失败：新设上限不能低于已使用次数(${vidUsed})！`, false);
+                return;
+            }
+
+            // Save configuration
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const idx = users.findIndex(user => user.userId === userId);
+            if (idx !== -1) {
+                users[idx].aiTextLimit = newTextLimit;
+                users[idx].aiImageLimit = newImageLimit;
+                users[idx].aiVideoLimit = newVideoLimit;
+
+                dbSave('hscms_users', users);
+                showLockToast('AIGC 额度配置成功保存！', true);
+                closeModal('quotaModal');
+
+                // Reload layout
+                loadUsersData();
+            }
+        }
+    </script>
+</body>
+</html>

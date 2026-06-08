@@ -177,10 +177,18 @@ const DEFAULT_QUALIFICATIONS = [
 ];
 
 const DEFAULT_USERS = [
-    { userId: 'USER_8820', nickname: '黄山行者', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop', bio: '热爱摄影的旅行博主，专注于记录黄山四季美景。', role: '供稿人(未认证)' },
-    { userId: 'USER_5541', nickname: '大峡谷探险家', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop', bio: '行万里路，写最真实的旅游攻略！', role: '认证供稿人' },
-    { userId: 'USER_6672', nickname: '徽风文化传媒', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&auto=format&fit=crop', bio: '专注于安徽徽派文化、黄山自然风光的专业传媒机构。', role: '供稿人(未认证)' },
-    { userId: 'USER_9901', nickname: '代开发票A', avatar: '', bio: '违规广告账号。', role: '普通用户' }
+    { userId: 'USER_8820', nickname: '黄山行者', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop', bio: '热爱摄影的旅行博主，专注于记录黄山四季美景。', role: '供稿人(未认证)', identity: '普通用户', joinTime: '2026-05-12', aiTextLimit: 1000, aiTextUsed: 120, aiImageLimit: 100, aiImageUsed: 25, aiVideoLimit: 20, aiVideoUsed: 3 },
+    { userId: 'USER_5541', nickname: '大峡谷探险家', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop', bio: '行万里路，写最真实的旅游攻略！', role: '认证供稿人', identity: '个人供稿', joinTime: '2026-04-18', aiTextLimit: 2000, aiTextUsed: 450, aiImageLimit: 200, aiImageUsed: 80, aiVideoLimit: 50, aiVideoUsed: 12 },
+    { userId: 'USER_6672', nickname: '徽风文化传媒', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&auto=format&fit=crop', bio: '专注于安徽徽派文化、黄山自然风光的专业传媒机构。', role: '供稿人(未认证)', identity: '机构供稿', joinTime: '2026-05-25', aiTextLimit: 5000, aiTextUsed: 1100, aiImageLimit: 500, aiImageUsed: 180, aiVideoLimit: 100, aiVideoUsed: 35 },
+    { userId: 'USER_9901', nickname: '代开发票A', avatar: '', bio: '违规广告账号。', role: '普通用户', identity: '普通用户', joinTime: '2026-05-30', aiTextLimit: 500, aiTextUsed: 50, aiImageLimit: 50, aiImageUsed: 5, aiVideoLimit: 10, aiVideoUsed: 0 },
+    { userId: 'USER_1001', nickname: '松涛入梦', avatar: '', bio: '静听松涛，心如止水。', role: '认证供稿人', identity: '个人供稿', joinTime: '2026-05-01', aiTextLimit: 1000, aiTextUsed: 300, aiImageLimit: 100, aiImageUsed: 15, aiVideoLimit: 20, aiVideoUsed: 2 },
+    { userId: 'USER_1002', nickname: '云海行舟', avatar: '', bio: '随风起舞，浪迹云海。', role: '普通用户', identity: '普通用户', joinTime: '2026-05-02', aiTextLimit: 1000, aiTextUsed: 500, aiImageLimit: 150, aiImageUsed: 60, aiVideoLimit: 30, aiVideoUsed: 5 },
+    { userId: 'USER_1003', nickname: '光明顶守望者', avatar: '', bio: '十年如一日守候黄山日出。', role: '认证供稿人', identity: '个人供稿', joinTime: '2026-05-05', aiTextLimit: 1500, aiTextUsed: 800, aiImageLimit: 200, aiImageUsed: 95, aiVideoLimit: 40, aiVideoUsed: 8 },
+    { userId: 'USER_1004', nickname: '翡翠谷溪流', avatar: '', bio: '安徽知名文化旅游传媒工作室。', role: '认证供稿人', identity: '机构供稿', joinTime: '2026-05-10', aiTextLimit: 3000, aiTextUsed: 1500, aiImageLimit: 400, aiImageUsed: 220, aiVideoLimit: 60, aiVideoUsed: 18 },
+    { userId: 'USER_1005', nickname: '徽州古村落', avatar: '', bio: '记录青砖黛瓦的徽派印记。', role: '普通用户', identity: '普通用户', joinTime: '2026-05-15', aiTextLimit: 500, aiTextUsed: 200, aiImageLimit: 50, aiImageUsed: 10, aiVideoLimit: 10, aiVideoUsed: 0 },
+    { userId: 'USER_1006', nickname: '西海飞石', avatar: '', bio: '奇峰怪石，自然奇观。', role: '认证供稿人', identity: '个人供稿', joinTime: '2026-05-18', aiTextLimit: 1000, aiTextUsed: 600, aiImageLimit: 100, aiImageUsed: 45, aiVideoLimit: 20, aiVideoUsed: 4 },
+    { userId: 'USER_1007', nickname: '屯溪老街客', avatar: '', bio: '行走在岁月打磨的石板路上。', role: '普通用户', identity: '普通用户', joinTime: '2026-05-20', aiTextLimit: 500, aiTextUsed: 100, aiImageLimit: 50, aiImageUsed: 8, aiVideoLimit: 10, aiVideoUsed: 1 },
+    { userId: 'USER_1008', nickname: '新安江渔歌', avatar: '', bio: '专注山水廊道及新安江流域风光宣介。', role: '认证供稿人', identity: '机构供稿', joinTime: '2026-05-22', aiTextLimit: 5000, aiTextUsed: 2500, aiImageLimit: 600, aiImageUsed: 310, aiVideoLimit: 80, aiVideoUsed: 22 }
 ];
 
 const DEFAULT_SYSTEM_MESSAGES = [
