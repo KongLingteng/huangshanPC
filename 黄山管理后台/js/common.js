@@ -145,6 +145,30 @@ const DEFAULT_UGC_POSTS = [
     { id: 4, title: '黄山山顶住宿避坑指南，必看！', authorId: 'USER_8820', publishTime: '2026-06-01 08:20:00', type: '图文', views: 150, comments: 2, status: '正常', shieldReason: '', content: '千万不要临时去订房，价格贵而且经常没房。最好提前半个月在官方小程序预订。', mediaUrl: '' }
 ];
 
+const DEFAULT_UGC_COMMENTS = [
+    // 帖子 1 评论
+    { id: 101, postId: 1, userId: 'USER_5541', content: '景色太壮观了！请问光明顶几点去占位置比较好？', time: '2026-06-01 11:00:00', status: '正常', parentId: null },
+    { id: 102, postId: 1, userId: 'USER_8820', content: '我是早上 4:30 到的，人已经不少了，建议提前一点过去。', time: '2026-06-01 11:15:00', status: '正常', parentId: 101, replyTo: '大峡谷探险家' },
+    { id: 103, postId: 1, userId: 'USER_5541', content: '收到，多谢博主！那我就 4 点出发。', time: '2026-06-01 11:20:00', status: '正常', parentId: 101, replyTo: '黄山行者' },
+    { id: 104, postId: 1, userId: 'USER_6672', content: '黄山的云海确实名不虚传，期待博主更多大作！', time: '2026-06-01 12:30:00', status: '正常', parentId: null },
+    { id: 105, postId: 1, userId: 'USER_1001', content: '非常漂亮的日出，构图极其精美，学习了！', time: '2026-06-01 13:00:00', status: '正常', parentId: null },
+    { id: 106, postId: 1, userId: 'USER_1002', content: '看完好想去啊，下周调休就去！', time: '2026-06-01 14:00:00', status: '正常', parentId: null },
+    { id: 107, postId: 1, userId: 'USER_1003', content: '请问一下博主是用什么相机和镜头拍摄的？', time: '2026-06-01 14:30:00', status: '正常', parentId: null },
+    { id: 108, postId: 1, userId: 'USER_8820', content: '用的是全画幅机身，搭配 24-70mm 变焦镜头，云海大场景很适合这个焦段。', time: '2026-06-01 14:45:00', status: '正常', parentId: 107, replyTo: '光明顶守望者' },
+    { id: 109, postId: 1, userId: 'USER_1003', content: '谢谢博主，我也打算带上我的 2470 出行了。', time: '2026-06-01 15:00:00', status: '正常', parentId: 107, replyTo: '黄山行者' },
+    { id: 110, postId: 1, userId: 'USER_1005', content: '迎客松那里的雾气是不是很大？需要做防水保护吗？', time: '2026-06-01 15:30:00', status: '正常', parentId: null },
+    { id: 111, postId: 1, userId: 'USER_8820', content: '早上露水比较重，最好备个相机防雨罩或干毛巾，随时擦拭。', time: '2026-06-01 15:45:00', status: '正常', parentId: 110, replyTo: '徽州古村落' },
+
+    // 帖子 2 评论
+    { id: 201, postId: 2, userId: 'USER_8820', content: '同感，排队时间确实有点久。其实可以从前山上去。', time: '2026-06-02 12:00:00', status: '正常', parentId: null },
+    { id: 202, postId: 2, userId: 'USER_1001', content: '请问步行下峡谷大概要走多久啊？', time: '2026-06-02 12:15:00', status: '正常', parentId: null },
+    { id: 203, postId: 2, userId: 'USER_5541', content: '大概需要 2 个小时，台阶比较陡，很考验膝盖。', time: '2026-06-02 12:30:00', status: '正常', parentId: 202, replyTo: '松涛入梦' },
+
+    // 帖子 3 评论
+    { id: 301, postId: 3, userId: 'USER_1006', content: '这个航拍镜头拉得太漂亮了，有大片视感！', time: '2026-05-28 16:00:00', status: '正常', parentId: null },
+    { id: 302, postId: 3, userId: 'USER_6672', content: '谢谢支持！冬天的飞来石在雪里有一种独特的宁静美。', time: '2026-05-28 16:15:00', status: '正常', parentId: 301, replyTo: '西海飞石' }
+];
+
 const DEFAULT_SENSITIVE_WORDS = [
     { id: 1, word: '发票代开', category: '侵权', replacement: '***' },
     { id: 2, word: '违禁药品', category: '色情', replacement: '***' },
@@ -294,6 +318,7 @@ function initDatabase() {
 
     // New tables
     dbGet('hscms_ugc_posts', DEFAULT_UGC_POSTS);
+    dbGet('hscms_ugc_comments', DEFAULT_UGC_COMMENTS);
     dbGet('hscms_sensitive_words', DEFAULT_SENSITIVE_WORDS);
     dbGet('hscms_blacklist', DEFAULT_BLACKLIST);
     dbGet('hscms_asset_submissions', DEFAULT_ASSET_SUBMISSIONS);

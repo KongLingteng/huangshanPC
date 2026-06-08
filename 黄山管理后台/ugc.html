@@ -180,7 +180,12 @@
                 <ul class="sub-nav-list">
                     <li class="sub-nav-item active" id="tabPostNav">
                         <a href="javascript:void(0)" onclick="switchTab('posts')">
-                            帖子与评论管理
+                            帖子管理
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabCommentNav">
+                        <a href="javascript:void(0)" onclick="switchTab('comments')">
+                            评论管理
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabWordNav">
@@ -298,6 +303,62 @@
                                     </tr>
                                 </thead>
                                 <tbody id="postsTableBody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 1.5: COMMENTS MANAGEMENT -->
+                <div id="commentsTab" class="tab-content" style="width: 100%;">
+                    <div class="workspace-header">
+                        <div class="workspace-title-section">
+                            <h1>评论管理</h1>
+                            <p>集中检索移动端 UGC 社区评论，人工干预争议性或低俗评论内容</p>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-body">
+                        <!-- Search Filters -->
+                        <div class="search-row">
+                            <div class="search-col">
+                                <label>评论人 ID / 昵称</label>
+                                <input type="text" id="filterCommentUser" class="form-control" style="width:160px;" placeholder="例如 USER_5541 或 昵称">
+                            </div>
+                            <div class="search-col">
+                                <label>评论内容关键字</label>
+                                <input type="text" id="filterCommentContent" class="form-control" style="width:180px;" placeholder="检索评论内容">
+                            </div>
+                            <div class="search-col">
+                                <label>合规状态</label>
+                                <select id="filterCommentStatus" class="form-control" style="width:120px;">
+                                    <option value="全部">全部</option>
+                                    <option value="正常">正常</option>
+                                    <option value="已下架">已下架</option>
+                                </select>
+                            </div>
+                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                                <button class="btn btn-primary" onclick="loadComments()">查询</button>
+                                <button class="btn" onclick="resetCommentFilters()">重置</button>
+                            </div>
+                        </div>
+
+                        <!-- Comments Table -->
+                        <div class="enterprise-card">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>评论内容</th>
+                                        <th>评论人ID</th>
+                                        <th>评论人昵称</th>
+                                        <th>所属帖子 (帖子名称)</th>
+                                        <th>发布时间</th>
+                                        <th>合规状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="commentsTableBody">
                                     <!-- Dynamic content -->
                                 </tbody>
                             </table>
@@ -552,6 +613,7 @@
         function switchTab(tab) {
             // Manage active classes on subbar
             document.getElementById('tabPostNav').classList.remove('active');
+            if (document.getElementById('tabCommentNav')) document.getElementById('tabCommentNav').classList.remove('active');
             document.getElementById('tabWordNav').classList.remove('active');
             document.getElementById('tabBlacklistNav').classList.remove('active');
             document.getElementById('tabTopicNav').classList.remove('active');
@@ -559,6 +621,7 @@
             // Hide all tab views
             document.getElementById('topicsTab').classList.remove('active');
             document.getElementById('postsTab').classList.remove('active');
+            if (document.getElementById('commentsTab')) document.getElementById('commentsTab').classList.remove('active');
             document.getElementById('wordsTab').classList.remove('active');
             document.getElementById('blacklistTab').classList.remove('active');
 
@@ -570,6 +633,10 @@
                 document.getElementById('tabPostNav').classList.add('active');
                 document.getElementById('postsTab').classList.add('active');
                 loadPostsList();
+            } else if (tab === 'comments') {
+                if (document.getElementById('tabCommentNav')) document.getElementById('tabCommentNav').classList.add('active');
+                if (document.getElementById('commentsTab')) document.getElementById('commentsTab').classList.add('active');
+                loadComments();
             } else if (tab === 'words') {
                 document.getElementById('tabWordNav').classList.add('active');
                 document.getElementById('wordsTab').classList.add('active');
@@ -751,11 +818,13 @@
                 
                 // Status badge
                 let statusBadge = `<span class="badge badge-success">正常</span>`;
-                let actionBtn = `<a href="javascript:void(0)" class="action-link danger" onclick="triggerShieldModal(${p.id})">下架屏蔽</a>`;
+                let actionBtn = `<a href="javascript:void(0)" class="action-link danger" onclick="triggerShieldModal(${p.id})">下架屏蔽</a>
+                                 <a href="post-detail.html?id=${p.id}" class="action-link" style="margin-left: 8px;">查看详情</a>`;
                 
                 if (p.status === '已下架') {
                     statusBadge = `<span class="badge badge-danger" title="原因：${p.shieldReason || '未录入'}">已下架</span>`;
-                    actionBtn = `<span style="color:#9ca3af; font-size: 12px; cursor: not-allowed;" title="原因：${p.shieldReason}">已人工干预</span>`;
+                    actionBtn = `<span style="color:#9ca3af; font-size: 12px; cursor: not-allowed; margin-right: 8px;" title="原因：${p.shieldReason}">已人工干预</span>
+                                 <a href="post-detail.html?id=${p.id}" class="action-link">查看详情</a>`;
                 }
 
                 // Media layout preview
@@ -1107,6 +1176,120 @@
 
             showLockToast(`用户 ${userId} 已成功解除封禁限制`, true);
             loadBlacklist();
+        }
+
+        // ==========================================
+        // TAB 1.5: COMMENTS MANAGEMENT
+        // ==========================================
+        function loadComments() {
+            const comments = dbGet('hscms_ugc_comments', DEFAULT_UGC_COMMENTS);
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const posts = dbGet('hscms_ugc_posts', []);
+
+            // 建立 maps 提高查找效率
+            const userMap = {};
+            users.forEach(u => { userMap[u.userId] = u.nickname; });
+            const postMap = {};
+            posts.forEach(p => { postMap[p.id] = p.title || p.content || '无标题帖子'; });
+
+            const filterUser = document.getElementById('filterCommentUser').value.trim().toLowerCase();
+            const filterContent = document.getElementById('filterCommentContent').value.trim().toLowerCase();
+            const filterStatus = document.getElementById('filterCommentStatus').value;
+
+            let filtered = comments;
+
+            // 筛选评论人（ID或昵称）
+            if (filterUser) {
+                filtered = filtered.filter(c => {
+                    const nickname = (userMap[c.userId] || '').toLowerCase();
+                    return c.userId.toLowerCase().includes(filterUser) || nickname.includes(filterUser);
+                });
+            }
+
+            // 筛选内容
+            if (filterContent) {
+                filtered = filtered.filter(c => c.content.toLowerCase().includes(filterContent));
+            }
+
+            // 筛选合规状态
+            if (filterStatus !== '全部') {
+                filtered = filtered.filter(c => c.status === filterStatus);
+            }
+
+            const tbody = document.getElementById('commentsTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding:24px;">暂无匹配的评论数据</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const tr = document.createElement('tr');
+                const nick = userMap[c.userId] || '未知用户';
+                const postTitle = postMap[c.postId] || `未知帖子 (ID:${c.postId})`;
+
+                let statusBadge = `<span class="badge badge-success">正常</span>`;
+                let actionBtn = `<a href="javascript:void(0)" class="action-link danger" onclick="shieldComment(${c.id})">下架屏蔽</a>
+                                 <a href="post-detail.html?id=${c.postId}" class="action-link" style="margin-left: 8px;">查看详情</a>`;
+
+                if (c.status === '已下架') {
+                    statusBadge = `<span class="badge badge-danger">已下架</span>`;
+                    actionBtn = `<span style="color:#9ca3af; font-size:12px; cursor:not-allowed; margin-right: 8px;">已人工干预</span>
+                                 <a href="post-detail.html?id=${c.postId}" class="action-link">查看详情</a>`;
+                }
+
+                // 支持二级评论的视觉呈现
+                let commentContentLayout = c.parentId ? `<span style="color:var(--primary-color); font-size:11px; margin-right: 4px;">[回复子评]</span> ${c.content}` : c.content;
+
+                tr.innerHTML = `
+                    <td><div style="max-width:300px; word-break:break-all;">${commentContentLayout}</div></td>
+                    <td><code>${c.userId}</code></td>
+                    <td><span style="font-weight:500; color:#475569;">${nick}</span></td>
+                    <td><div style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${postTitle}">${postTitle}</div></td>
+                    <td style="color:#64748b; font-size:12px;">${c.time}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetCommentFilters() {
+            document.getElementById('filterCommentUser').value = '';
+            document.getElementById('filterCommentContent').value = '';
+            document.getElementById('filterCommentStatus').value = '全部';
+            loadComments();
+        }
+
+        function shieldComment(commentId) {
+            if (confirm('确定要强制下架屏蔽该条评论内容吗？此操作无法撤销。')) {
+                const comments = dbGet('hscms_ugc_comments', DEFAULT_UGC_COMMENTS);
+                const idx = comments.findIndex(c => c.id === commentId);
+                if (idx !== -1) {
+                    comments[idx].status = '已下架';
+                    dbSave('hscms_ugc_comments', comments);
+                    
+                    // 下发系统通知给评论人
+                    const sysMsgs = dbGet('hscms_system_messages', []);
+                    const newMsgId = sysMsgs.length > 0 ? Math.max(...sysMsgs.map(m => m.id)) + 1 : 1;
+                    const now = new Date();
+                    const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+                    sysMsgs.push({
+                        id: newMsgId,
+                        userId: comments[idx].userId,
+                        title: '评论下架告知书',
+                        content: `您的评论内容“${comments[idx].content.substring(0, 15)}...”涉嫌违规被管理员下架。`,
+                        time: timeStr,
+                        read: false
+                    });
+                    dbSave('hscms_system_messages', sysMsgs);
+
+                    showLockToast('评论下架成功，系统消息已自动推送！', true);
+                    loadComments();
+                }
+            }
         }
 
         // Init page load
