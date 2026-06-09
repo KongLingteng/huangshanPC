@@ -120,6 +120,10 @@
                         <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
                         <span>合同配置</span>
                     </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73(a1.69)-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
                 </div>
             </aside>
 
@@ -237,6 +241,7 @@
                                     <option value="全部">全部状态</option>
                                     <option value="已出证">已出证</option>
                                     <option value="处理中">处理中</option>
+                                    <option value="已退款">已退款</option>
                                 </select>
                             </div>
                             <div class="search-col" style="flex-direction:row; gap:8px;">
@@ -313,6 +318,129 @@
         </div>
     </div>
 
+    <!-- MODAL: MATERIAL ORDER DETAIL -->
+    <div id="materialDetailModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>素材订单详情</h3>
+                <button class="modal-close-btn" onclick="closeModal('materialDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- 订单基本信息 -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                    <h4 style="margin-top: 0; margin-bottom: 12px; font-size: 13.5px; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">订单及支付信息</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">订单 ID:</span>
+                            <code id="mDetOrderId" style="margin-left: 6px;">-</code>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">订单状态:</span>
+                            <span id="mDetStatus" style="margin-left: 6px;">-</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">实付金额:</span>
+                            <span id="mDetPrice" style="margin-left: 6px; font-weight: 600; color: #10b981;">-</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">买家 ID:</span>
+                            <code id="mDetBuyerId" style="margin-left: 6px;">-</code>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">支付渠道:</span>
+                            <span id="mDetChannel" class="badge" style="margin-left: 6px; background: #f1f5f9; color: #475569;">-</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">交易时间:</span>
+                            <span id="mDetTime" style="margin-left: 6px; color: #475569;">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 素材内容信息 -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+                    <h4 style="margin-top: 0; margin-bottom: 8px; font-size: 13.5px; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">购买素材及预览</h4>
+                    <div>
+                        <span style="color: #64748b; font-weight: 500; font-size: 13px;">素材名称:</span>
+                        <strong id="mDetMaterialName" style="margin-left: 6px; color: #1f2937; font-size: 13px;">-</strong>
+                    </div>
+                    <div id="mDetPreviewContainer" style="background-color: #f8fafc; border-radius: 6px; padding: 12px; display: flex; align-items: center; justify-content: center; min-height: 180px; border: 1px dashed #e2e8f0; margin-top: 6px;">
+                        <!-- 素材预览 -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('materialDetailModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PROOF ORDER DETAIL -->
+    <div id="proofDetailModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>确权订单详情</h3>
+                <button class="modal-close-btn" onclick="closeModal('proofDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- 订单基本信息 -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                    <h4 style="margin-top: 0; margin-bottom: 12px; font-size: 13.5px; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">存证确权服务及订单信息</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">订单 ID:</span>
+                            <code id="pDetOrderId" style="margin-left: 6px;">-</code>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">证书状态:</span>
+                            <span id="pDetStatus" style="margin-left: 6px;">-</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">确权费用:</span>
+                            <span id="pDetPrice" style="margin-left: 6px; font-weight: 600; color: #4f46e5;">-</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">申请主体:</span>
+                            <span id="pDetApplicant" style="margin-left: 6px; font-weight: 500; color: #374151;">-</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">交易时间:</span>
+                            <span id="pDetTime" style="margin-left: 6px; color: #475569;">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 区块链与 DCI 证书信息 -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                    <h4 style="margin-top: 0; margin-bottom: 4px; font-size: 13.5px; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">区块链存证与 DCI 登记</h4>
+                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">存证作品名称:</span>
+                            <strong id="pDetWorkName" style="margin-left: 6px; color: #1f2937;">-</strong>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">DCI 确权登记码:</span>
+                            <span id="pDetDciCode" style="margin-left: 6px; font-family: monospace; font-weight: 700; color: #1677ff;">-</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">蚂蚁链区块存证 ID:</span>
+                            <span id="pDetAntChain" style="margin-left: 6px; font-family: monospace; color: #475569;">-</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+                            <span style="color: #64748b; font-weight: 500;">区块查验回执:</span>
+                            <div class="ledger-box" id="pDetLedger" style="margin-top: 4px; background: #0f172a; border-radius: 6px; padding: 12px; color: #e2e8f0; font-family: monospace; font-size: 11px;">
+                                <!-- Ledger Content -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('proofDetailModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <div id="lockToast" class="toast-container">
         <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
         <span id="lockToastText"></span>
@@ -324,6 +452,74 @@
         let materialPage = 1;
         let proofPage = 1;
         const pageSize = 5;
+
+        // Helper functions for asset mapping
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return Math.abs(hash);
+        }
+
+        function generateSimulatedHash(str) {
+            let hash = '';
+            const chars = '0123456789abcdef';
+            for (let i = 0; i < 64; i++) {
+                const index = (str.charCodeAt(i % str.length) + i) % 16;
+                hash += chars[index];
+            }
+            return hash;
+        }
+
+        function getAssetIdByName(name) {
+            if (!name) return 'SUB_8001';
+            
+            const submissions = dbGet('hscms_asset_submissions', DEFAULT_ASSET_SUBMISSIONS);
+            
+            // 1. 去除后缀以获得干净的关键词
+            const cleanName = name.replace(/\.(jpg|png|mp4|zip|pdf|doc|txt)$/i, '')
+                                 .replace(/[.()（）\[\]\-_]/g, ' ')
+                                 .trim();
+            
+            // 2. 尝试精确匹配标题
+            let found = submissions.find(s => s.title === cleanName || s.title.includes(cleanName) || cleanName.includes(s.title));
+            if (found) return found.id;
+            
+            // 3. 提取常见关键词并尝试匹配
+            const keywords = ['迎客松', '飞来石', '峡谷', '翡翠谷', '云谷', '宏村', '光明顶', '始信峰', '呈坎', '西海', '屯溪', '新安江', '木梨硆'];
+            for (const kw of keywords) {
+                if (name.includes(kw)) {
+                    found = submissions.find(s => s.title.includes(kw));
+                    if (found) return found.id;
+                }
+            }
+            
+            // 4. 如果没有，则动态创建一个新的 asset_submission 记录以保证能在详情页展示！
+            const newId = 'SUB_GEN_' + hashCode(cleanName);
+            const exists = submissions.find(s => s.id === newId);
+            if (!exists) {
+                const isVideo = name.includes('mp4') || name.includes('视频') || name.includes('短片') || name.includes('延时');
+                const isDoc = name.includes('pdf') || name.includes('doc') || name.includes('txt') || name.includes('攻略') || name.includes('手绘') || name.includes('路线图') || name.includes('手册');
+                
+                const newSubmission = {
+                    id: newId,
+                    title: cleanName,
+                    hash: generateSimulatedHash(cleanName),
+                    author: '供稿合作方',
+                    authorType: '个人',
+                    submitTime: '2026-06-02 12:00:00',
+                    needProof: name.includes('zip') || isDoc ? '否' : '是',
+                    antChainId: 'AntChain_' + newId.substring(8),
+                    dciCode: 'DCI-2026-' + newId.substring(8),
+                    status: '审核成功',
+                    rejectReason: ''
+                };
+                submissions.push(newSubmission);
+                dbSave('hscms_asset_submissions', submissions);
+            }
+            return newId;
+        }
 
         // Filtered Lists
         let filteredMaterials = [];
@@ -396,9 +592,7 @@
                     ? `<span class="badge badge-success">交易成功</span>`
                     : `<span class="badge badge-danger">已退款</span>`;
 
-                const actionBtn = o.status === '已完成'
-                    ? `<a href="javascript:void(0)" class="action-link danger" onclick="refundMaterialOrder('${o.orderId}')">退款</a>`
-                    : `<span style="color:#9ca3af; font-size:12px;">已处理</span>`;
+                const actionBtn = `<a href="javascript:void(0)" class="action-link" onclick="openMaterialDetailModal('${o.orderId}')">详情</a>`;
 
                 tr.innerHTML = `
                     <td><code>${o.orderId}</code></td>
@@ -412,36 +606,6 @@
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        function refundMaterialOrder(orderId) {
-            if (confirm(`确定要为素材订单 ${orderId} 办理退款吗？退款后状态将变更为“已退款”，且不可撤销！`)) {
-                const rawOrders = dbGet('hscms_material_orders', DEFAULT_MATERIAL_ORDERS);
-                const idx = rawOrders.findIndex(o => o.orderId === orderId);
-                if (idx !== -1) {
-                    rawOrders[idx].status = '已退款';
-                    dbSave('hscms_material_orders', rawOrders);
-                    showLockToast(`订单 ${orderId} 退款手续已成功办理！`, true);
-                    
-                    // Keep original search filters
-                    const keyword = document.getElementById('matKeyword').value.trim().toLowerCase();
-                    const channel = document.getElementById('matChannel').value;
-                    const status = document.getElementById('matStatus').value;
-                    
-                    // Filter again
-                    filteredMaterials = rawOrders.filter(o => {
-                        const matchesKeyword = !keyword || 
-                            o.orderId.toLowerCase().includes(keyword) || 
-                            o.materialName.toLowerCase().includes(keyword) || 
-                            o.buyerId.toLowerCase().includes(keyword);
-                        const matchesChannel = channel === '全部' || o.channel === channel;
-                        const matchesStatus = status === '全部' || o.status === status;
-                        return matchesKeyword && matchesChannel && matchesStatus;
-                    });
-                    
-                    renderMaterialTable();
-                }
-            }
         }
 
         function searchMaterialOrders() {
@@ -507,17 +671,33 @@
             pageRecords.forEach(o => {
                 const tr = document.createElement('tr');
                 
-                const statusBadge = o.status === '已出证'
-                    ? `<span class="badge badge-success">已出证</span>`
-                    : `<span class="badge badge-warning">处理中</span>`;
+                let statusBadge = '';
+                if (o.status === '已出证') {
+                    statusBadge = `<span class="badge badge-success">已出证</span>`;
+                } else if (o.status === '处理中') {
+                    statusBadge = `<span class="badge badge-warning">处理中</span>`;
+                } else if (o.status === '已退款') {
+                    statusBadge = `<span class="badge badge-danger">已退款</span>`;
+                }
 
-                const certSpan = o.status === '已出证'
-                    ? `<code style="font-weight:600; color:#3b82f6;">${o.certNo}</code>`
-                    : `<span style="color:#9ca3af;">链上存证中...</span>`;
+                let certSpan = '';
+                if (o.status === '已出证') {
+                    certSpan = `<code style="font-weight:600; color:#3b82f6;">${o.certNo}</code>`;
+                } else if (o.status === '已退款') {
+                    certSpan = `<span style="color:#9ca3af;">-</span>`;
+                } else {
+                    certSpan = `<span style="color:#9ca3af;">链上存证中...</span>`;
+                }
 
-                const actionBtn = o.status === '处理中'
-                    ? `<a href="javascript:void(0)" class="action-link" onclick="openCertModal('${o.orderId}', '${o.workName.replace(/'/g, "\\'")}')">确认出证</a>`
-                    : `<span style="color:#9ca3af; font-size:12px;">确权已锚定</span>`;
+                let actionBtn = `<a href="javascript:void(0)" class="action-link" onclick="openProofDetailModal('${o.orderId}')">详情</a>`;
+
+                if (o.status === '处理中') {
+                    actionBtn += `<a href="javascript:void(0)" class="action-link" style="margin-left: 8px;" onclick="openCertModal('${o.orderId}', '${o.workName.replace(/'/g, "\\'")}')">确认出证</a>`;
+                }
+
+                if (o.status !== '已退款') {
+                    actionBtn += `<a href="javascript:void(0)" class="action-link danger" style="margin-left: 8px;" onclick="refundProofOrder('${o.orderId}')">退款</a>`;
+                }
 
                 tr.innerHTML = `
                     <td><code>${o.orderId}</code></td>
@@ -531,6 +711,46 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function refundProofOrder(orderId) {
+            if (confirm(`确定要为确权订单 ${orderId} 办理退款吗？退款后状态将变更为“已退款”，原DCI证书信息将被注销且不可撤销！`)) {
+                const rawOrders = dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
+                const idx = rawOrders.findIndex(o => o.orderId === orderId);
+                if (idx !== -1) {
+                    const o = rawOrders[idx];
+                    o.status = '已退款';
+                    o.certNo = '-';
+                    dbSave('hscms_proof_orders', rawOrders);
+                    
+                    // 联动注销 asset_submissions 里的 DCI 登记码
+                    const assetId = getAssetIdByName(o.workName);
+                    const submissions = dbGet('hscms_asset_submissions', DEFAULT_ASSET_SUBMISSIONS);
+                    const sIdx = submissions.findIndex(s => s.id === assetId);
+                    if (sIdx !== -1) {
+                        submissions[sIdx].dciCode = '-';
+                        dbSave('hscms_asset_submissions', submissions);
+                    }
+                    
+                    showLockToast(`确权订单 ${orderId} 退款及证书注销手续已成功办理！`, true);
+                    
+                    // Keep original search filters
+                    const keyword = document.getElementById('proofKeyword').value.trim().toLowerCase();
+                    const status = document.getElementById('proofStatus').value;
+                    
+                    // Filter again
+                    filteredProofs = rawOrders.filter(item => {
+                        const matchesKeyword = !keyword || 
+                            item.orderId.toLowerCase().includes(keyword) || 
+                            item.workName.toLowerCase().includes(keyword) || 
+                            item.applicant.toLowerCase().includes(keyword);
+                        const matchesStatus = status === '全部' || item.status === status;
+                        return matchesKeyword && matchesStatus;
+                    });
+                    
+                    renderProofTable();
+                }
+            }
         }
 
         function searchProofOrders() {
@@ -657,6 +877,129 @@
             };
             buttonsContainer.appendChild(nextBtn);
         }
+
+        // ==========================================
+        // 3. ORDER DETAIL MODAL TRIGGERS
+        // ==========================================
+        function openMaterialDetailModal(orderId) {
+            const rawOrders = dbGet('hscms_material_orders', DEFAULT_MATERIAL_ORDERS);
+            const o = rawOrders.find(item => item.orderId === orderId);
+            if (!o) return;
+
+            document.getElementById('mDetOrderId').textContent = o.orderId;
+            document.getElementById('mDetPrice').textContent = `￥${o.price.toFixed(2)}`;
+            document.getElementById('mDetBuyerId').textContent = o.buyerId;
+            document.getElementById('mDetChannel').textContent = o.channel;
+            document.getElementById('mDetTime').textContent = o.time;
+            document.getElementById('mDetMaterialName').textContent = o.materialName;
+
+            let statusHTML = '';
+            if (o.status === '已完成') {
+                statusHTML = '<span class="badge badge-success">交易成功</span>';
+            } else {
+                statusHTML = '<span class="badge badge-danger">已退款</span>';
+            }
+            document.getElementById('mDetStatus').innerHTML = statusHTML;
+
+            // 渲染预览
+            const assetId = getAssetIdByName(o.materialName);
+            const submissions = dbGet('hscms_asset_submissions', DEFAULT_ASSET_SUBMISSIONS);
+            const a = submissions.find(item => item.id === assetId);
+            
+            const previewContainer = document.getElementById('mDetPreviewContainer');
+            if (a) {
+                const title = a.title.toLowerCase();
+                if (title.includes('视频') || title.includes('镜头') || title.includes('短片')) {
+                    previewContainer.innerHTML = `
+                        <div style="width:100%; max-width:320px; background:#000; border-radius:6px; overflow:hidden;">
+                            <video style="width:100%; display:block;" controls poster="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&auto=format&fit=crop">
+                                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    `;
+                } else if (title.includes('路线图') || title.includes('攻略') || title.includes('手册') || title.includes('文章')) {
+                    previewContainer.innerHTML = `
+                        <div style="font-size:12px; color:#475569; border:1px solid #e2e8f0; border-radius:4px; padding:12px; background:#fff; width:100%; text-align:left; max-height:160px; overflow-y:auto; line-height:1.6;">
+                            <strong style="display:block; text-align:center; margin-bottom:8px;">${a.title}</strong>
+                            <p style="margin:0;">【文档摘要】黄山以奇松、怪石、云海、温泉、冬雪“五绝”闻名于世。本文档整理了关于黄山摄影取景与构图的专业攻略指南...</p>
+                        </div>
+                    `;
+                } else {
+                    let imageUrl = '';
+                    if (title.includes('迎客松')) {
+                        imageUrl = 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=400&auto=format&fit=crop';
+                    } else if (title.includes('秋色') || title.includes('云谷')) {
+                        imageUrl = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&auto=format&fit=crop';
+                    } else {
+                        imageUrl = 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&auto=format&fit=crop';
+                    }
+                    previewContainer.innerHTML = `
+                        <img src="${imageUrl}" style="max-width:100%; max-height:160px; object-fit:contain; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.15);" alt="Asset Preview">
+                    `;
+                }
+            } else {
+                previewContainer.innerHTML = '<span style="color:#94a3b8; font-style:italic;">暂无预览数据</span>';
+            }
+
+            openModal('materialDetailModal');
+        }
+
+        function openProofDetailModal(orderId) {
+            const rawOrders = dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
+            const o = rawOrders.find(item => item.orderId === orderId);
+            if (!o) return;
+
+            document.getElementById('pDetOrderId').textContent = o.orderId;
+            document.getElementById('pDetPrice').textContent = `￥${o.price.toFixed(2)}`;
+            document.getElementById('pDetApplicant').textContent = o.applicant;
+            document.getElementById('pDetTime').textContent = o.time;
+            document.getElementById('pDetWorkName').textContent = o.workName;
+
+            let statusHTML = '';
+            if (o.status === '已出证') {
+                statusHTML = '<span class="badge badge-success">已出证</span>';
+            } else if (o.status === '处理中') {
+                statusHTML = '<span class="badge badge-warning">处理中</span>';
+            } else if (o.status === '已退款') {
+                statusHTML = '<span class="badge badge-danger">已退款</span>';
+            }
+            document.getElementById('pDetStatus').innerHTML = statusHTML;
+
+            // 读取联动资产信息，获取 antChainId
+            const assetId = getAssetIdByName(o.workName);
+            const submissions = dbGet('hscms_asset_submissions', DEFAULT_ASSET_SUBMISSIONS);
+            const a = submissions.find(item => item.id === assetId);
+
+            const antChainId = (a && a.antChainId !== '-') ? a.antChainId : 'AntChain_MOCK_' + o.orderId.substring(9);
+            const dciCode = o.status === '已退款' ? '-' : (o.status === '学术研究' || o.status === '已出证' ? o.certNo : 'DCI证书申请中');
+            const antChainShow = o.status === '学术研究' || o.status === '已退款' ? '-' : (o.status === '已出证' ? antChainId : '区块锚定中...');
+
+            document.getElementById('pDetDciCode').textContent = dciCode;
+            document.getElementById('pDetAntChain').textContent = antChainShow;
+
+            // 查验回执
+            const ledgerEl = document.getElementById('pDetLedger');
+            if (o.status === '已出证') {
+                ledgerEl.innerHTML = `
+                    <div class="ledger-line"><span class="ledger-label">存证区块ID:</span><span class="ledger-value">${antChainId}</span></div>
+                    <div class="ledger-line"><span class="ledger-label">区块高度:</span><span class="ledger-value">#12,940,105</span></div>
+                    <div class="ledger-line"><span class="ledger-label">存证所有人:</span><span class="ledger-value">${o.applicant}</span></div>
+                    <div class="ledger-line"><span class="ledger-label">核验状态:</span><span class="ledger-value" style="color:#10b981;">蚂蚁区块链节点核验通过</span></div>
+                    <div class="ledger-line"><span class="ledger-label">节点数字签名:</span><span class="ledger-value">0x7f23c91a...b2e04e9c7d42</span></div>
+                `;
+            } else if (o.status === '处理中') {
+                ledgerEl.innerHTML = `
+                    <div style="color:#94a3b8; font-style:italic; font-size:11.5px; text-align:center;">作品尚未出证审核。通过审核后将自动上链登记生成区块回执。</div>
+                `;
+            } else {
+                ledgerEl.innerHTML = `
+                    <div style="color:#ef4444; font-style:italic; font-size:11.5px; text-align:center;">该确权订单已办理退款，链上证书已注销失效。</div>
+                `;
+            }
+
+            openModal('proofDetailModal');
+        }
     </script>
 </body>
 </html>
+

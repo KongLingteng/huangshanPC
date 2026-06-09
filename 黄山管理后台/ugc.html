@@ -169,6 +169,10 @@
                         <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
                         <span>合同配置</span>
                     </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73(a1.69)-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
                 </div>
             </aside>
 
@@ -484,10 +488,7 @@
                     <div class="form-group">
                         <label>封禁下架原因</label>
                         <select id="shieldReasonSelect" class="form-control" onchange="toggleCustomReason()">
-                            <option value="发布垃圾广告或商业推广">发布垃圾广告或商业推广</option>
-                            <option value="包含争议性、偏激低俗言论">包含争议性、偏激低俗言论</option>
-                            <option value="含有侵权、涉密或违禁词汇">含有侵权、涉密或违禁词汇</option>
-                            <option value="自定义原因">自定义下架原因...</option>
+                            <!-- 动态加载 -->
                         </select>
                     </div>
                     <div class="form-group" id="customReasonWrapper" style="display:none;">
@@ -823,8 +824,7 @@
                 
                 if (p.status === '已下架') {
                     statusBadge = `<span class="badge badge-danger" title="原因：${p.shieldReason || '未录入'}">已下架</span>`;
-                    actionBtn = `<span style="color:#9ca3af; font-size: 12px; cursor: not-allowed; margin-right: 8px;" title="原因：${p.shieldReason}">已人工干预</span>
-                                 <a href="post-detail.html?id=${p.id}" class="action-link">查看详情</a>`;
+                    actionBtn = `<a href="post-detail.html?id=${p.id}" class="action-link">查看详情</a>`;
                 }
 
                 // Media layout preview
@@ -896,8 +896,33 @@
 
             document.getElementById('shieldPostId').value = postId;
             document.getElementById('shieldPostDetails').textContent = `即将下架帖子：《${post.title || '无标题'}》，作者 ID：${post.authorId}`;
-            document.getElementById('shieldReasonSelect').value = '发布垃圾广告或商业推广';
-            document.getElementById('customReasonWrapper').style.display = 'none';
+
+            // 动态加载屏蔽原因下拉选项
+            const reasons = dbGet('hscms_settings_shield_reasons', []);
+            const selectEl = document.getElementById('shieldReasonSelect');
+            selectEl.innerHTML = '';
+            
+            reasons.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r;
+                opt.textContent = r;
+                selectEl.appendChild(opt);
+            });
+            
+            // 追加自定义选项
+            const customOpt = document.createElement('option');
+            customOpt.value = '自定义原因';
+            customOpt.textContent = '自定义原因...';
+            selectEl.appendChild(customOpt);
+
+            // 默认选中第一个
+            if (reasons.length > 0) {
+                selectEl.value = reasons[0];
+            } else {
+                selectEl.value = '自定义原因';
+            }
+
+            document.getElementById('customReasonWrapper').style.display = selectEl.value === '自定义原因' ? 'block' : 'none';
             document.getElementById('shieldCustomReason').value = '';
             document.getElementById('banUserCheckbox').checked = false;
 
@@ -1235,8 +1260,7 @@
 
                 if (c.status === '已下架') {
                     statusBadge = `<span class="badge badge-danger">已下架</span>`;
-                    actionBtn = `<span style="color:#9ca3af; font-size:12px; cursor:not-allowed; margin-right: 8px;">已人工干预</span>
-                                 <a href="post-detail.html?id=${c.postId}" class="action-link">查看详情</a>`;
+                    actionBtn = `<a href="post-detail.html?id=${c.postId}" class="action-link">查看详情</a>`;
                 }
 
                 // 支持二级评论的视觉呈现

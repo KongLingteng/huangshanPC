@@ -152,6 +152,10 @@
                         <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
                         <span>合同配置</span>
                     </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73(a1.69)-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
                 </div>
             </aside>
 
@@ -214,9 +218,11 @@
                                 <label>加入时间</label>
                                 <input type="date" id="searchJoinTime" class="form-control" style="width:160px;">
                             </div>
-                            <div class="search-col" style="flex-direction:row; gap:8px;">
+                            <div class="search-col" style="flex-direction:row; gap:8px; align-items:center;">
                                 <button class="btn btn-primary" onclick="searchUsers()">查询</button>
                                 <button class="btn" onclick="resetSearch()">重置</button>
+                                <button id="batchQuotaBtn" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="openBatchQuotaModal()" disabled>批量设置 AIGC 额度</button>
+                                <span id="selectedCountText" style="font-size: 12px; color: var(--text-muted); display: none; white-space: nowrap;">已选中 0 位用户</span>
                             </div>
                         </div>
 
@@ -225,9 +231,11 @@
                             <table class="enterprise-table">
                                 <thead>
                                     <tr>
+                                        <th style="width: 40px; text-align: center;"><input type="checkbox" id="selectAllUsers" onchange="toggleSelectAllUsers(this)"></th>
                                         <th>头像</th>
                                         <th>用户 ID</th>
                                         <th>用户昵称</th>
+                                        <th>所属机构</th>
                                         <th>AIGC能力额度 (已用/限制)</th>
                                         <th>用户身份</th>
                                         <th>加入时间</th>
@@ -289,13 +297,47 @@
 
                     <div class="form-group" style="margin-top: 12px;">
                         <label style="font-weight: 600;">AI 生视频总额度</label>
-                        <input type="number" id="quotaVideoLimit" class="form-control" required min="0" placeholder="请输入限制次数">
-                        <span class="form-tip" id="quotaVideoTip">当前已用: 0 次</span>
+                        <input type="number" id="quotaVideoLimit" class="form-control" required min="0" placeholder="请输入限制秒数">
+                        <span class="form-tip" id="quotaVideoTip">当前已用: 0 秒</span>
                     </div>
                 </div>
                 <div class="modal-footer" style="margin-top: 16px;">
                     <button type="button" class="btn" onclick="closeModal('quotaModal')">取消</button>
                     <button type="submit" class="btn btn-primary">保存配置</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: BATCH EDIT QUOTA -->
+    <div id="batchQuotaModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>批量配置 AIGC 能力额度</h3>
+                <button class="modal-close-btn" onclick="closeModal('batchQuotaModal')">&times;</button>
+            </div>
+            <form id="batchQuotaForm" onsubmit="submitBatchQuotaChange(event)">
+                <div class="modal-body">
+                    <p style="font-size:12.5px; color:#475569; margin-bottom:16px; font-weight:600;" id="batchQuotaDetails">已选中 0 位用户</p>
+                    
+                    <div class="form-group">
+                        <label style="font-weight: 600;">AI 生文总额度</label>
+                        <input type="number" id="batchQuotaTextLimit" class="form-control" required min="0" placeholder="请输入限制字数">
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600;">AI 生图总额度</label>
+                        <input type="number" id="batchQuotaImageLimit" class="form-control" required min="0" placeholder="请输入限制张数">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600;">AI 生视频总额度</label>
+                        <input type="number" id="batchQuotaVideoLimit" class="form-control" required min="0" placeholder="请输入限制秒数">
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 16px;">
+                    <button type="button" class="btn" onclick="closeModal('batchQuotaModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认批量设置</button>
                 </div>
             </form>
         </div>
@@ -320,6 +362,27 @@
 
         function loadUsersData() {
             const users = dbGet('hscms_users', DEFAULT_USERS);
+            
+            // 为特定机构创作者注入企业名称（所属机构）数据
+            let needSave = false;
+            users.forEach(u => {
+                if (u.userId === 'USER_6672' && !u.orgName) {
+                    u.orgName = '黄山松石文化传媒有限公司';
+                    needSave = true;
+                }
+                if (u.userId === 'USER_1004' && !u.orgName) {
+                    u.orgName = '黄山翡翠谷旅游开发服务有限公司';
+                    needSave = true;
+                }
+                if (u.userId === 'USER_1008' && !u.orgName) {
+                    u.orgName = '安徽徽州人家文旅工作室';
+                    needSave = true;
+                }
+            });
+            if (needSave) {
+                dbSave('hscms_users', users);
+            }
+
             filteredUsersList = users;
             renderUsersTable();
         }
@@ -328,6 +391,11 @@
             const blacklist = dbGet('hscms_blacklist', []);
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
+
+            // 重置全选复选框和批量操作按钮状态
+            const selectAllCheckbox = document.getElementById('selectAllUsers');
+            if (selectAllCheckbox) selectAllCheckbox.checked = false;
+            updateBatchBtnState();
 
             // Calculate pagination parameters
             const totalRecords = filteredUsersList.length;
@@ -347,7 +415,7 @@
             renderPaginationButtons(totalPages);
 
             if (pageRecords.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的用户账户数据</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的用户账户数据</td></tr>`;
                 return;
             }
 
@@ -382,9 +450,13 @@
                 if (identity === '机构供稿') identityColor = '#8b5cf6';
 
                 tr.innerHTML = `
+                    <td style="text-align: center;">
+                        <input type="checkbox" name="userCheckbox" value="${u.userId}" onchange="updateBatchBtnState()">
+                    </td>
                     <td>${avatarPill}</td>
                     <td><code>${u.userId}</code></td>
                     <td><strong style="color:#1f2937;">${u.nickname}</strong></td>
+                    <td style="color:#475569; font-size:13px;">${u.orgName || '-'}</td>
                     <td>
                         <div class="quota-container">
                             <div class="quota-item">
@@ -397,8 +469,8 @@
                             </div>
                             <div class="quota-item">
                                 <span class="quota-label">生视频:</span>
-                                <span class="quota-val">${vidUsed} / ${vidLimit}</span>
-                            </div>
+                                <span class="quota-val">${vidUsed}秒 / ${vidLimit}秒</span>
+                             </div>
                         </div>
                     </td>
                     <td>
@@ -526,7 +598,7 @@
             document.getElementById('quotaImageTip').dataset.used = imgUsed;
 
             document.getElementById('quotaVideoLimit').value = vidLimit;
-            document.getElementById('quotaVideoTip').textContent = `已使用: ${vidUsed} 次 (新设额度不可低于该值)`;
+            document.getElementById('quotaVideoTip').textContent = `已使用: ${vidUsed} 秒 (新设额度不可低于该值)`;
             document.getElementById('quotaVideoTip').dataset.used = vidUsed;
 
             openModal('quotaModal');
@@ -554,7 +626,7 @@
                 return;
             }
             if (newVideoLimit < vidUsed) {
-                showLockToast(`生视频额度设置失败：新设上限不能低于已使用次数(${vidUsed})！`, false);
+                showLockToast(`生视频额度设置失败：新设上限不能低于已使用秒数(${vidUsed}秒)！`, false);
                 return;
             }
 
@@ -572,6 +644,100 @@
 
                 // Reload layout
                 loadUsersData();
+            }
+        }
+
+        // 一键全选用户
+        function toggleSelectAllUsers(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="userCheckbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+            updateBatchBtnState();
+        }
+
+        // 联动更新批量设置按钮和计数文字状态
+        function updateBatchBtnState() {
+            const checkboxes = document.querySelectorAll('input[name="userCheckbox"]');
+            const checkedBoxes = document.querySelectorAll('input[name="userCheckbox"]:checked');
+            
+            const batchBtn = document.getElementById('batchQuotaBtn');
+            const selectedText = document.getElementById('selectedCountText');
+            const selectAllCheckbox = document.getElementById('selectAllUsers');
+
+            if (batchBtn && selectedText) {
+                if (checkedBoxes.length > 0) {
+                    batchBtn.disabled = false;
+                    selectedText.style.display = 'inline-block';
+                    selectedText.textContent = `已选中 ${checkedBoxes.length} 位用户`;
+                } else {
+                    batchBtn.disabled = true;
+                    selectedText.style.display = 'none';
+                }
+            }
+
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = (checkboxes.length > 0 && checkboxes.length === checkedBoxes.length);
+            }
+        }
+
+        // 开启批量额度设置弹窗
+        function openBatchQuotaModal() {
+            const checkedBoxes = document.querySelectorAll('input[name="userCheckbox"]:checked');
+            const count = checkedBoxes.length;
+            if (count === 0) return;
+
+            document.getElementById('batchQuotaDetails').textContent = `已选中 ${count} 位用户，将统一调整其 AIGC 能力额度限制:`;
+            
+            // 默认初值
+            document.getElementById('batchQuotaTextLimit').value = 1000;
+            document.getElementById('batchQuotaImageLimit').value = 100;
+            document.getElementById('batchQuotaVideoLimit').value = 20;
+
+            openModal('batchQuotaModal');
+        }
+
+        // 提交批量额度变更
+        function submitBatchQuotaChange(e) {
+            e.preventDefault();
+            
+            const newTextLimit = parseInt(document.getElementById('batchQuotaTextLimit').value);
+            const newImageLimit = parseInt(document.getElementById('batchQuotaImageLimit').value);
+            const newVideoLimit = parseInt(document.getElementById('batchQuotaVideoLimit').value);
+
+            if (isNaN(newTextLimit) || newTextLimit < 0 || isNaN(newImageLimit) || newImageLimit < 0 || isNaN(newVideoLimit) || newVideoLimit < 0) {
+                showLockToast('请输入有效的非负整数限额参数！', false);
+                return;
+            }
+
+            const checkedBoxes = document.querySelectorAll('input[name="userCheckbox"]:checked');
+            const selectedUserIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            let updateCount = 0;
+
+            selectedUserIds.forEach(userId => {
+                const idx = users.findIndex(u => u.userId === userId);
+                if (idx !== -1) {
+                    // 防御性：为了不低于已使用额度，采用新设定值与已使用量中的最大值
+                    const usedText = users[idx].aiTextUsed || 0;
+                    const usedImage = users[idx].aiImageUsed || 0;
+                    const usedVideo = users[idx].aiVideoUsed || 0;
+
+                    users[idx].aiTextLimit = Math.max(newTextLimit, usedText);
+                    users[idx].aiImageLimit = Math.max(newImageLimit, usedImage);
+                    users[idx].aiVideoLimit = Math.max(newVideoLimit, usedVideo);
+                    updateCount++;
+                }
+            });
+
+            if (updateCount > 0) {
+                dbSave('hscms_users', users);
+                showLockToast(`成功批量配置了 ${updateCount} 位用户的 AIGC 额度！`, true);
+                closeModal('batchQuotaModal');
+                
+                // 保留当前的检索过滤条件进行刷新
+                searchUsers();
             }
         }
     </script>

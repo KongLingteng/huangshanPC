@@ -268,7 +268,7 @@
                     <!-- LEFT PREVIEW AREA -->
                     <div class="preview-box">
                         <div class="back-btn-container">
-                            <button class="btn" onclick="history.back()">&larr; 返回素材审核队列</button>
+                            <button class="btn" onclick="location.href='asset-audit.html'">&larr; 返回素材审核队列</button>
                         </div>
                         <div class="preview-title-bar">
                             <h2 id="assetTitle">素材加载中...</h2>
@@ -307,6 +307,10 @@
                             <div class="info-item">
                                 <span class="info-label">作品原文件指纹 (SHA-256)</span>
                                 <span class="hash-code" id="infoHash" onclick="copyText(this.textContent)">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">关联用途</span>
+                                <div id="infoLinkedUsage" class="info-value">-</div>
                             </div>
                         </div>
 
@@ -374,6 +378,21 @@
             document.getElementById('infoAuthorType').textContent = a.authorType === '个人' ? '个人独立创作者' : '签约合作机构';
             document.getElementById('infoSubmitTime').textContent = a.submitTime;
             document.getElementById('infoHash').textContent = a.hash;
+
+            // Render linked usage
+            const usageEl = document.getElementById('infoLinkedUsage');
+            if (a.linkedUsage && a.linkedUsage !== '') {
+                const usages = a.linkedUsage.split(', ');
+                usageEl.innerHTML = `<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">` + 
+                    usages.map(u => `<span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 11px; padding: 3px 8px; border-radius: 4px; white-space: nowrap;">${u}</span>`).join('') +
+                    `</div>`;
+            } else {
+                if (a.status === '待审核') {
+                    usageEl.innerHTML = `<span style="color: #ef4444; font-size: 12.5px; font-weight: 500;">⚠️ 未关联用途</span>`;
+                } else {
+                    usageEl.innerHTML = `<span style="color: #94a3b8; font-size: 12.5px; font-style: italic;">未关联</span>`;
+                }
+            }
 
             // Render status
             let statusText = '';

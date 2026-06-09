@@ -332,6 +332,78 @@ function initDatabase() {
     dbGet('hscms_material_orders', DEFAULT_MATERIAL_ORDERS);
     dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
     dbGet('hscms_contracts', DEFAULT_CONTRACTS);
+
+    // 新增设置相关的配置表
+    dbGet('hscms_settings_audit_config', {
+        assetAiAudit: true,
+        communityAiAudit: true
+    });
+    dbGet('hscms_settings_aigc_limit', {
+        initTextLimit: 1000,
+        initImageLimit: 100,
+        initVideoLimit: 20
+    });
+    dbGet('hscms_settings_usage_config', [
+        {
+            id: 1,
+            name: "学术研究",
+            desc: "用于学术报告、配图等",
+            specs: [
+                { name: "学术交流用途", price: 100 },
+                { name: "研究报告用途", price: 150 },
+                { name: "学术论文配图", price: 200 },
+                { name: "学术著作配图", price: 250 }
+            ]
+        },
+        {
+            id: 2,
+            name: "仅供自用",
+            desc: "个人学习与欣赏",
+            specs: [
+                { name: "仅供个人学习", price: 50 }
+            ]
+        },
+        {
+            id: 3,
+            name: "公共文化弘扬",
+            desc: "公益活动与教育用图",
+            specs: [
+                { name: "展览展示(公益性)", price: 100 },
+                { name: "其他图书、杂志、报刊配图", price: 150 },
+                { name: "普及性文章发表用图", price: 180 },
+                { name: "公开教育活动用图", price: 120 },
+                { name: "公开创意设计用图", price: 200 }
+            ]
+        },
+        {
+            id: 4,
+            name: "新闻宣传",
+            desc: "自媒体或新闻配图等",
+            specs: [
+                { name: "公众号以及自媒体文章配图", price: 150 },
+                { name: "图文新闻报道", price: 180 },
+                { name: "视频新闻报道", price: 300 },
+                { name: "高清宣传片制作用图", price: 500 },
+                { name: "4k宣传片制作用图", price: 800 }
+            ]
+        }
+    ]);
+    dbGet('hscms_settings_reject_reasons', [
+        "图片/视频分辨率不足，未达高清供稿标准",
+        "资产内容存在显著的外部水印、版权争议",
+        "作品分类提报有误，请修改属性重新提报"
+    ]);
+    dbGet('hscms_settings_shield_reasons', [
+        "发布垃圾广告或商业推广",
+        "包含争议性、偏激低俗言论",
+        "含有侵权、涉密或违禁词汇"
+    ]);
+
+    // 初始化用户申请下架通知表
+    dbGet('hscms_take_down_requests', [
+        { id: 'TDR_1001', assetId: 'SUB_8003', assetTitle: '独家黄山导游手绘路线图（矢量PDF）', author: '黄山行者', reason: '商用版使用授权合同已到期，申请平台下架原素材。', submitTime: '2026-06-08 09:00:00', status: '未读' },
+        { id: 'TDR_1002', assetId: 'SUB_8004', assetTitle: '云谷寺秋色全景图', author: '徽风文化传媒', reason: '作品版权将转售于第三方机构，应第三方要求在平台申请下架。', submitTime: '2026-06-08 09:30:00', status: '未读' }
+    ]);
 }
 
 // Initialize on Script load
@@ -344,3 +416,54 @@ document.addEventListener('keydown', (e) => {
         showLockToast('搜索模块暂不可用（除“内容管理”外均处于锁定状态）');
     }
 });
+
+// 全局通知铃铛动态注入与红点更新逻辑
+window.addEventListener('DOMContentLoaded', () => {
+    injectNotificationBell();
+    checkTakeDownNotifications();
+});
+
+function injectNotificationBell() {
+    const headerRight = document.querySelector('.header-right');
+    const userProfile = document.querySelector('.user-profile');
+    if (headerRight && userProfile && !document.querySelector('.notification-bell-container')) {
+        // 创建铃铛容器
+        const bellContainer = document.createElement('div');
+        bellContainer.className = 'notification-bell-container';
+        bellContainer.style.position = 'relative';
+        bellContainer.style.cursor = 'pointer';
+        bellContainer.style.display = 'flex';
+        bellContainer.style.alignItems = 'center';
+        bellContainer.style.marginRight = '16px';
+        bellContainer.title = '用户申请下架通知';
+        bellContainer.onclick = () => {
+            location.href = 'take-down-requests.html';
+        };
+        bellContainer.innerHTML = `
+            <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: #475569; transition: fill 0.2s;" onmouseover="this.style.fill='var(--primary-color)'" onmouseout="this.style.fill='#475569'">
+                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+            </svg>
+            <span id="bellRedDot" style="display: none; position: absolute; top: -1px; right: -1px; width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; border: 1.5px solid #ffffff;"></span>
+        `;
+        
+        // 样式微调确保并排对齐
+        headerRight.style.display = 'flex';
+        headerRight.style.alignItems = 'center';
+        
+        // 将铃铛按钮插入到用户头像左侧
+        headerRight.insertBefore(bellContainer, userProfile);
+    }
+}
+
+function checkTakeDownNotifications() {
+    const defaultRequests = [
+        { id: 'TDR_1001', assetId: 'SUB_8003', assetTitle: '独家黄山导游手绘路线图（矢量PDF）', author: '黄山行者', reason: '商用版使用授权合同已到期，申请平台下架原素材。', submitTime: '2026-06-08 09:00:00', status: '未读' },
+        { id: 'TDR_1002', assetId: 'SUB_8004', assetTitle: '云谷寺秋色全景图', author: '徽风文化传媒', reason: '作品版权将转售于第三方机构，应第三方要求在平台申请下架。', submitTime: '2026-06-08 09:30:00', status: '未读' }
+    ];
+    const requests = dbGet('hscms_take_down_requests', defaultRequests);
+    const hasUnread = requests.some(r => r.status === '未读');
+    const dot = document.getElementById('bellRedDot');
+    if (dot) {
+        dot.style.display = hasUnread ? 'block' : 'none';
+    }
+}

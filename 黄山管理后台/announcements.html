@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 通知公告配置</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .pagination-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .pagination-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+        }
+        
+        /* Rich Text Editor Styling */
+        .rich-editor-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #475569;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .rich-editor-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        /* User selection panel */
+        .user-selector-panel {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            padding: 12px;
+            margin-top: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s ease-in-out;
+            max-height: 280px;
+        }
+        .user-selector-list {
+            overflow-y: auto;
+            max-height: 180px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #ffffff;
+        }
+        .user-selector-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 12.5px;
+            gap: 12px;
+            transition: background 0.15s;
+        }
+        .user-selector-item:hover {
+            background: #f8fafc;
+        }
+        .user-selector-item:last-child {
+            border-bottom: none;
+        }
+        .user-selector-item input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+        /* Detail display styling */
+        .detail-item {
+            margin-bottom: 14px;
+        }
+        .detail-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .detail-value {
+            font-size: 13.5px;
+            color: #1e293b;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top" id="primarySidebar">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                    <a href="settings.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>系统设置</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item" id="tabAuditNav">
+                        <a href="settings.html?tab=audit">审核配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabLimitNav">
+                        <a href="settings.html?tab=limit">AIGC额度管控</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabUsageNav">
+                        <a href="settings.html?tab=usage">素材用途配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAssetRejectNav">
+                        <a href="settings.html?tab=asset-reject">素材驳回原因配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabPostShieldNav">
+                        <a href="settings.html?tab=post-shield">帖子下架配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSplitNav">
+                        <a href="settings.html?tab=split">分成策略配置</a>
+                    </li>
+                    <li class="sub-nav-item active" id="tabAnnouncementsNav">
+                        <a href="announcements.html">通知公告</a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas" style="overflow-y: auto; padding: 24px;">
+                <div class="workspace-header" style="margin-bottom: 20px;">
+                    <div class="workspace-title-section">
+                        <h1>通知公告管理</h1>
+                        <p>编辑并发布系统公告，面向全体用户或者定向选择的部分供稿人/用户推送站内富文本通知消息。</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="openCreateAnnouncement()">+ 发布新通知</button>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <!-- Filters -->
+                    <div class="search-row">
+                        <div class="search-col">
+                            <label>公告标题</label>
+                            <input type="text" id="filterTitle" class="form-control" style="width:220px;" placeholder="检索公告标题...">
+                        </div>
+                        <div class="search-col">
+                            <label>推送范围</label>
+                            <select id="filterScope" class="form-control" style="width:120px;">
+                                <option value="全部">全部范围</option>
+                                <option value="全体">全体推送</option>
+                                <option value="部分">部分定向</option>
+                            </select>
+                        </div>
+                        <div class="search-col" style="flex-direction:row; gap:8px;">
+                            <button class="btn btn-primary" onclick="searchAnnouncements()">查询</button>
+                            <button class="btn" onclick="resetSearch()">重置</button>
+                        </div>
+                    </div>
+
+                    <!-- Announcement Table -->
+                    <div class="enterprise-card">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th>公告 ID</th>
+                                    <th style="width: 35%;">公告标题</th>
+                                    <th>推送范围</th>
+                                    <th>接收受众</th>
+                                    <th>发布时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="annTableBody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:12px 16px; border-top:1px solid var(--border-color);">
+                            <div style="font-size:12px; color:var(--text-muted);" id="pageInfo">
+                                共 0 条，第 1/1 页
+                            </div>
+                            <div class="pagination-buttons" id="paginationButtons" style="display:flex; gap:6px;">
+                                <!-- Dynamic -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: CREATE ANNOUNCEMENT -->
+    <div id="createModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3>发布系统通知公告</h3>
+                <button class="modal-close-btn" onclick="closeModal('createModal')">&times;</button>
+            </div>
+            <form onsubmit="submitAnnouncement(event)">
+                <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+                    <div class="form-group">
+                        <label style="font-weight: 600;">公告标题</label>
+                        <input type="text" id="annTitle" class="form-control" required placeholder="请输入醒目的公告标题">
+                    </div>
+
+                    <!-- Scope selection -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; display: block; margin-bottom: 6px;">推送范围</label>
+                        <div style="display: flex; gap: 20px;">
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13.5px;">
+                                <input type="radio" name="annScope" value="全部" checked onchange="toggleScope(this.value)"> 全体用户
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13.5px;">
+                                <input type="radio" name="annScope" value="部分" onchange="toggleScope(this.value)"> 定向部分用户
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- User selectors area -->
+                    <div id="userSelectorPanel" class="user-selector-panel">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <span style="font-weight: 600; font-size: 12.5px; color: #334155;">选择接收用户</span>
+                            <input type="text" id="userFilterInput" class="form-control" style="width: 160px; height: 28px; font-size: 12px; padding: 2px 8px;" placeholder="过滤名称/ID..." oninput="filterUserList()">
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 4px 12px; border-bottom: 1px solid #cbd5e1; background: #cbd5e1; border-top-left-radius: 4px; border-top-right-radius: 4px; font-size: 12px; gap: 12px; font-weight:600; color:#1e293b;">
+                            <input type="checkbox" id="userSelectAll" onchange="toggleAllUsers(this.checked)">
+                            <span>选择全部过滤用户 (选中: <span id="selectedCount">0</span>)</span>
+                        </div>
+                        <div class="user-selector-list" id="userListContainer">
+                            <!-- Dynamic check rows -->
+                        </div>
+                    </div>
+
+                    <!-- Rich text editor -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; display: block; margin-bottom: 6px;">公告消息内容</label>
+                        <div class="rich-editor-toolbar" style="display:flex; gap:6px; background:#f1f5f9; padding:6px 12px; border:1px solid #cbd5e1; border-bottom:none; border-top-left-radius:6px; border-top-right-radius:6px; align-items:center;">
+                            <button type="button" class="rich-editor-btn" onclick="formatDoc('bold')" title="加粗">B</button>
+                            <button type="button" class="rich-editor-btn" onclick="formatDoc('italic')" title="倾斜">I</button>
+                            <button type="button" class="rich-editor-btn" onclick="formatDoc('underline')" title="下划线">U</button>
+                            <select onchange="formatDoc('fontSize', this.value); this.selectedIndex=0;" style="padding:2px 4px; font-size:12px; border-radius:4px; border:1px solid #cbd5e1; cursor:pointer; color:#475569;">
+                                <option value="">字号</option>
+                                <option value="3">小</option>
+                                <option value="4">中</option>
+                                <option value="5">大</option>
+                                <option value="6">超大</option>
+                            </select>
+                            <input type="color" onchange="formatDoc('foreColor', this.value)" style="width:24px; height:20px; border:none; padding:0; cursor:pointer; background:transparent;" title="文字颜色">
+                        </div>
+                        <div id="annContentEditor" contenteditable="true" style="min-height:160px; max-height:220px; overflow-y:auto; border:1px solid #cbd5e1; padding:12px; border-bottom-left-radius:6px; border-bottom-right-radius:6px; outline:none; background:#ffffff; font-size:13px; line-height:1.6;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 10px;">
+                    <button type="button" class="btn" onclick="closeModal('createModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">发布公告</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ANNOUNCEMENT DETAIL -->
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>系统公告详情</h3>
+                <button class="modal-close-btn" onclick="closeModal('detailModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+                <div class="detail-item">
+                    <span class="detail-label">公告标题</span>
+                    <strong class="detail-value" id="detTitle" style="font-size: 15px; color:#1e293b;">-</strong>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="detail-item">
+                        <span class="detail-label">推送范围</span>
+                        <span class="detail-value" id="detScope">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">发布时间</span>
+                        <span class="detail-value" id="detTime">-</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">接收受众列表</span>
+                    <span class="detail-value" id="detAudience" style="font-size: 12.5px; word-break: break-all; color:#475569;">-</span>
+                </div>
+                <div class="detail-item" style="border-top: 1px solid #f1f5f9; padding-top: 14px;">
+                    <span class="detail-label">公告渲染内容</span>
+                    <div id="detContent" style="padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13.5px; line-height: 1.7; max-height: 240px; overflow-y: auto; color:#334155;">
+                        <!-- Content render -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('detailModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Pagination & filtered states
+        let curPage = 1;
+        const pageSize = 5;
+        let filteredAnnouncements = [];
+
+        // Users cache for selection
+        let allUsers = [];
+
+        // Formatting support
+        function formatDoc(cmd, val = null) {
+            document.execCommand(cmd, false, val);
+            document.getElementById('annContentEditor').focus();
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadUsers();
+            loadAnnouncements();
+        });
+
+        // Load users from DB for check list
+        function loadUsers() {
+            allUsers = dbGet('hscms_users', DEFAULT_USERS);
+        }
+
+        // Load announcements logs from LocalStorage
+        function loadAnnouncements() {
+            const defaultAnns = [
+                { id: 'ANN_1001', title: '关于规范数字资产上架版权提报审核的通知', content: '<p>各位供稿人用户：</p><p>为进一步保障平台数字资产合法性，即日起所有提报上架的摄影与视频素材必须在提报时如实关联<b>【素材用途】</b>，未关联用途的素材提报将一律予以驳回，请大家知悉并配合！</p>', scope: '全部', targetUsers: [], targetUserNames: '全体用户', publishTime: '2026-06-01 10:00:00' },
+                { id: 'ANN_1002', title: '【重要】签约机构分成协议更新公告', content: '<p>尊敬的机构合作伙伴：</p><p>分成比策略已经迁移至统一配置中心，现行系统已默认执行新的分成算法。详情请前往<b>分成策略配置</b>页面查看更新说明。</p>', scope: '部分', targetUsers: ['USER_6672', 'USER_1004', 'USER_1008'], targetUserNames: '徽风文化传媒, 翡翠谷溪流, 新安江渔歌', publishTime: '2026-06-05 14:30:00' }
+            ];
+            const raw = dbGet('hscms_announcements', defaultAnns);
+            filteredAnnouncements = raw;
+            renderAnnouncementsTable();
+        }
+
+        // Render logs list
+        function renderAnnouncementsTable() {
+            const tbody = document.getElementById('annTableBody');
+            tbody.innerHTML = '';
+
+            const totalRecords = filteredAnnouncements.length;
+            const totalPages = Math.ceil(totalRecords / pageSize) || 1;
+
+            if (curPage > totalPages) curPage = totalPages;
+
+            const startIdx = (curPage - 1) * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, totalRecords);
+            const pageRecords = filteredAnnouncements.slice(startIdx, endIdx);
+
+            document.getElementById('pageInfo').textContent = `共 ${totalRecords} 条记录，当前第 ${curPage}/${totalPages} 页`;
+            renderPagination(totalPages);
+
+            if (pageRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#9ca3af; padding: 24px;">暂无通知公告历史发布记录！</td></tr>`;
+                return;
+            }
+
+            pageRecords.forEach(a => {
+                const tr = document.createElement('tr');
+                const scopeBadge = a.scope === '全部'
+                    ? '<span class="badge badge-success">全体推送</span>'
+                    : '<span class="badge badge-warning">部分定向</span>';
+
+                tr.innerHTML = `
+                    <td><code>${a.id}</code></td>
+                    <td><strong style="color:#1f2937;">${a.title}</strong></td>
+                    <td>${scopeBadge}</td>
+                    <td style="color:#4b5563; font-size:12.5px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${a.targetUserNames}">${a.targetUserNames}</td>
+                    <td style="color:#64748b; font-size:12px;">${a.publishTime}</td>
+                    <td><a href="javascript:void(0)" class="action-link" onclick="openDetailModal('${a.id}')">详情</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Pagination buttons
+        function renderPagination(totalPages) {
+            const container = document.getElementById('paginationButtons');
+            container.innerHTML = '';
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.textContent = '上一页';
+            prevBtn.disabled = curPage === 1;
+            prevBtn.onclick = () => {
+                curPage--;
+                renderAnnouncementsTable();
+            };
+            container.appendChild(prevBtn);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `pagination-btn ${curPage === i ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => {
+                    curPage = i;
+                    renderAnnouncementsTable();
+                };
+                container.appendChild(btn);
+            }
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.textContent = '下一页';
+            nextBtn.disabled = curPage === totalPages;
+            nextBtn.onclick = () => {
+                curPage++;
+                renderAnnouncementsTable();
+            };
+            container.appendChild(nextBtn);
+        }
+
+        // Filter and Search
+        function searchAnnouncements() {
+            const title = document.getElementById('filterTitle').value.trim().toLowerCase();
+            const scope = document.getElementById('filterScope').value;
+
+            const raw = dbGet('hscms_announcements', []);
+            filteredAnnouncements = raw.filter(a => {
+                const matchesTitle = !title || a.title.toLowerCase().includes(title);
+                const matchesScope = scope === '全部' || 
+                                     (scope === '全体' && a.scope === '全部') || 
+                                     (scope === '部分' && a.scope === '部分');
+                return matchesTitle && matchesScope;
+            });
+
+            curPage = 1;
+            renderAnnouncementsTable();
+        }
+
+        function resetSearch() {
+            document.getElementById('filterTitle').value = '';
+            document.getElementById('filterScope').value = '全部';
+            loadAnnouncements();
+            curPage = 1;
+        }
+
+        // Radio scope toggle
+        function toggleScope(scope) {
+            const panel = document.getElementById('userSelectorPanel');
+            if (scope === '部分') {
+                panel.style.display = 'flex';
+                renderUserList();
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        // Render user checks list in modal
+        function renderUserList() {
+            const container = document.getElementById('userListContainer');
+            container.innerHTML = '';
+            
+            const keyword = document.getElementById('userFilterInput').value.trim().toLowerCase();
+
+            const filteredUsers = allUsers.filter(u => {
+                return u.nickname.toLowerCase().includes(keyword) || u.userId.toLowerCase().includes(keyword);
+            });
+
+            if (filteredUsers.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:12px; color:#94a3b8; font-size:12px;">未匹配到符合条件的用户</div>';
+                return;
+            }
+
+            filteredUsers.forEach(u => {
+                const item = document.createElement('div');
+                item.className = 'user-selector-item';
+                item.innerHTML = `
+                    <input type="checkbox" name="selectedUserCheck" value="${u.userId}" data-nickname="${u.nickname}" onchange="updateSelectedCount()">
+                    <span style="font-weight:600; color:#1e293b;">${u.nickname}</span>
+                    <span style="color:#64748b; font-size:11px;">(ID: <code>${u.userId}</code>)</span>
+                    <span style="margin-left:auto; font-size:11.5px; background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#475569;">${u.identity || '普通用户'}</span>
+                `;
+                container.appendChild(item);
+            });
+
+            updateSelectAllState();
+            updateSelectedCount();
+        }
+
+        // Filter search users inside modal selector
+        function filterUserList() {
+            renderUserList();
+        }
+
+        // Select All toggle for users inside selector
+        function toggleAllUsers(checked) {
+            const checkboxes = document.getElementsByName('selectedUserCheck');
+            checkboxes.forEach(cb => {
+                cb.checked = checked;
+            });
+            updateSelectedCount();
+        }
+
+        // Dynamic update check state
+        function updateSelectedCount() {
+            const checkboxes = document.getElementsByName('selectedUserCheck');
+            let checkedCount = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) checkedCount++;
+            });
+            document.getElementById('selectedCount').textContent = checkedCount;
+            updateSelectAllState();
+        }
+
+        // All select state sync
+        function updateSelectAllState() {
+            const selectAllCb = document.getElementById('userSelectAll');
+            const checkboxes = document.getElementsByName('selectedUserCheck');
+            
+            if (checkboxes.length === 0) {
+                selectAllCb.checked = false;
+                selectAllCb.indeterminate = false;
+                return;
+            }
+
+            let checkedCount = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) checkedCount++;
+            });
+
+            if (checkedCount === 0) {
+                selectAllCb.checked = false;
+                selectAllCb.indeterminate = false;
+            } else if (checkedCount === checkboxes.length) {
+                selectAllCb.checked = true;
+                selectAllCb.indeterminate = false;
+            } else {
+                selectAllCb.checked = false;
+                selectAllCb.indeterminate = true;
+            }
+        }
+
+        // Open modal
+        function openCreateAnnouncement() {
+            document.getElementById('annTitle').value = '';
+            document.getElementById('annContentEditor').innerHTML = '';
+            document.getElementById('userFilterInput').value = '';
+            
+            // Default to "全部" radio
+            const radios = document.getElementsByName('annScope');
+            radios[0].checked = true;
+            toggleScope('全部');
+
+            openModal('createModal');
+        }
+
+        // Form Submit handler
+        function submitAnnouncement(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('annTitle').value.trim();
+            const content = document.getElementById('annContentEditor').innerHTML.trim();
+            const scope = document.querySelector('input[name="annScope"]:checked').value;
+
+            if (!title) {
+                alert('请输入公告标题！');
+                return;
+            }
+            if (!content || content === '<br>' || content === '<div><br></div>') {
+                alert('请输入公告内容！');
+                return;
+            }
+
+            let targetUsers = [];
+            let targetUserNames = '';
+
+            if (scope === '部分') {
+                const checkboxes = document.getElementsByName('selectedUserCheck');
+                const checkedUsers = [];
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        checkedUsers.push({
+                            id: cb.value,
+                            nickname: cb.getAttribute('data-nickname')
+                        });
+                    }
+                });
+
+                if (checkedUsers.length === 0) {
+                    alert('您选择了“部分推送”范围，请在用户列表中至少勾选一个接收人！');
+                    return;
+                }
+
+                targetUsers = checkedUsers.map(u => u.id);
+                targetUserNames = checkedUsers.map(u => u.nickname).join(', ');
+            } else {
+                targetUserNames = '全体用户';
+            }
+
+            // Time helper
+            const formatTime = (d) => {
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            };
+            const nowStr = formatTime(new Date());
+
+            // 1. 保存公告到 hscms_announcements
+            const rawAnns = dbGet('hscms_announcements', []);
+            const newId = 'ANN_' + (rawAnns.length > 0 ? (Math.max(...rawAnns.map(x => parseInt(x.id.substring(4)))) + 1) : 1001);
+            
+            const newAnn = {
+                id: newId,
+                title,
+                content,
+                scope,
+                targetUsers,
+                targetUserNames,
+                publishTime: nowStr
+            };
+            
+            rawAnns.unshift(newAnn);
+            dbSave('hscms_announcements', rawAnns);
+
+            // 2. 联动追加发送消息给指定受众的用户系统消息表 hscms_system_messages
+            const rawMsgs = dbGet('hscms_system_messages', []);
+            let recipientUserIds = [];
+
+            if (scope === '全部') {
+                recipientUserIds = allUsers.map(u => u.userId);
+            } else {
+                recipientUserIds = targetUsers;
+            }
+
+            let lastMsgId = rawMsgs.length > 0 ? Math.max(...rawMsgs.map(m => m.id)) : 0;
+            recipientUserIds.forEach(uid => {
+                lastMsgId++;
+                rawMsgs.push({
+                    id: lastMsgId,
+                    userId: uid,
+                    title: `系统公告：${title}`,
+                    content: content,
+                    time: nowStr,
+                    read: false
+                });
+            });
+            dbSave('hscms_system_messages', rawMsgs);
+
+            showLockToast(`公告已成功发布！并已对 ${recipientUserIds.length} 位用户推送站内消息。`, true);
+            closeModal('createModal');
+
+            // Reload & Search
+            loadAnnouncements();
+        }
+
+        // Open details Modal
+        function openDetailModal(id) {
+            const raw = dbGet('hscms_announcements', []);
+            const a = raw.find(item => item.id === id);
+            if (!a) return;
+
+            document.getElementById('detTitle').textContent = a.title;
+            document.getElementById('detScope').innerHTML = a.scope === '全部'
+                ? '<span class="badge badge-success">全体推送</span>'
+                : '<span class="badge badge-warning">部分定向</span>';
+            document.getElementById('detTime').textContent = a.publishTime;
+            document.getElementById('detAudience').textContent = a.targetUserNames;
+            document.getElementById('detContent').innerHTML = a.content;
+
+            openModal('detailModal');
+        }
+    </script>
+</body>
+</html>

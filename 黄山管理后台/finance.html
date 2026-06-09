@@ -184,6 +184,10 @@
                         <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
                         <span>合同配置</span>
                     </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73(a1.69)-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
                 </div>
             </aside>
 
@@ -195,15 +199,15 @@
                 <ul class="sub-nav-list">
                     <li class="sub-nav-item active" id="tabQueueNav">
                         <a href="javascript:void(0)" onclick="switchTab('queue')">
-                            提现结算队列
+                            申请结算列表
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabHistoryNav">
                         <a href="javascript:void(0)" onclick="switchTab('history')">
-                            打款清算历史
+                            打款历史
                         </a>
                     </li>
-                    <li class="sub-nav-item" id="tabConfigNav">
+                    <li class="sub-nav-item" id="tabConfigNav" style="display: none;">
                         <a href="javascript:void(0)" onclick="switchTab('config')">
                             分成策略配置
                         </a>
@@ -217,7 +221,7 @@
                 <div id="queueTab" class="tab-content active" style="width: 100%;">
                     <div class="workspace-header">
                         <div class="workspace-title-section">
-                            <h1>提现结算清算队列</h1>
+                            <h1>申请结算列表</h1>
                             <p>审核供稿人提现提报，系统自动核算 T+7 资金解冻锁与最低 100 元提现阈值限制。</p>
                         </div>
                     </div>
@@ -269,7 +273,7 @@
                 <div id="historyTab" class="tab-content" style="width: 100%;">
                     <div class="workspace-header">
                         <div class="workspace-title-section">
-                            <h1>打款清算流水记录</h1>
+                            <h1>打款历史</h1>
                             <p>查询已打款、已清结算的财务划账历史，以及因安全合规原因被退回的记录。</p>
                         </div>
                     </div>
@@ -317,59 +321,21 @@
                 </div>
 
                 <!-- TAB 3: SPLIT CONFIGURATION -->
+                <!-- TAB 3: SPLIT CONFIGURATION (MIGRATED) -->
                 <div id="configTab" class="tab-content" style="width: 100%;">
                     <div class="workspace-header">
                         <div class="workspace-title-section">
                             <h1>分成清算配额配置</h1>
-                            <p>配置供稿人上传素材被C端用户订购后的分成占比，修改后立即对新交易生效。</p>
+                            <p>分成比例配置参数现已统一迁移至系统设置中心维护。</p>
                         </div>
                     </div>
                     
                     <div class="canvas-body">
-                        <div class="config-card-grid">
-                            <!-- Individual Creator config -->
-                            <div class="config-panel">
-                                <div class="config-section-title">个人独立创作者分成比</div>
-                                <form onsubmit="saveSplitConfig(event, '个人')">
-                                    <div class="config-percentage-row">
-                                        <div class="form-group" style="flex:1;">
-                                            <label>作者获得 (%)</label>
-                                            <input type="number" id="splitCreatorVal" class="form-control config-percentage-input" min="0" max="100" required>
-                                        </div>
-                                        <div style="font-size:24px; color:#cbd5e1; margin-top:20px;">:</div>
-                                        <div class="form-group" style="flex:1;">
-                                            <label>平台抽成 (%)</label>
-                                            <input type="number" id="splitCreatorPlatform" class="form-control config-percentage-input" disabled value="30">
-                                        </div>
-                                    </div>
-                                    <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:16px;">
-                                        当前分成比设定：创作者结算时将自动打款收益的份额，平台保留管理及技术运维抽成。
-                                    </p>
-                                    <button type="submit" class="btn btn-primary">保存个人分成比</button>
-                                </form>
-                            </div>
-
-                            <!-- Institutional config -->
-                            <div class="config-panel">
-                                <div class="config-section-title">签约合作机构分成比</div>
-                                <form onsubmit="saveSplitConfig(event, '机构')">
-                                    <div class="config-percentage-row">
-                                        <div class="form-group" style="flex:1;">
-                                            <label>机构获得 (%)</label>
-                                            <input type="number" id="splitOrgVal" class="form-control config-percentage-input" min="0" max="100" required>
-                                        </div>
-                                        <div style="font-size:24px; color:#cbd5e1; margin-top:20px;">:</div>
-                                        <div class="form-group" style="flex:1;">
-                                            <label>平台抽成 (%)</label>
-                                            <input type="number" id="splitOrgPlatform" class="form-control config-percentage-input" disabled value="20">
-                                        </div>
-                                    </div>
-                                    <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:16px;">
-                                        适用于文旅传媒等拥有独立法人主体资质的战略级机构，支持大额公对公打款开票。
-                                    </p>
-                                    <button type="submit" class="btn btn-primary">保存机构分成比</button>
-                                </form>
-                            </div>
+                        <div class="config-panel" style="text-align: center; padding: 48px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                            <div style="font-size: 48px; margin-bottom: 16px;">⚙️</div>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">分成策略配置已迁移</h3>
+                            <p style="font-size: 13px; color: #64748b; margin-bottom: 24px;">为了提供更统一、便捷的管理体验，独立创作者与机构分成比的调整功能已迁移至系统设置模块。</p>
+                            <a href="settings.html?tab=split" class="btn btn-primary" style="text-decoration: none; display: inline-block;">立即前往设置中心</a>
                         </div>
                     </div>
                 </div>
@@ -454,48 +420,7 @@
             } else if (tab === 'config') {
                 document.getElementById('tabConfigNav').classList.add('active');
                 document.getElementById('configTab').classList.add('active');
-                loadConfigForm();
             }
-        }
-
-        // Auto update platform split values when user inputs creator values
-        document.getElementById('splitCreatorVal').addEventListener('input', (e) => {
-            const val = parseInt(e.target.value) || 0;
-            if (val >= 0 && val <= 100) {
-                document.getElementById('splitCreatorPlatform').value = 100 - val;
-            }
-        });
-        document.getElementById('splitOrgVal').addEventListener('input', (e) => {
-            const val = parseInt(e.target.value) || 0;
-            if (val >= 0 && val <= 100) {
-                document.getElementById('splitOrgPlatform').value = 100 - val;
-            }
-        });
-
-        // Config loads
-        function loadConfigForm() {
-            const config = dbGet('hscms_split_config', DEFAULT_SPLIT_RATIOS);
-            document.getElementById('splitCreatorVal').value = config['个人'];
-            document.getElementById('splitCreatorPlatform').value = 100 - config['个人'];
-            document.getElementById('splitOrgVal').value = config['机构'];
-            document.getElementById('splitOrgPlatform').value = 100 - config['机构'];
-        }
-
-        function saveSplitConfig(e, type) {
-            e.preventDefault();
-            const config = dbGet('hscms_split_config', DEFAULT_SPLIT_RATIOS);
-            
-            if (type === '个人') {
-                const val = parseInt(document.getElementById('splitCreatorVal').value);
-                config['个人'] = val;
-            } else {
-                const val = parseInt(document.getElementById('splitOrgVal').value);
-                config['机构'] = val;
-            }
-
-            dbSave('hscms_split_config', config);
-            showLockToast(`${type}分成配额参数保存生效！`, true);
-            loadConfigForm();
         }
 
         // ==========================================
@@ -570,8 +495,7 @@
                     else blockReason = '未达到最低起提标准';
 
                     actionBtns = `
-                        <span style="color:#9ca3af; font-size:12px; cursor:not-allowed;" title="由于 ${blockReason}，打款被拦截屏蔽">⚠️ 清算受限</span>
-                        <a href="javascript:void(0)" class="action-link danger" style="margin-left:10px;" onclick="triggerRejectWdrModal('${w.id}')">驳回退回</a>
+                        <a href="javascript:void(0)" class="action-link danger" onclick="triggerRejectWdrModal('${w.id}')">驳回退回</a>
                     `;
                 }
 

@@ -176,6 +176,10 @@
                         <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
                         <span>合同配置</span>
                     </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73(a1.69)-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
                 </div>
             </aside>
 
@@ -192,12 +196,17 @@
                     </li>
                     <li class="sub-nav-item" id="tabApprovedNav">
                         <a href="javascript:void(0)" onclick="switchTab('审核成功')">
-                            确权成功历史
+                            确权历史
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabRejectedNav">
                         <a href="javascript:void(0)" onclick="switchTab('已驳回')">
                             已驳回记录
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabTakeDownNav">
+                        <a href="take-down-requests.html">
+                            用户申请下架通知
                         </a>
                     </li>
                 </ul>
@@ -303,10 +312,7 @@
                     <div class="form-group">
                         <label>驳回原因</label>
                         <select id="rejectReasonSelect" class="form-control" onchange="toggleCustomReason()">
-                            <option value="图片/视频分辨率不足，未达高清供稿标准">图片/视频分辨率不足，未达高清供稿标准</option>
-                            <option value="资产内容存在显著的外部水印、版权争议">资产内容存在显著的外部水印、版权争议</option>
-                            <option value="作品分类提报有误，请修改属性重新提报">作品分类提报有误，请修改属性重新提报</option>
-                            <option value="自定义原因">自定义驳回说明...</option>
+                            <!-- 动态加载 -->
                         </select>
                     </div>
                     <div class="form-group" id="customReasonWrapper" style="display:none;">
@@ -317,6 +323,35 @@
                 <div class="modal-footer">
                     <button type="button" class="btn" onclick="closeModal('rejectModal')">取消</button>
                     <button type="submit" class="btn btn-primary">确认驳回</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: LINK ASSET USAGE DIALOG -->
+    <div id="usageModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>关联素材用途配置</h3>
+                <button class="modal-close-btn" onclick="closeModal('usageModal')">&times;</button>
+            </div>
+            <form id="usageForm" onsubmit="submitUsageLink(event)">
+                <input type="hidden" id="usageAssetId">
+                <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <p style="font-size:12px; color:#64748b; margin: 0;">请选择适合该素材的用途（可多选）：</p>
+                        <label style="font-size:12px; color:var(--primary-color); cursor:pointer; display:flex; align-items:center; gap:4px; margin:0; user-select:none;">
+                            <input type="checkbox" id="selectAllUsage" onchange="toggleSelectAllUsage(this)">
+                            <span>一键全选</span>
+                        </label>
+                    </div>
+                    <div id="usageOptionsWrapper" style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Dynamic Checkboxes Grouped by Parent Category -->
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 16px;">
+                    <button type="button" class="btn" onclick="closeModal('usageModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认关联</button>
                 </div>
             </form>
         </div>
@@ -357,7 +392,7 @@
                 document.getElementById('pageTitle').textContent = '资产版权确权 - 待审核队列';
             } else if (status === '审核成功') {
                 document.getElementById('tabApprovedNav').classList.add('active');
-                document.getElementById('pageTitle').textContent = '资产版权确权 - 确权成功历史';
+                document.getElementById('pageTitle').textContent = '资产版权确权 - 确权历史';
             } else if (status === '已驳回') {
                 document.getElementById('tabRejectedNav').classList.add('active');
                 document.getElementById('pageTitle').textContent = '资产版权确权 - 已驳回记录';
@@ -449,15 +484,33 @@
                 let actionColumn = '';
                 if (a.status === '待审核') {
                     actionColumn = `
-                        <a href="javascript:void(0)" class="action-link" onclick="approveAssetFlow('${a.id}')">通过并发证</a>
+                        <a href="javascript:void(0)" class="action-link" onclick="openLinkUsageModal('${a.id}')">关联用途</a>
+                        <a href="javascript:void(0)" class="action-link" onclick="approveAssetFlow('${a.id}')">通过</a>
                         <a href="javascript:void(0)" class="action-link danger" onclick="triggerRejectModal('${a.id}')">驳回申请</a>
                         <a href="asset-detail.html?id=${a.id}" class="action-link" style="margin-left: 8px;" target="_blank">详情</a>
                     `;
                 } else {
                     actionColumn = `
-                        <span style="color:#9ca3af; font-size:12px;">已归档</span>
-                        <a href="asset-detail.html?id=${a.id}" class="action-link" style="margin-left: 8px;" target="_blank">详情</a>
+                        <a href="asset-detail.html?id=${a.id}" class="action-link" target="_blank">详情</a>
                     `;
+                }
+
+                // 展示已关联的用途标签 (限制前3个以防高度撑开，超出部分以等N项...显示)
+                let usageTagsHtml = '';
+                if (a.linkedUsage && a.linkedUsage !== '') {
+                    const usages = a.linkedUsage.split(', ');
+                    let visibleTags = '';
+                    if (usages.length <= 3) {
+                        visibleTags = usages.map(u => `<span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap;">${u}</span>`).join('');
+                    } else {
+                        visibleTags = usages.slice(0, 3).map(u => `<span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap;">${u}</span>`).join('') +
+                                      `<span class="badge" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap; cursor: help;" title="${a.linkedUsage}">等${usages.length}项...</span>`;
+                    }
+                    usageTagsHtml = `<div style="margin-top: 6px; display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; overflow: hidden;">` + 
+                        visibleTags +
+                        `</div>`;
+                } else if (a.status === '待审核') {
+                    usageTagsHtml = `<div style="margin-top: 6px;"><span style="color: #ef4444; font-size: 11px; font-weight: 500;">⚠️ 未关联用途</span></div>`;
                 }
 
                 tr.innerHTML = `
@@ -467,6 +520,7 @@
                             <span>ID: <code>${a.id}</code></span>
                             <span>指纹 SHA-256: <code class="hash-code" onclick="navigator.clipboard.writeText('${a.hash}'); alert('哈希值已复制到剪贴板！');">${a.hash.substring(0, 16)}...</code></span>
                         </div>
+                        ${usageTagsHtml}
                     </td>
                     <td>
                         <strong style="color:#334155;">${a.author}</strong>
@@ -515,9 +569,15 @@
             const a = assets.find(item => item.id === assetId);
             if (!a) return;
 
+            // Enforcement of usage link
+            if (!a.linkedUsage || a.linkedUsage === '') {
+                alert('请先完成【关联用途】的操作后，方可进行审核通过！');
+                return;
+            }
+
             // Conventional review division
             if (a.needProof === '否') {
-                if (confirm(`该素材（${a.title}）选择的是常规上架（不需存证确权）。\n确定要通过常规合规审核并直接将其发布上架售卖吗？`)) {
+                if (confirm(`该素材（${a.title}）选择的是常规上架（不需存证确权）。\n确定要通过常规合规审核并直接通过吗？`)) {
                     finalizeApproval(assetId, false);
                 }
                 return;
@@ -601,8 +661,8 @@
                     assets[aIdx].dciCode = '-';
                     assets[aIdx].antChainId = '-';
                     
-                    successMsg = `您好！您常规上架的作品《${title}》已成功通过平台常规合规审核，并正式上架售卖。该作品未选择区块链及 DCI 确权服务。`;
-                    toastMsg = `作品常规合规审核通过，已成功上架发布！`;
+                    successMsg = `您好！您常规上架的作品《${title}》已成功通过平台常规合规审核。该作品未选择区块链及 DCI 确权服务。`;
+                    toastMsg = `作品常规合规审核通过。`;
                 }
 
                 dbSave('hscms_asset_submissions', assets);
@@ -631,8 +691,33 @@
         // Reject popup triggers
         function triggerRejectModal(assetId) {
             document.getElementById('rejectAssetId').value = assetId;
-            document.getElementById('rejectReasonSelect').value = '图片/视频分辨率不足，未达高清供稿标准';
-            document.getElementById('customReasonWrapper').style.display = 'none';
+
+            // 动态加载驳回原因下拉选项
+            const reasons = dbGet('hscms_settings_reject_reasons', []);
+            const selectEl = document.getElementById('rejectReasonSelect');
+            selectEl.innerHTML = '';
+            
+            reasons.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r;
+                opt.textContent = r;
+                selectEl.appendChild(opt);
+            });
+            
+            // 追加自定义选项
+            const customOpt = document.createElement('option');
+            customOpt.value = '自定义原因';
+            customOpt.textContent = '自定义原因...';
+            selectEl.appendChild(customOpt);
+
+            // 默认选中第一个
+            if (reasons.length > 0) {
+                selectEl.value = reasons[0];
+            } else {
+                selectEl.value = '自定义原因';
+            }
+
+            document.getElementById('customReasonWrapper').style.display = selectEl.value === '自定义原因' ? 'block' : 'none';
             document.getElementById('rejectCustomReason').value = '';
             openModal('rejectModal');
         }
@@ -688,6 +773,143 @@
 
                 showLockToast('版权申领已驳回退回，退回告知书已送达。', true);
                 closeModal('rejectModal');
+                loadAssetsList();
+            }
+        }
+
+        // 一键全选控制
+        function toggleSelectAllUsage(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="usageSpecCheckbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+        }
+
+        // 联动更新一键全选的状态
+        function updateSelectAllState() {
+            const totalCheckbox = document.querySelectorAll('input[name="usageSpecCheckbox"]');
+            const checkedCheckbox = document.querySelectorAll('input[name="usageSpecCheckbox"]:checked');
+            const selectAllCheckbox = document.getElementById('selectAllUsage');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = (totalCheckbox.length > 0 && totalCheckbox.length === checkedCheckbox.length);
+            }
+        }
+
+        // 开启关联用途弹窗
+        function openLinkUsageModal(assetId) {
+            const assets = dbGet('hscms_asset_submissions', []);
+            const a = assets.find(item => item.id === assetId);
+            if (!a) return;
+
+            document.getElementById('usageAssetId').value = assetId;
+
+            // 获取全部用途配置
+            const usageConfig = dbGet('hscms_settings_usage_config', []);
+            const wrapper = document.getElementById('usageOptionsWrapper');
+            wrapper.innerHTML = '';
+
+            if (usageConfig.length === 0) {
+                wrapper.innerHTML = `<div style="color:#ef4444; font-size:12px; text-align:center;">暂无任何素材用途分类，请先在系统设置中配置。</div>`;
+                openModal('usageModal');
+                return;
+            }
+
+            // 获取该资产已关联的用途
+            const currentUsages = a.linkedUsage ? a.linkedUsage.split(', ') : [];
+
+            usageConfig.forEach(category => {
+                const groupDiv = document.createElement('div');
+                groupDiv.style.border = '1px solid #e2e8f0';
+                groupDiv.style.borderRadius = '8px';
+                groupDiv.style.padding = '12px';
+                groupDiv.style.backgroundColor = '#f8fafc';
+
+                // 一级分类标题
+                const header = document.createElement('div');
+                header.style.fontWeight = 'bold';
+                header.style.fontSize = '13px';
+                header.style.color = '#1e293b';
+                header.style.marginBottom = '8px';
+                header.textContent = category.name;
+                groupDiv.appendChild(header);
+
+                // 二级细分规格列表
+                const listDiv = document.createElement('div');
+                listDiv.style.display = 'flex';
+                listDiv.style.flexDirection = 'column';
+                listDiv.style.gap = '8px';
+                listDiv.style.paddingLeft = '8px';
+
+                if (category.specs && category.specs.length > 0) {
+                    category.specs.forEach(spec => {
+                        let specName = '';
+                        let specPrice = 100;
+                        if (typeof spec === 'object' && spec !== null) {
+                            specName = spec.name || '';
+                            specPrice = typeof spec.price !== 'undefined' ? spec.price : 100;
+                        } else {
+                            specName = String(spec);
+                        }
+
+                        const label = document.createElement('label');
+                        label.style.display = 'flex';
+                        label.style.alignItems = 'center';
+                        label.style.gap = '8px';
+                        label.style.fontSize = '12.5px';
+                        label.style.color = '#475569';
+                        label.style.cursor = 'pointer';
+
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.name = 'usageSpecCheckbox';
+                        checkbox.value = specName;
+                        checkbox.onchange = updateSelectAllState; // 联动事件
+                        if (currentUsages.includes(specName)) {
+                            checkbox.checked = true;
+                        }
+
+                        const textSpan = document.createElement('span');
+                        textSpan.innerHTML = `${specName} <strong style="color:var(--primary-color);">(￥${specPrice})</strong>`;
+
+                        label.appendChild(checkbox);
+                        label.appendChild(textSpan);
+                        listDiv.appendChild(label);
+                    });
+                } else {
+                    const noSpecs = document.createElement('div');
+                    noSpecs.style.color = '#94a3b8';
+                    noSpecs.style.fontSize = '12px';
+                    noSpecs.style.fontStyle = 'italic';
+                    noSpecs.textContent = '暂无细分规格';
+                    listDiv.appendChild(noSpecs);
+                }
+
+                groupDiv.appendChild(listDiv);
+                wrapper.appendChild(groupDiv);
+            });
+
+            // 初始化一键全选复选框的状态
+            updateSelectAllState();
+
+            openModal('usageModal');
+        }
+
+        // 提交关联用途
+        function submitUsageLink(e) {
+            e.preventDefault();
+            const assetId = document.getElementById('usageAssetId').value;
+            const checkedBoxes = document.querySelectorAll('input[name="usageSpecCheckbox"]:checked');
+            const selectedUsages = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const assets = dbGet('hscms_asset_submissions', []);
+            const aIdx = assets.findIndex(a => a.id === assetId);
+
+            if (aIdx !== -1) {
+                assets[aIdx].linkedUsage = selectedUsages.join(', ');
+                dbSave('hscms_asset_submissions', assets);
+
+                showLockToast('关联用途成功！', true);
+                closeModal('usageModal');
                 loadAssetsList();
             }
         }
