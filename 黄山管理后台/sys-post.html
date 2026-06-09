@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 岗位管理</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Table Search Styling */
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Toolbar Styling */
+        .toolbar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .toolbar-left {
+            display: flex;
+            gap: 8px;
+        }
+        .toolbar-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .tool-btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .tool-btn-icon:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .tool-btn-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Switch Custom Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
+        /* Pagination buttons styling */
+        .pagination-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .pagination-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+        }
+
+        /* Small action buttons in column */
+        .action-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 2px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .action-icon-btn:hover {
+            background: #e2e8f0;
+            color: var(--primary-color);
+        }
+        .action-icon-btn.danger:hover {
+            background: #fee2e2;
+            color: #ef4444;
+            border-color: #fecaca;
+        }
+        .action-icon-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        /* Form styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <!-- Notification Bell -->
+                <div class="bell-notification-container" style="position:relative; margin-right:16px; cursor:pointer;" onclick="window.location.href='take-down-requests.html'">
+                    <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:#64748b;">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 4.36 6 6.92 6 10v5l-2 2v1h16v-1l-2-2z"/>
+                    </svg>
+                    <span id="bellNotificationRedDot" style="display:none; position:absolute; top:-2px; right:-2px; width:8px; height:8px; background-color:#ef4444; border-radius:50%; border:1px solid #ffffff;"></span>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top" id="primarySidebar">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                    <a href="settings.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>系统设置</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item" id="tabAuditNav">
+                        <a href="settings.html?tab=audit">审核配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabLimitNav">
+                        <a href="settings.html?tab=limit">AIGC额度管控</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabUsageNav">
+                        <a href="settings.html?tab=usage">素材用途配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAssetRejectNav">
+                        <a href="settings.html?tab=asset-reject">素材驳回原因配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabPostShieldNav">
+                        <a href="settings.html?tab=post-shield">帖子下架配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSplitNav">
+                        <a href="settings.html?tab=split">分成策略配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAnnouncementsNav">
+                        <a href="announcements.html">通知公告</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysUserNav">
+                        <a href="sys-user.html">系统用户管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysRoleNav">
+                        <a href="sys-role.html">角色管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysMenuNav">
+                        <a href="sys-menu.html">菜单管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysDeptNav">
+                        <a href="sys-dept.html">部门管理</a>
+                    </li>
+                    <li class="sub-nav-item active" id="tabSysPostNav">
+                        <a href="sys-post.html">岗位管理</a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas" style="overflow-y: auto; padding: 24px;">
+                <div class="workspace-header" style="margin-bottom: 20px;">
+                    <div class="workspace-title-section">
+                        <h1>岗位管理</h1>
+                        <p>维护系统用户的职位属性，进行所属部门关联及排序划分。</p>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <!-- Filters -->
+                    <div class="search-row">
+                        <div class="search-col">
+                            <label>模糊搜索</label>
+                            <input type="text" id="searchKeyword" class="form-control" style="width:200px;" placeholder="请输入模糊搜索">
+                        </div>
+                        <div class="search-col">
+                            <label>状态</label>
+                            <select id="searchStatus" class="form-control" style="width:140px;">
+                                <option value="">请选择状态</option>
+                                <option value="正常">正常</option>
+                                <option value="停用">停用</option>
+                            </select>
+                        </div>
+                        <div class="search-col" style="flex-direction:row; gap:8px;">
+                            <button class="btn btn-primary" onclick="searchPosts()">查询</button>
+                            <button class="btn" onclick="resetSearch()">重置</button>
+                        </div>
+                    </div>
+
+                    <!-- Toolbar Buttons -->
+                    <div class="toolbar-row">
+                        <div class="toolbar-left">
+                            <button class="btn btn-primary" onclick="openAddPostModal()">+ 新增</button>
+                            <button class="btn" id="btnBulkEdit" onclick="openEditSelectedPost()" style="background:#22c55e; border-color:#22c55e; color:#ffffff;" disabled>修改</button>
+                            <button class="btn btn-danger" id="btnBulkDelete" onclick="deleteSelectedPosts()" disabled>删除</button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="tool-btn-icon" onclick="toggleSearchRow()" title="显示/隐藏搜索栏">
+                                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            </button>
+                            <button class="tool-btn-icon" onclick="resetSearch()" title="重置">
+                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                            </button>
+                            <button class="tool-btn-icon" onclick="loadPostsData()" title="刷新">
+                                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Post Table -->
+                    <div class="enterprise-card">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align:center;">
+                                        <input type="checkbox" id="checkAll" onchange="toggleCheckAll(this.checked)">
+                                    </th>
+                                    <th>岗位名称</th>
+                                    <th>岗位编码</th>
+                                    <th style="width: 80px; text-align:center;">排序</th>
+                                    <th style="width: 100px; text-align:center;">状态</th>
+                                    <th>创建时间</th>
+                                    <th style="width: 140px; text-align:center;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="postTableBody">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:12px 16px; border-top:1px solid var(--border-color);">
+                            <div style="font-size:12px; color:var(--text-muted);" id="pageInfo">
+                                共 0 条，第 1/1 页
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <select id="pageSizeSelect" class="form-control" style="width:100px; padding: 2px 8px; height: 28px; font-size: 12px;" onchange="changePageSize(this.value)">
+                                    <option value="10">10条/页</option>
+                                    <option value="20">20条/页</option>
+                                    <option value="50">50条/页</option>
+                                </select>
+                                <div class="pagination-buttons" id="paginationButtons" style="display:flex; gap:6px;">
+                                    <!-- Dynamic -->
+                                </div>
+                                <div style="display:flex; align-items:center; gap:4px; font-size:12px; color:#475569;">
+                                    <span>前往</span>
+                                    <input type="number" id="gotoPageInput" class="form-control" style="width: 50px; text-align:center; height: 26px; padding:2px;" min="1" value="1">
+                                    <span>页</span>
+                                    <button class="pagination-btn" style="padding: 2px 6px; height: 26px;" onclick="gotoPage()">确定</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL 1: ADD/EDIT POST -->
+    <div id="postModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 id="postModalTitle">新增岗位</h3>
+                <button class="modal-close-btn" onclick="closeModal('postModal')">&times;</button>
+            </div>
+            <form onsubmit="submitPostForm(event)">
+                <input type="hidden" id="editPostId" value="">
+                <div class="modal-body" style="padding: 20px 0;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>岗位名称*</label>
+                            <input type="text" id="formPostName" class="form-control" required placeholder="请输入岗位名称，如 董事长">
+                        </div>
+                        <div class="form-group">
+                            <label>岗位编码*</label>
+                            <input type="text" id="formPostCode" class="form-control" required placeholder="请输入岗位编码，如 ceo">
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序*</label>
+                            <input type="number" id="formPostSort" class="form-control" required placeholder="请输入显示顺序，如 1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>岗位状态</label>
+                            <select id="formStatus" class="form-control">
+                                <option value="正常">正常</option>
+                                <option value="停用">停用</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('postModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // State variables
+        let curPage = 1;
+        let pageSize = 10;
+        let allPosts = [];
+        let filteredPosts = [];
+
+        // Predefined Cold-start dataset
+        const DEFAULT_POSTS = [
+            { postId: 'post_ceo', postName: '董事长', postCode: 'ceo', postSort: 1, status: '正常', createTime: '2026-03-24 20:56:24' },
+            { postId: 'post_se', postName: '项目经理', postCode: 'se', postSort: 2, status: '正常', createTime: '2026-03-24 20:56:24' },
+            { postId: 'post_hr', postName: '人力资源', postCode: 'hr', postSort: 3, status: '正常', createTime: '2026-03-24 20:56:24' },
+            { postId: 'post_user', postName: '普通员工', postCode: 'user', postSort: 4, status: '正常', createTime: '2026-03-24 20:56:24' }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadPostsData();
+
+            // Sync bell notification
+            if (typeof checkTakeDownNotifications === 'function') {
+                checkTakeDownNotifications();
+            }
+        });
+
+        // Hide/Show Search section
+        function toggleSearchRow() {
+            const row = document.querySelector('.search-row');
+            if (row) {
+                row.style.display = row.style.display === 'none' ? 'flex' : 'none';
+            }
+        }
+
+        // Fetch posts from database
+        function loadPostsData() {
+            allPosts = dbGet('hscms_posts', DEFAULT_POSTS);
+            filteredPosts = [...allPosts];
+            
+            // Sort by sort field
+            filteredPosts.sort((a,b) => a.postSort - b.postSort);
+
+            curPage = 1;
+            loadPostsTable();
+        }
+
+        // Render table
+        function loadPostsTable() {
+            const tbody = document.getElementById('postTableBody');
+            tbody.innerHTML = '';
+
+            const total = filteredPosts.length;
+            const totalPages = Math.ceil(total / pageSize) || 1;
+
+            if (curPage > totalPages) curPage = totalPages;
+
+            const start = (curPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, total);
+            const pageData = filteredPosts.slice(start, end);
+
+            document.getElementById('pageInfo').textContent = `共 ${total} 条，当前第 ${curPage}/${totalPages} 页`;
+            document.getElementById('gotoPageInput').max = totalPages;
+            renderPaginationButtons(totalPages);
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding:24px;">暂无匹配的岗位管理数据！</td></tr>`;
+                updateToolbarState();
+                return;
+            }
+
+            pageData.forEach(p => {
+                const tr = document.createElement('tr');
+                const isChecked = p.status === '正常' ? 'checked' : '';
+
+                tr.innerHTML = `
+                    <td style="text-align:center;">
+                        <input type="checkbox" name="postCheckRow" value="${p.postId}" onchange="updateToolbarState()">
+                    </td>
+                    <td><strong style="color:#1f2937;">${p.postName}</strong></td>
+                    <td><code>${p.postCode}</code></td>
+                    <td style="text-align:center;">${p.postSort}</td>
+                    <td style="text-align:center;">
+                        <label class="switch">
+                            <input type="checkbox" ${isChecked} onchange="togglePostStatus('${p.postId}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td style="font-size:12px; color:#64748b;">${p.createTime}</td>
+                    <td style="text-align:center;">
+                        <button class="action-icon-btn" onclick="openEditPostModal('${p.postId}')" title="修改岗位">
+                            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        </button>
+                        <button class="action-icon-btn danger" onclick="deleteSinglePost('${p.postId}')" title="删除岗位">
+                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('checkAll').checked = false;
+            updateToolbarState();
+        }
+
+        // Render Pagination buttons list
+        function renderPaginationButtons(totalPages) {
+            const container = document.getElementById('paginationButtons');
+            container.innerHTML = '';
+
+            const prev = document.createElement('button');
+            prev.className = 'pagination-btn';
+            prev.textContent = '‹';
+            prev.disabled = curPage === 1;
+            prev.onclick = () => {
+                curPage--;
+                loadPostsTable();
+            };
+            container.appendChild(prev);
+
+            let startPage = Math.max(1, curPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const btn = document.createElement('button');
+                btn.className = `pagination-btn ${curPage === i ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => {
+                    curPage = i;
+                    loadPostsTable();
+                };
+                container.appendChild(btn);
+            }
+
+            const next = document.createElement('button');
+            next.className = 'pagination-btn';
+            next.textContent = '›';
+            next.disabled = curPage === totalPages;
+            next.onclick = () => {
+                curPage++;
+                loadPostsTable();
+            };
+            container.appendChild(next);
+        }
+
+        function changePageSize(size) {
+            pageSize = parseInt(size);
+            curPage = 1;
+            loadPostsTable();
+        }
+
+        function gotoPage() {
+            const input = document.getElementById('gotoPageInput');
+            let val = parseInt(input.value);
+            const totalPages = Math.ceil(filteredPosts.length / pageSize) || 1;
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > totalPages) val = totalPages;
+            curPage = val;
+            input.value = val;
+            loadPostsTable();
+        }
+
+        // Check All checkboxes control
+        function toggleCheckAll(checked) {
+            const boxes = document.getElementsByName('postCheckRow');
+            boxes.forEach(b => b.checked = checked);
+            updateToolbarState();
+        }
+
+        // Sync Toolbar State
+        function updateToolbarState() {
+            const boxes = document.getElementsByName('postCheckRow');
+            let selectedCount = 0;
+            boxes.forEach(b => {
+                if (b.checked) selectedCount++;
+            });
+
+            document.getElementById('btnBulkEdit').disabled = selectedCount !== 1;
+            document.getElementById('btnBulkDelete').disabled = selectedCount === 0;
+        }
+
+        // Switch trigger
+        function togglePostStatus(postId, isChecked) {
+            const index = allPosts.findIndex(p => p.postId === postId);
+            if (index !== -1) {
+                const targetStatus = isChecked ? '正常' : '停用';
+                allPosts[index].status = targetStatus;
+                dbSave('hscms_posts', allPosts);
+                showLockToast(`岗位 “${allPosts[index].postName}” 状态已切换为 ${targetStatus}`, true);
+            }
+        }
+
+        // Search Filter
+        function searchPosts() {
+            const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+            const status = document.getElementById('searchStatus').value;
+
+            filteredPosts = allPosts.filter(p => {
+                const matchKeyword = !keyword || 
+                                     p.postName.toLowerCase().includes(keyword) || 
+                                     p.postCode.toLowerCase().includes(keyword);
+                const matchStatus = !status || p.status === status;
+                return matchKeyword && matchStatus;
+            });
+
+            filteredPosts.sort((a,b) => a.postSort - b.postSort);
+            curPage = 1;
+            loadPostsTable();
+        }
+
+        // Reset Filter
+        function resetSearch() {
+            document.getElementById('searchKeyword').value = '';
+            document.getElementById('searchStatus').value = '';
+
+            filteredPosts = [...allPosts];
+            filteredPosts.sort((a,b) => a.postSort - b.postSort);
+            curPage = 1;
+            loadPostsTable();
+        }
+
+
+
+        // Open Add Modal
+        function openAddPostModal() {
+            document.getElementById('postModalTitle').textContent = '新增岗位';
+            document.getElementById('editPostId').value = '';
+
+            document.getElementById('formPostName').value = '';
+            document.getElementById('formPostCode').value = '';
+            document.getElementById('formPostSort').value = allPosts.length + 1;
+            document.getElementById('formStatus').value = '正常';
+
+            openModal('postModal');
+        }
+
+        // Open Edit Modal
+        function openEditPostModal(postId) {
+            const p = allPosts.find(x => x.postId === postId);
+            if (!p) return;
+
+            document.getElementById('postModalTitle').textContent = '修改岗位';
+            document.getElementById('editPostId').value = p.postId;
+
+            document.getElementById('formPostName').value = p.postName;
+            document.getElementById('formPostCode').value = p.postCode;
+            document.getElementById('formPostSort').value = p.postSort;
+            document.getElementById('formStatus').value = p.status;
+
+            openModal('postModal');
+        }
+
+        // Open Edit from Selected Toolbar
+        function openEditSelectedPost() {
+            const boxes = document.getElementsByName('postCheckRow');
+            let targetId = null;
+            boxes.forEach(b => {
+                if (b.checked) targetId = b.value;
+            });
+            if (targetId) {
+                openEditPostModal(targetId);
+            }
+        }
+
+        // Submit Form Add/Edit
+        function submitPostForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editPostId').value;
+            const postName = document.getElementById('formPostName').value.trim();
+            const postCode = document.getElementById('formPostCode').value.trim();
+            const postSort = parseInt(document.getElementById('formPostSort').value) || 1;
+            const status = document.getElementById('formStatus').value;
+
+            // Unique check code
+            const isCodeExists = allPosts.some(p => p.postCode.toLowerCase() === postCode.toLowerCase() && p.postId !== editId);
+            if (isCodeExists) {
+                showLockToast(`岗位编码 “${postCode}” 已存在，请使用其他唯一编码！`);
+                return;
+            }
+
+            const now = new Date();
+            const curTimeStr = now.getFullYear() + '-' + 
+                               String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                               String(now.getDate()).padStart(2, '0') + ' ' + 
+                               String(now.getHours()).padStart(2, '0') + ':' + 
+                               String(now.getMinutes()).padStart(2, '0') + ':' + 
+                               String(now.getSeconds()).padStart(2, '0');
+
+            if (editId) {
+                // Edit
+                const index = allPosts.findIndex(x => x.postId === editId);
+                if (index !== -1) {
+                    allPosts[index].postName = postName;
+                    allPosts[index].postCode = postCode;
+                    allPosts[index].postSort = postSort;
+                    allPosts[index].status = status;
+
+                    dbSave('hscms_posts', allPosts);
+                    showLockToast('岗位修改已顺利保存！', true);
+                }
+            } else {
+                // Add
+                const newId = 'post_' + Math.random().toString(36).substr(2, 9);
+                const newPost = {
+                    postId: newId,
+                    postName: postName,
+                    postCode: postCode,
+                    postSort: postSort,
+                    status: status,
+                    createTime: curTimeStr
+                };
+                allPosts.push(newPost);
+                dbSave('hscms_posts', allPosts);
+                showLockToast('新岗位创建成功！', true);
+            }
+
+            closeModal('postModal');
+            loadPostsData();
+        }
+
+        // Delete Single Record
+        function deleteSinglePost(postId) {
+            const target = allPosts.find(x => x.postId === postId);
+            if (!target) return;
+
+            // Integrity checks
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const isAssociated = users.some(u => u.post === target.postName);
+            if (isAssociated) {
+                showLockToast(`岗位 “${target.postName}” 下仍有系统用户存在，禁止直接删除！`);
+                return;
+            }
+
+            if (confirm(`确定要永久删除岗位 “${target.postName}” 吗？`)) {
+                allPosts = allPosts.filter(x => x.postId !== postId);
+                dbSave('hscms_posts', allPosts);
+                showLockToast('岗位已删除！', true);
+                loadPostsData();
+            }
+        }
+
+        // Delete Selected Multiple Records
+        function deleteSelectedPosts() {
+            const boxes = document.getElementsByName('postCheckRow');
+            const targetIds = [];
+            boxes.forEach(b => {
+                if (b.checked) targetIds.push(b.value);
+            });
+
+            if (targetIds.length === 0) return;
+
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            let blockedNames = [];
+
+            // Verify each
+            targetIds.forEach(id => {
+                const target = allPosts.find(x => x.postId === id);
+                if (target) {
+                    const isAssociated = users.some(u => u.post === target.postName);
+                    if (isAssociated) {
+                        blockedNames.push(target.postName);
+                    }
+                }
+            });
+
+            if (blockedNames.length > 0) {
+                showLockToast(`岗位 “${blockedNames.join(', ')}” 下仍有关联用户，禁止删除！`);
+                return;
+            }
+
+            if (confirm(`确定要永久删除这 ${targetIds.length} 个选中的岗位吗？`)) {
+                allPosts = allPosts.filter(x => !targetIds.includes(x.postId));
+                dbSave('hscms_posts', allPosts);
+                showLockToast('选中的岗位已全部顺利物理删除！', true);
+                loadPostsData();
+            }
+        }
+    </script>
+</body>
+</html>

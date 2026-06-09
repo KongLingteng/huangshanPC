@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 菜单管理</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Table Search Styling */
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Toolbar Styling */
+        .toolbar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .toolbar-left {
+            display: flex;
+            gap: 8px;
+        }
+        .toolbar-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .tool-btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .tool-btn-icon:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .tool-btn-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Pagination style */
+        .pagination-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .pagination-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+        }
+
+        /* Switch Custom Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
+        /* Small action buttons in column */
+        .action-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 2px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .action-icon-btn:hover {
+            background: #e2e8f0;
+            color: var(--primary-color);
+        }
+        .action-icon-btn.danger:hover {
+            background: #fee2e2;
+            color: #ef4444;
+            border-color: #fecaca;
+        }
+        .action-icon-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        /* Form styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /* Tree display tweaks */
+        .tree-node-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tree-toggle-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            user-select: none;
+            color: #64748b;
+            font-size: 11px;
+            transition: transform 0.2s;
+        }
+        .tree-toggle-arrow.collapsed {
+            transform: rotate(-90deg);
+        }
+        .menu-indent {
+            display: inline-block;
+            width: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top" id="primarySidebar">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                    <a href="settings.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>系统设置</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item" id="tabAuditNav">
+                        <a href="settings.html?tab=audit">审核配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabLimitNav">
+                        <a href="settings.html?tab=limit">AIGC额度管控</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabUsageNav">
+                        <a href="settings.html?tab=usage">素材用途配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAssetRejectNav">
+                        <a href="settings.html?tab=asset-reject">素材驳回原因配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabPostShieldNav">
+                        <a href="settings.html?tab=post-shield">帖子下架配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSplitNav">
+                        <a href="settings.html?tab=split">分成策略配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAnnouncementsNav">
+                        <a href="announcements.html">通知公告</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysUserNav">
+                        <a href="sys-user.html">系统用户管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysRoleNav">
+                        <a href="sys-role.html">角色管理</a>
+                    </li>
+                    <li class="sub-nav-item active" id="tabSysMenuNav">
+                        <a href="sys-menu.html">菜单管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysDeptNav">
+                        <a href="sys-dept.html">部门管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysPostNav">
+                        <a href="sys-post.html">岗位管理</a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas" style="overflow-y: auto; padding: 24px;">
+                <div class="workspace-header" style="margin-bottom: 20px;">
+                    <div class="workspace-title-section">
+                        <h1>菜单管理</h1>
+                        <p>维护系统功能层级结构、路由规则以及多语言配置属性。</p>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <!-- Filters -->
+                    <div class="search-row">
+                        <div class="search-col">
+                            <label>模糊搜索</label>
+                            <input type="text" id="searchKeyword" class="form-control" style="width:220px;" placeholder="模糊搜索菜单名称">
+                        </div>
+                        <div class="search-col">
+                            <label>状态</label>
+                            <select id="searchStatus" class="form-control" style="width:140px;">
+                                <option value="">请选择状态</option>
+                                <option value="正常">正常</option>
+                                <option value="停用">停用</option>
+                            </select>
+                        </div>
+                        <div class="search-col" style="flex-direction:row; gap:8px;">
+                            <button class="btn btn-primary" onclick="searchMenus()">查询</button>
+                            <button class="btn" onclick="resetSearch()">重置</button>
+                        </div>
+                    </div>
+
+                    <!-- Toolbar Buttons -->
+                    <div class="toolbar-row">
+                        <div class="toolbar-left">
+                            <button class="btn btn-primary" onclick="openAddMenuModal()">+ 新增</button>
+                            <button class="btn" onclick="toggleAllExpandState()" style="background:#4b5563; border-color:#4b5563; color:#ffffff;" id="btnToggleExpand">展开/折叠</button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="tool-btn-icon" onclick="toggleSearchRow()" title="显示/隐藏搜索栏">
+                                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            </button>
+                            <button class="tool-btn-icon" onclick="loadMenusData()" title="刷新">
+                                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Menu Tree Table -->
+                    <div class="enterprise-card">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th>菜单名称</th>
+                                    <th>路由路径</th>
+                                    <th>显示排序</th>
+                                    <th>组件路径</th>
+                                    <th>显示设置</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th style="width: 160px; text-align:center;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="menuTableBody">
+                                <!-- Dynamic rendering -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT MENU -->
+    <div id="menuModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 id="menuModalTitle">新增菜单</h3>
+                <button class="modal-close-btn" onclick="closeModal('menuModal')">&times;</button>
+            </div>
+            <form onsubmit="submitMenuForm(event)">
+                <input type="hidden" id="editMenuId" value="">
+                <div class="modal-body" style="padding: 20px 0;">
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>上级菜单*</label>
+                            <select id="formParentId" class="form-control" required>
+                                <option value="0">主目录</option>
+                                <!-- Populate parent menus dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>菜单名称*</label>
+                            <input type="text" id="formMenuName" class="form-control" required placeholder="请输入菜单名称，如 帖子管理">
+                        </div>
+                        <div class="form-group">
+                            <label>路由路径*</label>
+                            <input type="text" id="formPath" class="form-control" required placeholder="如 /index">
+                        </div>
+                        <div class="form-group">
+                            <label>显示排序*</label>
+                            <input type="number" id="formOrderNum" class="form-control" required placeholder="如 10" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>组件路径</label>
+                            <input type="text" id="formComponent" class="form-control" placeholder="如 ugc.html">
+                        </div>
+                        <div class="form-group">
+                            <label>显示设置</label>
+                            <select id="formVisible" class="form-control">
+                                <option value="显示">显示</option>
+                                <option value="隐藏">隐藏</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>状态</label>
+                            <select id="formStatus" class="form-control">
+                                <option value="正常">正常</option>
+                                <option value="停用">停用</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('menuModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Global menu states
+        let allMenus = [];
+        let filteredMenus = [];
+        let globalExpanded = true;
+        let collapsedParentIds = new Set(); // Track collapsed parent menu IDs
+
+        // Existing menus as mock dataset
+        const DEFAULT_MENUS = [
+            { menuId: 1, parentId: 0, menuName: "首页", path: "/index", orderNum: 10, component: "index.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 2, parentId: 0, menuName: "社区运营", path: "/ugc", orderNum: 20, component: "ugc.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 21, parentId: 2, menuName: "帖子管理", path: "/ugc/post", orderNum: 10, component: "ugc.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 22, parentId: 2, menuName: "评论管理", path: "/ugc/comment", orderNum: 20, component: "ugc.html#comments", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 23, parentId: 2, menuName: "用户黑名单", path: "/ugc/blacklist", orderNum: 30, component: "ugc.html#blacklist", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 24, parentId: 2, menuName: "推荐话题", path: "/ugc/topic", orderNum: 40, component: "index.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 3, parentId: 0, menuName: "素材管理", path: "/asset-audit", orderNum: 30, component: "asset-audit.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 31, parentId: 3, menuName: "待审核列表", path: "/asset-audit/list", orderNum: 10, component: "asset-audit.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 32, parentId: 3, menuName: "素材库", path: "/material-library", orderNum: 20, component: "material-library.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 4, parentId: 0, menuName: "系统设置", path: "/settings", orderNum: 97, component: "settings.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 41, parentId: 4, menuName: "系统用户管理", path: "/sys-user", orderNum: 10, component: "sys-user.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 42, parentId: 4, menuName: "角色管理", path: "/sys-role", orderNum: 20, component: "sys-role.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" },
+            { menuId: 43, parentId: 4, menuName: "菜单管理", path: "/sys-menu", orderNum: 30, component: "sys-menu.html", visible: "显示", status: "正常", createTime: "2026-03-24 20:56:24" }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadMenusData();
+        });
+
+        // Hide/Show Search section
+        function toggleSearchRow() {
+            const row = document.querySelector('.search-row');
+            if (row) {
+                row.style.display = row.style.display === 'none' ? 'flex' : 'none';
+            }
+        }
+
+        // Fetch menus and sort hierarchically
+        function loadMenusData() {
+            allMenus = dbGet('hscms_menus', DEFAULT_MENUS);
+            let changed = false;
+            allMenus.forEach(m => {
+                if (m.path === undefined) {
+                    const dm = DEFAULT_MENUS.find(x => x.menuId === m.menuId);
+                    m.path = dm ? dm.path : "";
+                    changed = true;
+                }
+                if (m.perms !== undefined) {
+                    delete m.perms;
+                    changed = true;
+                }
+                if (m.i18nKey !== undefined) {
+                    delete m.i18nKey;
+                    changed = true;
+                }
+            });
+            if (changed) {
+                dbSave('hscms_menus', allMenus);
+            }
+            filteredMenus = [...allMenus];
+            renderMenuTreeTable();
+        }
+
+        // Sort items: Parents first, then children, matching orderNum
+        function getHierarchicalSortedList(list) {
+            const parents = list.filter(m => parseInt(m.parentId) === 0).sort((a,b) => a.orderNum - b.orderNum);
+            const result = [];
+
+            parents.forEach(p => {
+                result.push(p);
+                const children = list.filter(m => parseInt(m.parentId) === p.menuId).sort((a,b) => a.orderNum - b.orderNum);
+                children.forEach(c => {
+                    result.push(c);
+                });
+            });
+
+            // Handle orphaned nodes just in case
+            list.forEach(item => {
+                if (parseInt(item.parentId) !== 0 && !result.some(r => r.menuId === item.menuId)) {
+                    result.push(item);
+                }
+            });
+
+            return result;
+        }
+
+        function renderMenuTreeTable() {
+            const tbody = document.getElementById('menuTableBody');
+            tbody.innerHTML = '';
+
+            const sorted = getHierarchicalSortedList(filteredMenus);
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding:24px;">暂无匹配的菜单管理数据！</td></tr>`;
+                return;
+            }
+
+            sorted.forEach(m => {
+                const tr = document.createElement('tr');
+                const isParent = parseInt(m.parentId) === 0;
+                
+                // Determine whether child is hidden based on parent collapse
+                if (!isParent && collapsedParentIds.has(parseInt(m.parentId))) {
+                    tr.style.display = 'none';
+                }
+
+                tr.setAttribute('data-id', m.menuId);
+                tr.setAttribute('data-parent', m.parentId);
+
+                // Checkboxes configuration for visible and status
+                const isVisibleChecked = m.visible === '显示' ? 'checked' : '';
+                const isStatusChecked = m.status === '正常' ? 'checked' : '';
+
+                // Building Menu Name HTML with toggle arrows for Parents, Indentation for Children
+                let nameHtml = '';
+                if (isParent) {
+                    // Check if it has any children
+                    const hasChildren = allMenus.some(child => parseInt(child.parentId) === m.menuId);
+                    if (hasChildren) {
+                        const arrowClass = collapsedParentIds.has(m.menuId) ? 'tree-toggle-arrow collapsed' : 'tree-toggle-arrow';
+                        nameHtml = `
+                            <span class="${arrowClass}" onclick="toggleNodeCollapse(${m.menuId})">▼</span>
+                            <strong style="color:#1f2937;">${m.menuName}</strong>
+                        `;
+                    } else {
+                        nameHtml = `
+                            <span style="display:inline-block; width:18px;"></span>
+                            <strong style="color:#1f2937;">${m.menuName}</strong>
+                        `;
+                    }
+                } else {
+                    nameHtml = `
+                        <span class="menu-indent"></span>
+                        <span style="color:#4b5563;">${m.menuName}</span>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <span class="tree-node-name">${nameHtml}</span>
+                    </td>
+                    <td><code>${m.path || '-'}</code></td>
+                    <td>${m.orderNum}</td>
+                    <td>${m.component || '-'}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" ${isVisibleChecked} onchange="toggleMenuVisible('${m.menuId}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" ${isStatusChecked} onchange="toggleMenuStatus('${m.menuId}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td style="font-size:12px; color:#64748b;">${m.createTime}</td>
+                    <td style="text-align:center;">
+                        <button class="action-icon-btn" onclick="openEditMenuModal('${m.menuId}')" title="修改菜单">
+                            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        </button>
+                        ${isParent ? `
+                        <button class="action-icon-btn" onclick="openAddSubMenuModal('${m.menuId}')" style="color:#22c55e;" title="新增下级菜单">
+                            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        </button>
+                        ` : `
+                        <button class="action-icon-btn" style="opacity: 0.3; cursor: not-allowed;" disabled>
+                            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        </button>
+                        `}
+                        <button class="action-icon-btn danger" onclick="deleteMenu('${m.menuId}')" title="删除菜单">
+                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Toggle visibility of children under parent
+        function toggleNodeCollapse(parentId) {
+            const hasCollapse = collapsedParentIds.has(parentId);
+            if (hasCollapse) {
+                collapsedParentIds.delete(parentId);
+            } else {
+                collapsedParentIds.add(parentId);
+            }
+            renderMenuTreeTable();
+        }
+
+        // One-key collapse/expand all
+        function toggleAllExpandState() {
+            globalExpanded = !globalExpanded;
+            const parents = allMenus.filter(m => parseInt(m.parentId) === 0);
+            
+            if (globalExpanded) {
+                collapsedParentIds.clear();
+            } else {
+                parents.forEach(p => collapsedParentIds.add(p.menuId));
+            }
+            renderMenuTreeTable();
+        }
+
+        // Toggle Switch handlers
+        function toggleMenuVisible(menuId, checked) {
+            const val = checked ? '显示' : '隐藏';
+            const list = dbGet('hscms_menus', DEFAULT_MENUS);
+            const idx = list.findIndex(m => String(m.menuId) === String(menuId));
+            if (idx !== -1) {
+                list[idx].visible = val;
+                dbSave('hscms_menus', list);
+                allMenus = list;
+                showLockToast(`显示设置已更改为: ${val}`, true);
+
+                const target = filteredMenus.find(m => String(m.menuId) === String(menuId));
+                if (target) target.visible = val;
+            }
+        }
+
+        function toggleMenuStatus(menuId, checked) {
+            const val = checked ? '正常' : '停用';
+            const list = dbGet('hscms_menus', DEFAULT_MENUS);
+            const idx = list.findIndex(m => String(m.menuId) === String(menuId));
+            if (idx !== -1) {
+                list[idx].status = val;
+                dbSave('hscms_menus', list);
+                allMenus = list;
+                showLockToast(`菜单状态已更改为: ${val}`, true);
+
+                const target = filteredMenus.find(m => String(m.menuId) === String(menuId));
+                if (target) target.status = val;
+            }
+        }
+
+        // Filters
+        function searchMenus() {
+            const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+            const status = document.getElementById('searchStatus').value;
+
+            filteredMenus = allMenus.filter(m => {
+                const matchesKeyword = !keyword || m.menuName.toLowerCase().includes(keyword);
+                const matchesStatus = !status || m.status === status;
+                return matchesKeyword && matchesStatus;
+            });
+            renderMenuTreeTable();
+        }
+
+        function resetSearch() {
+            document.getElementById('searchKeyword').value = '';
+            document.getElementById('searchStatus').value = '';
+            filteredMenus = [...allMenus];
+            renderMenuTreeTable();
+        }
+
+        // Populate parent dropdown list inside form
+        function populateParentDropdown(selectedId = 0) {
+            const select = document.getElementById('formParentId');
+            select.innerHTML = '<option value="0">主目录</option>';
+            
+            // Allow only root level items to be parents to match system guidelines
+            const rootMenus = allMenus.filter(m => parseInt(m.parentId) === 0);
+            rootMenus.forEach(rm => {
+                const opt = document.createElement('option');
+                opt.value = rm.menuId;
+                opt.textContent = rm.menuName;
+                select.appendChild(opt);
+            });
+
+            select.value = selectedId;
+        }
+
+        // ============================================
+        // Modal Handlers
+        // ============================================
+        function openAddMenuModal() {
+            document.getElementById('menuModalTitle').textContent = '新增菜单';
+            document.getElementById('editMenuId').value = '';
+            
+            populateParentDropdown(0);
+
+            document.getElementById('formMenuName').value = '';
+            document.getElementById('formPath').value = '';
+            document.getElementById('formOrderNum').value = '';
+            document.getElementById('formComponent').value = '';
+            document.getElementById('formVisible').value = '显示';
+            document.getElementById('formStatus').value = '正常';
+
+            openModal('menuModal');
+        }
+
+        function openAddSubMenuModal(parentId) {
+            document.getElementById('menuModalTitle').textContent = '新增下级菜单';
+            document.getElementById('editMenuId').value = '';
+
+            populateParentDropdown(parentId);
+            // Lock parent drop-down select to keep workflow natural
+            document.getElementById('formParentId').value = parentId;
+
+            document.getElementById('formMenuName').value = '';
+            document.getElementById('formPath').value = '';
+            document.getElementById('formOrderNum').value = '';
+            document.getElementById('formComponent').value = '';
+            document.getElementById('formVisible').value = '显示';
+            document.getElementById('formStatus').value = '正常';
+
+            openModal('menuModal');
+        }
+
+        function openEditMenuModal(menuId) {
+            const m = allMenus.find(item => String(item.menuId) === String(menuId));
+            if (!m) return;
+
+            document.getElementById('menuModalTitle').textContent = '修改菜单';
+            document.getElementById('editMenuId').value = m.menuId;
+
+            populateParentDropdown(m.parentId);
+            
+            document.getElementById('formMenuName').value = m.menuName;
+            document.getElementById('formPath').value = m.path || '';
+            document.getElementById('formOrderNum').value = m.orderNum;
+            document.getElementById('formComponent').value = m.component || '';
+            document.getElementById('formVisible').value = m.visible || '显示';
+            document.getElementById('formStatus').value = m.status || '正常';
+
+            openModal('menuModal');
+        }
+
+        function submitMenuForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editMenuId').value;
+            const parentId = parseInt(document.getElementById('formParentId').value);
+            const menuName = document.getElementById('formMenuName').value.trim();
+            const path = document.getElementById('formPath').value.trim();
+            const orderNum = parseInt(document.getElementById('formOrderNum').value);
+            const component = document.getElementById('formComponent').value.trim();
+            const visible = document.getElementById('formVisible').value;
+            const status = document.getElementById('formStatus').value;
+
+            if (!menuName || !path || isNaN(orderNum)) {
+                showLockToast('必填项不能为空！');
+                return;
+            }
+
+            const list = dbGet('hscms_menus', DEFAULT_MENUS);
+
+            if (editId) {
+                // Edit Menu Item
+                const idx = list.findIndex(item => String(item.menuId) === String(editId));
+                if (idx !== -1) {
+                    list[idx].parentId = parentId;
+                    list[idx].menuName = menuName;
+                    list[idx].path = path;
+                    list[idx].orderNum = orderNum;
+                    list[idx].component = component;
+                    list[idx].visible = visible;
+                    list[idx].status = status;
+                    dbSave('hscms_menus', list);
+                    showLockToast('菜单修改成功！', true);
+                }
+            } else {
+                // Add Menu Item
+                const formatTime = (d) => {
+                    const pad = (n) => String(n).padStart(2, '0');
+                    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+                };
+
+                // Create a unique menuId
+                const nextId = list.length > 0 ? (Math.max(...list.map(x => parseInt(x.menuId))) + 1) : 1;
+
+                const newMenu = {
+                    menuId: nextId,
+                    parentId: parentId,
+                    menuName: menuName,
+                    path: path,
+                    orderNum: orderNum,
+                    component: component,
+                    visible: visible,
+                    status: status,
+                    createTime: formatTime(new Date())
+                };
+
+                list.push(newMenu);
+                dbSave('hscms_menus', list);
+                showLockToast('菜单新增成功！', true);
+            }
+
+            closeModal('menuModal');
+            loadMenusData();
+        }
+
+        // Delete menu item with check protection
+        function deleteMenu(menuId) {
+            // Check if this menu has any submenus
+            const hasChildren = allMenus.some(item => String(item.parentId) === String(menuId));
+            if (hasChildren) {
+                showLockToast('该菜单项下包含子级菜单，禁止直接删除！');
+                return;
+            }
+
+            if (confirm(`确认要删除菜单 ID 为 [${menuId}] 的系统菜单吗？`)) {
+                let list = dbGet('hscms_menus', DEFAULT_MENUS);
+                list = list.filter(item => String(item.menuId) !== String(menuId));
+                dbSave('hscms_menus', list);
+                showLockToast('菜单已成功删除！', true);
+                loadMenusData();
+            }
+        }
+    </script>
+</body>
+</html>

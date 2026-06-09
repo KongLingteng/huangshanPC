@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 角色管理</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Table Search Styling */
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Toolbar Styling */
+        .toolbar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .toolbar-left {
+            display: flex;
+            gap: 8px;
+        }
+        .toolbar-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .tool-btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .tool-btn-icon:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .tool-btn-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Pagination style */
+        .pagination-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .pagination-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff;
+        }
+        .pagination-btn:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+        }
+
+        /* Switch Custom Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
+        /* Small action buttons in column */
+        .action-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 2px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .action-icon-btn:hover {
+            background: #e2e8f0;
+            color: var(--primary-color);
+        }
+        .action-icon-btn.danger:hover {
+            background: #fee2e2;
+            color: #ef4444;
+            border-color: #fecaca;
+        }
+        .action-icon-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        /* Form styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /* Tree panel checkbox grid */
+        .tree-check-panel {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            background: #f8fafc;
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .tree-node-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .tree-child-list {
+            padding-left: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .tree-child-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        /* Assign User Scroll List */
+        .user-scroll-list {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #ffffff;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        .user-list-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            gap: 12px;
+            transition: background 0.15s;
+        }
+        .user-list-item:hover {
+            background: #f8fafc;
+        }
+        .user-list-item:last-child {
+            border-bottom: none;
+        }
+        .user-list-item input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top" id="primarySidebar">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                    <a href="settings.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>系统设置</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item" id="tabAuditNav">
+                        <a href="settings.html?tab=audit">审核配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabLimitNav">
+                        <a href="settings.html?tab=limit">AIGC额度管控</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabUsageNav">
+                        <a href="settings.html?tab=usage">素材用途配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAssetRejectNav">
+                        <a href="settings.html?tab=asset-reject">素材驳回原因配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabPostShieldNav">
+                        <a href="settings.html?tab=post-shield">帖子下架配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSplitNav">
+                        <a href="settings.html?tab=split">分成策略配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAnnouncementsNav">
+                        <a href="announcements.html">通知公告</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysUserNav">
+                        <a href="sys-user.html">系统用户管理</a>
+                    </li>
+                    <li class="sub-nav-item active" id="tabSysRoleNav">
+                        <a href="sys-role.html">角色管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysMenuNav">
+                        <a href="sys-menu.html">菜单管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysDeptNav">
+                        <a href="sys-dept.html">部门管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysPostNav">
+                        <a href="sys-post.html">岗位管理</a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas" style="overflow-y: auto; padding: 24px;">
+                <div class="workspace-header" style="margin-bottom: 20px;">
+                    <div class="workspace-title-section">
+                        <h1>角色管理</h1>
+                        <p>配置管理员与业务岗位的操作权限，并进行菜单和数据层级划分。</p>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <!-- Advanced Filters -->
+                    <div class="search-row">
+                        <div class="search-col">
+                            <label>模糊搜索</label>
+                            <input type="text" id="searchKeyword" class="form-control" style="width:220px;" placeholder="搜索角色名称">
+                        </div>
+                        <div class="search-col">
+                            <label>状态</label>
+                            <select id="searchStatus" class="form-control" style="width:140px;">
+                                <option value="">请选择状态</option>
+                                <option value="正常">正常</option>
+                                <option value="停用">停用</option>
+                            </select>
+                        </div>
+                        <div class="search-col">
+                            <label>创建时间</label>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <input type="date" id="searchDateStart" class="form-control" style="width:140px;">
+                                <span style="color:var(--text-light); font-size:12px;">-</span>
+                                <input type="date" id="searchDateEnd" class="form-control" style="width:140px;">
+                            </div>
+                        </div>
+                        <div class="search-col" style="flex-direction:row; gap:8px;">
+                            <button class="btn btn-primary" onclick="searchRoles()">查询</button>
+                            <button class="btn" onclick="resetSearch()">重置</button>
+                        </div>
+                    </div>
+
+                    <!-- Toolbar Buttons -->
+                    <div class="toolbar-row">
+                        <div class="toolbar-left">
+                            <button class="btn btn-primary" onclick="openAddRoleModal()">+ 新增</button>
+                            <button class="btn" id="btnBulkEdit" onclick="openEditSelectedRole()" style="background:#22c55e; border-color:#22c55e; color:#ffffff;" disabled>修改</button>
+                            <button class="btn btn-danger" id="btnBulkDelete" onclick="deleteSelectedRoles()" disabled>删除</button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="tool-btn-icon" onclick="toggleSearchRow()" title="显示/隐藏搜索栏">
+                                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            </button>
+                            <button class="tool-btn-icon" onclick="loadRolesTable()" title="刷新">
+                                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Roles Table -->
+                    <div class="enterprise-card">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align:center;">
+                                        <input type="checkbox" id="checkAll" onchange="toggleCheckAll(this.checked)">
+                                    </th>
+                                    <th>角色名称</th>
+                                    <th>显示顺序</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th style="width: 180px; text-align:center;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roleTableBody">
+                                <!-- Dynamic Loading -->
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:12px 16px; border-top:1px solid var(--border-color);">
+                            <div style="font-size:12px; color:var(--text-muted);" id="pageInfo">
+                                共 0 条，第 1/1 页
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <select id="pageSizeSelect" class="form-control" style="width:100px; padding: 2px 8px; height: 28px; font-size: 12px;" onchange="changePageSize(this.value)">
+                                    <option value="10">10条/页</option>
+                                    <option value="20">20条/页</option>
+                                    <option value="50">50条/页</option>
+                                </select>
+                                <div class="pagination-buttons" id="paginationButtons" style="display:flex; gap:6px;">
+                                    <!-- Dynamic -->
+                                </div>
+                                <div style="display:flex; align-items:center; gap:4px; font-size:12px; color:#475569;">
+                                    <span>前往</span>
+                                    <input type="number" id="gotoPageInput" class="form-control" style="width: 50px; text-align:center; height: 26px; padding:2px;" min="1" value="1">
+                                    <span>页</span>
+                                    <button class="pagination-btn" style="padding: 2px 6px; height: 26px;" onclick="gotoPage()">确定</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL 1: ADD/EDIT ROLE -->
+    <div id="roleModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 id="roleModalTitle">新增角色</h3>
+                <button class="modal-close-btn" onclick="closeModal('roleModal')">&times;</button>
+            </div>
+            <form onsubmit="submitRoleForm(event)">
+                <input type="hidden" id="editRoleId" value="">
+                <div class="modal-body" style="padding: 20px 0;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>角色名称*</label>
+                            <input type="text" id="formRoleName" class="form-control" required placeholder="请输入角色名称，如 超级管理员">
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序*</label>
+                            <input type="number" id="formRoleSort" class="form-control" required placeholder="如 1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>状态</label>
+                            <select id="formStatus" class="form-control">
+                                <option value="正常">正常</option>
+                                <option value="停用">停用</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label>备注说明</label>
+                        <input type="text" id="formRemark" class="form-control" placeholder="请输入简短备注">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label>菜单权限 (勾选可授予的模块菜单)</label>
+                        <div class="tree-check-panel" id="formMenusGrid">
+                            <!-- Menu Nodes Tree -->
+                            <div class="tree-node-item">
+                                <input type="checkbox" name="roleMenuCheck" value="menu_home" id="m_home">
+                                <label for="m_home">首页</label>
+                            </div>
+                            <div class="tree-node-item">
+                                <input type="checkbox" name="roleMenuCheck" value="menu_ugc" id="m_ugc">
+                                <label for="m_ugc">社区运营</label>
+                            </div>
+                            <div class="tree-node-item">
+                                <input type="checkbox" name="roleMenuCheck" value="menu_material" id="m_mat">
+                                <label for="m_mat">素材</label>
+                            </div>
+                            <div class="tree-node-item">
+                                <input type="checkbox" name="roleMenuCheck" value="menu_finance" id="m_fin">
+                                <label for="m_fin">交易</label>
+                            </div>
+                            <div class="tree-node-item">
+                                <input type="checkbox" name="roleMenuCheck" value="menu_user" id="m_usr">
+                                <label for="m_usr">用户</label>
+                            </div>
+                            <div class="tree-node-item">
+                                <input type="checkbox" name="roleMenuCheck" value="menu_order" id="m_ord">
+                                <label for="m_ord">订单</label>
+                            </div>
+                            <div class="tree-node-item">
+                                <input type="checkbox" name="roleMenuCheck" value="menu_contract" id="m_con">
+                                <label for="m_con">合同配置</label>
+                            </div>
+                            <div class="tree-node-item">
+                                <input type="checkbox" name="roleMenuCheck" value="menu_setting" id="m_set">
+                                <label for="m_set">设置</label>
+                            </div>
+                            <div class="tree-child-list">
+                                <label class="tree-child-item"><input type="checkbox" name="roleMenuCheck" value="menu_setting_ann"> 通知公告</label>
+                                <label class="tree-child-item"><input type="checkbox" name="roleMenuCheck" value="menu_setting_user"> 系统用户管理</label>
+                                <label class="tree-child-item"><input type="checkbox" name="roleMenuCheck" value="menu_setting_role"> 角色管理</label>
+                                <label class="tree-child-item"><input type="checkbox" name="roleMenuCheck" value="menu_setting_menu"> 菜单管理</label>
+                                <label class="tree-child-item"><input type="checkbox" name="roleMenuCheck" value="menu_setting_dept"> 部门管理</label>
+                                <label class="tree-child-item"><input type="checkbox" name="roleMenuCheck" value="menu_setting_post"> 岗位管理</label>
+                                <label class="tree-child-item"><input type="checkbox" name="roleMenuCheck" value="menu_setting_dict"> 字典管理</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('roleModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: DATA SCOPE -->
+    <div id="dataScopeModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3>分配数据权限</h3>
+                <button class="modal-close-btn" onclick="closeModal('dataScopeModal')">&times;</button>
+            </div>
+            <form onsubmit="submitDataScope(event)">
+                <input type="hidden" id="dataScopeRoleId" value="">
+                <div class="modal-body" style="padding: 20px 0;">
+                    <div class="form-group">
+                        <label>角色名称</label>
+                        <input type="text" id="dataScopeRoleName" class="form-control" disabled>
+                    </div>
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label>数据权限范围*</label>
+                        <select id="formDataScope" class="form-control" required>
+                            <option value="全部数据权限">全部数据权限</option>
+                            <option value="自定数据权限">自定数据权限</option>
+                            <option value="本部门数据权限">本部门数据权限</option>
+                            <option value="本部门及以下数据权限">本部门及以下数据权限</option>
+                            <option value="仅本人数据权限">仅本人数据权限</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('dataScopeModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ASSIGN USER -->
+    <div id="assignUserModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>分配系统用户</h3>
+                <button class="modal-close-btn" onclick="closeModal('assignUserModal')">&times;</button>
+            </div>
+            <form onsubmit="submitAssignUser(event)">
+                <input type="hidden" id="assignUserRoleId" value="">
+                <div class="modal-body" style="padding: 20px 0;">
+                    <div class="form-group" style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:600; font-size:13px; color:#334155;">分配到角色：<span id="assignUserRoleName" style="color:var(--primary-color);"></span></span>
+                        <input type="text" id="assignUserKeyword" class="form-control" style="width:180px; height:28px; font-size:12px; padding:2px 8px;" placeholder="检索昵称/ID..." oninput="filterAssignUsers()">
+                    </div>
+                    <div class="user-scroll-list" id="assignUserListWrapper">
+                        <!-- Dynamic Checkbox user list -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('assignUserModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Pagination & filtered states
+        let curPage = 1;
+        let pageSize = 10;
+        let filteredRoles = [];
+        let allRoles = [];
+
+        // System users pool for assignment
+        let allUsers = [];
+
+        // Default Roles dataset for cold-start
+        const DEFAULT_ROLES = [
+            {
+                roleId: 'role_superadmin',
+                roleName: '超级管理员',
+                roleKey: 'superadmin',
+                roleSort: 1,
+                status: '正常',
+                createTime: '2026-03-24 20:56:24',
+                menuIds: ['menu_home', 'menu_ugc', 'menu_material', 'menu_finance', 'menu_user', 'menu_order', 'menu_contract', 'menu_setting', 'menu_setting_ann', 'menu_setting_user', 'menu_setting_role', 'menu_setting_menu', 'menu_setting_dept', 'menu_setting_post', 'menu_setting_dict'],
+                dataScope: '全部数据权限',
+                remark: '系统最高权限超级管理员，拥有全局访问与数据维护能力。'
+            },
+            {
+                roleId: 'role_pc_user',
+                roleName: 'PC端普通用户',
+                roleKey: 'pc_user',
+                roleSort: 2,
+                status: '正常',
+                createTime: '2026-03-24 20:56:24',
+                menuIds: ['menu_home', 'menu_material', 'menu_order'],
+                dataScope: '本部门数据权限',
+                remark: '用于PC控制台的基础数据查看与素材维护等基本操作。'
+            },
+            {
+                roleId: 'role_app_user',
+                roleName: '移动端普通用户',
+                roleKey: 'app_user',
+                roleSort: 3,
+                status: '正常',
+                createTime: '2026-03-24 20:56:24',
+                menuIds: ['menu_home', 'menu_ugc'],
+                dataScope: '仅本人数据权限',
+                remark: '适用于黄山前台移动APP普通登录浏览、社区互动用户。'
+            }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadRolesData();
+        });
+
+        // Toggle search visibility
+        function toggleSearchRow() {
+            const row = document.querySelector('.search-row');
+            if (row) {
+                row.style.display = row.style.display === 'none' ? 'flex' : 'none';
+            }
+        }
+
+        // Fetch dataset
+        function loadRolesData() {
+            allRoles = dbGet('hscms_roles', DEFAULT_ROLES);
+            filteredRoles = [...allRoles];
+            
+            // Sync loaded users pool
+            allUsers = dbGet('hscms_users', DEFAULT_USERS);
+
+            curPage = 1;
+            loadRolesTable();
+        }
+
+        // Render table records
+        function loadRolesTable() {
+            const tbody = document.getElementById('roleTableBody');
+            tbody.innerHTML = '';
+
+            const total = filteredRoles.length;
+            const totalPages = Math.ceil(total / pageSize) || 1;
+
+            if (curPage > totalPages) curPage = totalPages;
+
+            const start = (curPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, total);
+            const pageData = filteredRoles.slice(start, end);
+
+            document.getElementById('pageInfo').textContent = `共 ${total} 条，当前第 ${curPage}/${totalPages} 页`;
+            document.getElementById('gotoPageInput').max = totalPages;
+            renderPagination(totalPages);
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding:24px;">暂无匹配的角色管理数据！</td></tr>`;
+                updateToolbarState();
+                return;
+            }
+
+            pageData.forEach(r => {
+                const tr = document.createElement('tr');
+                const isChecked = r.status === '正常' ? 'checked' : '';
+
+                // Extra operation icons: Edit, Delete, Menu tree configs, Data scope, Assign users
+                tr.innerHTML = `
+                    <td style="text-align:center;">
+                        <input type="checkbox" name="roleCheckRow" value="${r.roleId}" onchange="updateToolbarState()">
+                    </td>
+                    <td><strong style="color:#1f2937;">${r.roleName}</strong></td>
+                    <td>${r.roleSort}</td>
+                    <td>
+                         <label class="switch">
+                             <input type="checkbox" ${isChecked} onchange="toggleRoleStatus('${r.roleId}', this.checked)">
+                             <span class="slider"></span>
+                         </label>
+                    </td>
+                    <td style="font-size:12px; color:#64748b;">${r.createTime}</td>
+                    <td style="text-align:center;">
+                        <button class="action-icon-btn" onclick="openEditRoleModal('${r.roleId}')" title="修改角色/配置权限">
+                            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        </button>
+                        <button class="action-icon-btn danger" onclick="deleteSingleRole('${r.roleId}')" title="删除角色">
+                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </button>
+                        <button class="action-icon-btn" onclick="openDataScope('${r.roleId}')" title="数据权限">
+                            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                        </button>
+                        <button class="action-icon-btn" onclick="openAssignUser('${r.roleId}')" title="分配用户">
+                            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('checkAll').checked = false;
+            updateToolbarState();
+        }
+
+        // Pagination buttons renderer
+        function renderPagination(totalPages) {
+            const container = document.getElementById('paginationButtons');
+            container.innerHTML = '';
+
+            const prev = document.createElement('button');
+            prev.className = 'pagination-btn';
+            prev.textContent = '‹';
+            prev.disabled = curPage === 1;
+            prev.onclick = () => {
+                curPage--;
+                loadRolesTable();
+            };
+            container.appendChild(prev);
+
+            let start = Math.max(1, curPage - 2);
+            let end = Math.min(totalPages, start + 4);
+            if (end - start < 4) {
+                start = Math.max(1, end - 4);
+            }
+
+            for (let i = start; i <= end; i++) {
+                const btn = document.createElement('button');
+                btn.className = `pagination-btn ${curPage === i ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => {
+                    curPage = i;
+                    loadRolesTable();
+                };
+                container.appendChild(btn);
+            }
+
+            const next = document.createElement('button');
+            next.className = 'pagination-btn';
+            next.textContent = '›';
+            next.disabled = curPage === totalPages;
+            next.onclick = () => {
+                curPage++;
+                loadRolesTable();
+            };
+            container.appendChild(next);
+        }
+
+        function changePageSize(size) {
+            pageSize = parseInt(size);
+            curPage = 1;
+            loadRolesTable();
+        }
+
+        function gotoPage() {
+            const input = document.getElementById('gotoPageInput');
+            let val = parseInt(input.value);
+            const totalPages = Math.ceil(filteredRoles.length / pageSize) || 1;
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > totalPages) val = totalPages;
+            curPage = val;
+            input.value = val;
+            loadRolesTable();
+        }
+
+        // Search & filter
+        function searchRoles() {
+            const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+            const status = document.getElementById('searchStatus').value;
+            const dateStart = document.getElementById('searchDateStart').value;
+            const dateEnd = document.getElementById('searchDateEnd').value;
+
+            filteredRoles = allRoles.filter(r => {
+                const matchesKeyword = !keyword || 
+                    r.roleName.toLowerCase().includes(keyword);
+
+                const matchesStatus = !status || r.status === status;
+
+                let matchesDate = true;
+                if (dateStart || dateEnd) {
+                    const rDate = r.createTime ? r.createTime.split(' ')[0] : '';
+                    if (dateStart && rDate < dateStart) matchesDate = false;
+                    if (dateEnd && rDate > dateEnd) matchesDate = false;
+                }
+
+                return matchesKeyword && matchesStatus && matchesDate;
+            });
+
+            curPage = 1;
+            loadRolesTable();
+        }
+
+        function resetSearch() {
+            document.getElementById('searchKeyword').value = '';
+            document.getElementById('searchStatus').value = '';
+            document.getElementById('searchDateStart').value = '';
+            document.getElementById('searchDateEnd').value = '';
+            filteredRoles = [...allRoles];
+            curPage = 1;
+            loadRolesTable();
+        }
+
+        // Toggle Switch handler
+        function toggleRoleStatus(roleId, checked) {
+            const status = checked ? '正常' : '停用';
+            const list = dbGet('hscms_roles', DEFAULT_ROLES);
+            const idx = list.findIndex(r => r.roleId === roleId);
+            if (idx !== -1) {
+                list[idx].status = status;
+                dbSave('hscms_roles', list);
+                allRoles = list;
+                showLockToast(`角色状态已更新为: ${status}`, true);
+                
+                const target = filteredRoles.find(r => r.roleId === roleId);
+                if (target) target.status = status;
+            }
+        }
+
+        // Sync toolbar buttons status
+        function updateToolbarState() {
+            const checks = document.getElementsByName('roleCheckRow');
+            let selectedCount = 0;
+            checks.forEach(c => {
+                if (c.checked) selectedCount++;
+            });
+
+            document.getElementById('btnBulkEdit').disabled = selectedCount !== 1;
+            document.getElementById('btnBulkDelete').disabled = selectedCount === 0;
+        }
+
+        function toggleCheckAll(checked) {
+            const checks = document.getElementsByName('roleCheckRow');
+            checks.forEach(c => {
+                c.checked = checked;
+            });
+            updateToolbarState();
+        }
+
+        // ===========================================
+        // MODAL 1: ADD/EDIT ROLE
+        // ===========================================
+        function openAddRoleModal() {
+            document.getElementById('roleModalTitle').textContent = '新增角色';
+            document.getElementById('editRoleId').value = '';
+            document.getElementById('formRoleName').value = '';
+            document.getElementById('formRoleSort').value = '';
+            document.getElementById('formStatus').value = '正常';
+            document.getElementById('formRemark').value = '';
+
+            const checks = document.getElementsByName('roleMenuCheck');
+            checks.forEach(c => c.checked = false);
+
+            openModal('roleModal');
+        }
+
+        function openEditRoleModal(roleId) {
+            const r = allRoles.find(item => item.roleId === roleId);
+            if (!r) return;
+
+            document.getElementById('editRoleId').value = r.roleId;
+            document.getElementById('formRoleName').value = r.roleName;
+            document.getElementById('formRoleSort').value = r.roleSort;
+            document.getElementById('formStatus').value = r.status || '正常';
+            document.getElementById('formRemark').value = r.remark || '';
+
+            const checks = document.getElementsByName('roleMenuCheck');
+            const menuIds = r.menuIds || [];
+            checks.forEach(c => {
+                c.checked = menuIds.includes(c.value);
+            });
+
+            openModal('roleModal');
+        }
+
+        function openEditSelectedRole() {
+            const checks = document.getElementsByName('roleCheckRow');
+            let targetId = '';
+            checks.forEach(c => {
+                if (c.checked) targetId = c.value;
+            });
+            if (targetId) openEditRoleModal(targetId);
+        }
+
+        function submitRoleForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editRoleId').value;
+            const roleName = document.getElementById('formRoleName').value.trim();
+            const roleSort = parseInt(document.getElementById('formRoleSort').value);
+            const status = document.getElementById('formStatus').value;
+            const remark = document.getElementById('formRemark').value.trim();
+
+            if (!roleName || isNaN(roleSort)) {
+                showLockToast('必填项不能为空！');
+                return;
+            }
+
+            const checks = document.getElementsByName('roleMenuCheck');
+            const menuIds = [];
+            checks.forEach(c => {
+                if (c.checked) menuIds.push(c.value);
+            });
+
+            const list = dbGet('hscms_roles', DEFAULT_ROLES);
+
+            if (editId) {
+                // Update
+                const idx = list.findIndex(r => r.roleId === editId);
+                if (idx !== -1) {
+                    list[idx].roleName = roleName;
+                    list[idx].roleSort = roleSort;
+                    list[idx].status = status;
+                    list[idx].remark = remark;
+                    list[idx].menuIds = menuIds;
+                    dbSave('hscms_roles', list);
+                    showLockToast('角色信息及菜单权限保存成功！', true);
+                }
+            } else {
+                // Insert
+                const formatTime = (d) => {
+                    const pad = (n) => String(n).padStart(2, '0');
+                    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+                };
+
+                const newRoleId = 'role_' + Math.floor(1000 + Math.random() * 9000);
+                const newRole = {
+                    roleId: newRoleId,
+                    roleName: roleName,
+                    roleKey: 'role_' + newRoleId,
+                    roleSort: roleSort,
+                    status: status,
+                    createTime: formatTime(new Date()),
+                    menuIds: menuIds,
+                    dataScope: '全部数据权限',
+                    remark: remark
+                };
+
+                list.push(newRole);
+                dbSave('hscms_roles', list);
+                showLockToast('角色新增成功！', true);
+            }
+
+            closeModal('roleModal');
+            loadRolesData();
+        }
+
+        // Delete handlers
+        function deleteSingleRole(roleId) {
+            if (roleId === 'role_superadmin') {
+                showLockToast('超级管理员内置角色禁止删除！');
+                return;
+            }
+            if (confirm(`确认要删除角色 ID 为 [${roleId}] 的系统角色吗？`)) {
+                performDeleteRoles([roleId]);
+            }
+        }
+
+        function deleteSelectedRoles() {
+            const checks = document.getElementsByName('roleCheckRow');
+            const toDelete = [];
+            checks.forEach(c => {
+                if (c.checked) toDelete.push(c.value);
+            });
+
+            if (toDelete.length === 0) return;
+            if (toDelete.includes('role_superadmin')) {
+                showLockToast('选择项中包含超级管理员角色，超级管理员角色禁止删除！');
+                return;
+            }
+
+            if (confirm(`确认要批量删除选中的 ${toDelete.length} 个角色吗？`)) {
+                performDeleteRoles(toDelete);
+            }
+        }
+
+        function performDeleteRoles(roleIdList) {
+            let list = dbGet('hscms_roles', DEFAULT_ROLES);
+            list = list.filter(r => !roleIdList.includes(r.roleId));
+            dbSave('hscms_roles', list);
+            showLockToast('角色移除成功！', true);
+            loadRolesData();
+        }
+
+        // ===========================================
+        // MODAL 2: DATA SCOPE
+        // ===========================================
+        function openDataScope(roleId) {
+            const r = allRoles.find(item => item.roleId === roleId);
+            if (!r) return;
+
+            document.getElementById('dataScopeRoleId').value = r.roleId;
+            document.getElementById('dataScopeRoleName').value = r.roleName;
+            document.getElementById('formDataScope').value = r.dataScope || '全部数据权限';
+
+            openModal('dataScopeModal');
+        }
+
+        function submitDataScope(e) {
+            e.preventDefault();
+            const targetId = document.getElementById('dataScopeRoleId').value;
+            const scope = document.getElementById('formDataScope').value;
+
+            const list = dbGet('hscms_roles', DEFAULT_ROLES);
+            const idx = list.findIndex(r => r.roleId === targetId);
+            if (idx !== -1) {
+                list[idx].dataScope = scope;
+                dbSave('hscms_roles', list);
+                showLockToast('数据权限配置更新成功！', true);
+            }
+            closeModal('dataScopeModal');
+            loadRolesData();
+        }
+
+        // ===========================================
+        // MODAL 3: ASSIGN USER
+        // ===========================================
+        function openAssignUser(roleId) {
+            const r = allRoles.find(item => item.roleId === roleId);
+            if (!r) return;
+
+            document.getElementById('assignUserRoleId').value = r.roleId;
+            document.getElementById('assignUserRoleName').textContent = r.roleName;
+            document.getElementById('assignUserKeyword').value = '';
+
+            renderAssignUserList();
+            openModal('assignUserModal');
+        }
+
+        function renderAssignUserList() {
+            const container = document.getElementById('assignUserListWrapper');
+            container.innerHTML = '';
+
+            const roleId = document.getElementById('assignUserRoleId').value;
+            const r = allRoles.find(item => item.roleId === roleId);
+            if (!r) return;
+
+            const keyword = document.getElementById('assignUserKeyword').value.trim().toLowerCase();
+            const userList = dbGet('hscms_users', DEFAULT_USERS);
+
+            const filtered = userList.filter(u => {
+                return u.nickname.toLowerCase().includes(keyword) || u.userId.toLowerCase().includes(keyword);
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8; font-size:12.5px;">暂无匹配的系统用户</div>';
+                return;
+            }
+
+            filtered.forEach(u => {
+                // Determine if this user is assigned to current role
+                const userRoles = u.assignedRoles || [u.role || '普通角色'];
+                const isAssigned = userRoles.includes(r.roleName);
+                const isChecked = isAssigned ? 'checked' : '';
+
+                const item = document.createElement('div');
+                item.className = 'user-list-item';
+                item.innerHTML = `
+                    <input type="checkbox" name="assignUserCheck" value="${u.userId}" ${isChecked}>
+                    <span style="font-weight:600; color:#1e293b;">${u.nickname}</span>
+                    <span style="color:#64748b; font-size:11.5px;">(ID: <code>${u.userId}</code>)</span>
+                    <span style="margin-left:auto; font-size:12px; background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#475569;">${u.role || '普通角色'}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function filterAssignUsers() {
+            renderAssignUserList();
+        }
+
+        function submitAssignUser(e) {
+            e.preventDefault();
+            const targetRoleId = document.getElementById('assignUserRoleId').value;
+            const r = allRoles.find(item => item.roleId === targetRoleId);
+            if (!r) return;
+
+            const checks = document.getElementsByName('assignUserCheck');
+            const selectedUserIds = [];
+            checks.forEach(c => {
+                if (c.checked) selectedUserIds.push(c.value);
+            });
+
+            // Sync with users database
+            const userList = dbGet('hscms_users', DEFAULT_USERS);
+
+            // Traverse and modify user role configurations
+            userList.forEach(u => {
+                if (!u.assignedRoles) {
+                    u.assignedRoles = [u.role || '普通角色'];
+                }
+
+                const hasRole = u.assignedRoles.includes(r.roleName);
+                const shouldHave = selectedUserIds.includes(u.userId);
+
+                // If currently not on list but checked, add role. If currently checked but unchecked, remove role.
+                if (shouldHave && !hasRole) {
+                    u.assignedRoles.push(r.roleName);
+                } else if (!shouldHave && hasRole) {
+                    u.assignedRoles = u.assignedRoles.filter(role => role !== r.roleName);
+                }
+
+                u.role = u.assignedRoles.length > 0 ? u.assignedRoles.join(', ') : '普通角色';
+            });
+
+            dbSave('hscms_users', userList);
+            showLockToast('分配系统用户成功！', true);
+            closeModal('assignUserModal');
+
+            // Refresh loaded datasets in core view
+            loadRolesData();
+        }
+    </script>
+</body>
+</html>

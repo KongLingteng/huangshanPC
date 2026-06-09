@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 部门管理</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Table Search Styling */
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Toolbar Styling */
+        .toolbar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .toolbar-left {
+            display: flex;
+            gap: 8px;
+        }
+        .toolbar-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .tool-btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .tool-btn-icon:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .tool-btn-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Tree Indent and Arrows */
+        .tree-indent {
+            display: inline-block;
+            height: 1px;
+        }
+        .tree-toggle-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 10px;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+
+        /* Switch Custom Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
+        /* Small action buttons in column */
+        .action-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 2px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .action-icon-btn:hover {
+            background: #e2e8f0;
+            color: var(--primary-color);
+        }
+        .action-icon-btn.danger:hover {
+            background: #fee2e2;
+            color: #ef4444;
+            border-color: #fecaca;
+        }
+        .action-icon-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        /* Form styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <!-- Notification Bell -->
+                <div class="bell-notification-container" style="position:relative; margin-right:16px; cursor:pointer;" onclick="window.location.href='take-down-requests.html'">
+                    <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:#64748b;">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 4.36 6 6.92 6 10v5l-2 2v1h16v-1l-2-2z"/>
+                    </svg>
+                    <span id="bellNotificationRedDot" style="display:none; position:absolute; top:-2px; right:-2px; width:8px; height:8px; background-color:#ef4444; border-radius:50%; border:1px solid #ffffff;"></span>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top" id="primarySidebar">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                    <a href="settings.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>系统设置</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item" id="tabAuditNav">
+                        <a href="settings.html?tab=audit">审核配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabLimitNav">
+                        <a href="settings.html?tab=limit">AIGC额度管控</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabUsageNav">
+                        <a href="settings.html?tab=usage">素材用途配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAssetRejectNav">
+                        <a href="settings.html?tab=asset-reject">素材驳回原因配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabPostShieldNav">
+                        <a href="settings.html?tab=post-shield">帖子下架配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSplitNav">
+                        <a href="settings.html?tab=split">分成策略配置</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAnnouncementsNav">
+                        <a href="announcements.html">通知公告</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysUserNav">
+                        <a href="sys-user.html">系统用户管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysRoleNav">
+                        <a href="sys-role.html">角色管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysMenuNav">
+                        <a href="sys-menu.html">菜单管理</a>
+                    </li>
+                    <li class="sub-nav-item active" id="tabSysDeptNav">
+                        <a href="sys-dept.html">部门管理</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabSysPostNav">
+                        <a href="sys-post.html">岗位管理</a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas" style="overflow-y: auto; padding: 24px;">
+                <div class="workspace-header" style="margin-bottom: 20px;">
+                    <div class="workspace-title-section">
+                        <h1>部门管理</h1>
+                        <p>维护运营管理组织架构的树形层级及地区类别权限划分。</p>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <!-- Filters -->
+                    <div class="search-row">
+                        <div class="search-col">
+                            <label>模糊检索</label>
+                            <input type="text" id="searchKeyword" class="form-control" style="width:200px;" placeholder="请输入模糊检索">
+                        </div>
+                        <div class="search-col">
+                            <label>状态</label>
+                            <select id="searchStatus" class="form-control" style="width:140px;">
+                                <option value="">请选择状态</option>
+                                <option value="正常">正常</option>
+                                <option value="停用">停用</option>
+                            </select>
+                        </div>
+                        <div class="search-col" style="flex-direction:row; gap:8px;">
+                            <button class="btn btn-primary" onclick="searchDepts()">查询</button>
+                            <button class="btn" onclick="resetSearch()">重置</button>
+                        </div>
+                    </div>
+
+                    <!-- Toolbar Buttons -->
+                    <div class="toolbar-row">
+                        <div class="toolbar-left">
+                            <button class="btn btn-primary" onclick="openAddDeptModal()">+ 新增</button>
+                            <button class="btn" id="btnToggleExpand" onclick="toggleExpandAllDepts()" style="background:#f1f5f9; border-color:#cbd5e1; color:#334155;">↓↑ 收起</button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="tool-btn-icon" onclick="toggleSearchRow()" title="显示/隐藏搜索栏">
+                                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            </button>
+                            <button class="tool-btn-icon" onclick="resetSearch()" title="重置">
+                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                            </button>
+                            <button class="tool-btn-icon" onclick="loadDeptsData()" title="刷新">
+                                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Table List -->
+                    <div class="enterprise-card">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th>部门名称</th>
+                                    <th style="width: 100px; text-align:center;">显示排序</th>
+                                    <th style="width: 100px; text-align:center;">状态</th>
+                                    <th>创建时间</th>
+                                    <th style="width: 150px; text-align:center;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deptTableBody">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL 1: ADD/EDIT DEPT -->
+    <div id="deptModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 id="deptModalTitle">新增部门</h3>
+                <button class="modal-close-btn" onclick="closeModal('deptModal')">&times;</button>
+            </div>
+            <form onsubmit="submitDeptForm(event)">
+                <input type="hidden" id="editDeptId" value="">
+                <div class="modal-body" style="padding: 20px 0;">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>上级部门</label>
+                        <select id="formParentId" class="form-control">
+                            <!-- Options generated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>部门名称*</label>
+                            <input type="text" id="formDeptName" class="form-control" required placeholder="请输入部门名称">
+                        </div>
+                        <div class="form-group">
+                            <label>显示排序*</label>
+                            <input type="number" id="formOrderNum" class="form-control" required placeholder="请输入显示排序，如 0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>部门状态</label>
+                            <select id="formStatus" class="form-control">
+                                <option value="正常">正常</option>
+                                <option value="停用">停用</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('deptModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Global variables
+        let allDepts = [];
+        let filteredDepts = [];
+        let globalExpanded = true;
+        let collapsedDeptIds = new Set(); // Track collapsed parent department IDs
+
+        // Predefined database Cold-start
+        const DEFAULT_DEPTS = [
+            { deptId: 'dept_1', parentId: '0', deptName: '总部', orderNum: 0, status: '正常', createTime: '2026-03-24 20:56:24' },
+            { deptId: 'dept_2', parentId: 'dept_1', deptName: '研发部', orderNum: 1, status: '正常', createTime: '2026-03-24 20:56:24' },
+            { deptId: 'dept_3', parentId: 'dept_1', deptName: '运营部', orderNum: 2, status: '正常', createTime: '2026-03-24 20:56:24' },
+            { deptId: 'dept_4', parentId: 'dept_1', deptName: '财务部', orderNum: 3, status: '正常', createTime: '2026-03-24 20:56:24' },
+            { deptId: 'dept_5', parentId: 'dept_1', deptName: '供稿合作部', orderNum: 4, status: '正常', createTime: '2026-03-24 20:56:24' }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadDeptsData();
+            
+            // Sync check notification
+            if (typeof checkTakeDownNotifications === 'function') {
+                checkTakeDownNotifications();
+            }
+        });
+
+        // Toggle search visibility
+        function toggleSearchRow() {
+            const row = document.querySelector('.search-row');
+            if (row) {
+                row.style.display = row.style.display === 'none' ? 'flex' : 'none';
+            }
+        }
+
+        // Fetch depts list from LocalStorage
+        function loadDeptsData() {
+            allDepts = dbGet('hscms_depts', DEFAULT_DEPTS);
+            filteredDepts = [...allDepts];
+            renderDeptTable();
+        }
+
+        // Recursive tree sorter
+        function getHierarchicalSortedList(list) {
+            let result = [];
+            const roots = list.filter(d => d.parentId === '0' || !d.parentId).sort((a, b) => a.orderNum - b.orderNum);
+            
+            function recurse(parentId, depth) {
+                const children = list.filter(d => d.parentId === parentId).sort((a, b) => a.orderNum - b.orderNum);
+                children.forEach(c => {
+                    c.level = depth;
+                    result.push(c);
+                    recurse(c.deptId, depth + 1);
+                });
+            }
+
+            roots.forEach(r => {
+                r.level = 0;
+                result.push(r);
+                recurse(r.deptId, 1);
+            });
+
+            // Handle orphans just in case
+            list.forEach(item => {
+                if (!result.some(x => x.deptId === item.deptId)) {
+                    item.level = 0;
+                    result.push(item);
+                }
+            });
+
+            return result;
+        }
+
+        // Render function
+        function renderDeptTable() {
+            const tbody = document.getElementById('deptTableBody');
+            tbody.innerHTML = '';
+
+            const sorted = getHierarchicalSortedList(filteredDepts);
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding:24px;">暂无匹配的部门管理数据！</td></tr>`;
+                return;
+            }
+
+            sorted.forEach(d => {
+                const tr = document.createElement('tr');
+                
+                // Determine visibility based on parent collapsed state
+                if (isNodeHidden(d, filteredDepts)) {
+                    tr.style.display = 'none';
+                }
+
+                const isChecked = d.status === '正常' ? 'checked' : '';
+
+                // Render Name with Indent + Toggle arrow if has children
+                let nameHtml = '';
+                const indentSize = (d.level || 0) * 20;
+                const indent = `<span class="tree-indent" style="width:${indentSize}px;"></span>`;
+                const hasChildren = allDepts.some(child => child.parentId === d.deptId);
+
+                if (hasChildren) {
+                    const arrowClass = collapsedDeptIds.has(d.deptId) ? 'tree-toggle-icon collapsed' : 'tree-toggle-icon';
+                    const arrowSymbol = collapsedDeptIds.has(d.deptId) ? '▶' : '▼';
+                    nameHtml = `
+                        ${indent}
+                        <span class="${arrowClass}" style="cursor:pointer; margin-right:4px;" onclick="toggleDeptCollapse('${d.deptId}')">${arrowSymbol}</span>
+                        <strong style="color:#1f2937;">${d.deptName}</strong>
+                    `;
+                } else {
+                    nameHtml = `
+                        ${indent}
+                        <span class="tree-toggle-icon" style="visibility:hidden; margin-right:4px;">▶</span>
+                        <span style="color:#4b5563;">${d.deptName}</span>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td>${nameHtml}</td>
+                    <td style="text-align:center;">${d.orderNum}</td>
+                    <td style="text-align:center;">
+                        <label class="switch">
+                            <input type="checkbox" ${isChecked} onchange="toggleDeptStatus('${d.deptId}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td style="font-size:12px; color:#64748b;">${d.createTime}</td>
+                    <td style="text-align:center;">
+                        <button class="action-icon-btn" onclick="openEditDeptModal('${d.deptId}')" title="修改部门">
+                            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                        </button>
+                        <button class="action-icon-btn" onclick="openAddDeptModal('${d.deptId}')" title="新增下级部门" style="color:var(--primary-color);">
+                            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        </button>
+                        <button class="action-icon-btn danger" onclick="deleteDept('${d.deptId}')" title="删除部门">
+                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Helper to check if node is hidden due to ancestors being collapsed
+        function isNodeHidden(node, list) {
+            let parentId = node.parentId;
+            while (parentId && parentId !== '0') {
+                if (collapsedDeptIds.has(parentId)) {
+                    return true;
+                }
+                const parent = list.find(d => d.deptId === parentId);
+                if (!parent) break;
+                parentId = parent.parentId;
+            }
+            return false;
+        }
+
+        // Toggle individual collapse
+        function toggleDeptCollapse(deptId) {
+            if (collapsedDeptIds.has(deptId)) {
+                collapsedDeptIds.delete(deptId);
+            } else {
+                collapsedDeptIds.add(deptId);
+            }
+            renderDeptTable();
+        }
+
+        // Expand / Collapse all toggler
+        function toggleExpandAllDepts() {
+            const btn = document.getElementById('btnToggleExpand');
+            if (globalExpanded) {
+                // Collapse all: Find all items with children and add to collapsed set
+                allDepts.forEach(d => {
+                    const hasChildren = allDepts.some(c => c.parentId === d.deptId);
+                    if (hasChildren) {
+                        collapsedDeptIds.add(d.deptId);
+                    }
+                });
+                globalExpanded = false;
+                btn.textContent = '展开';
+                btn.style.background = 'var(--primary-color)';
+                btn.style.color = '#ffffff';
+                btn.style.borderColor = 'var(--primary-color)';
+            } else {
+                collapsedDeptIds.clear();
+                globalExpanded = true;
+                btn.textContent = '收起';
+                btn.style.background = '#f1f5f9';
+                btn.style.color = '#334155';
+                btn.style.borderColor = '#cbd5e1';
+            }
+            renderDeptTable();
+        }
+
+        // Switch toggle status
+        function toggleDeptStatus(deptId, isChecked) {
+            const targetStatus = isChecked ? '正常' : '停用';
+            const index = allDepts.findIndex(d => d.deptId === deptId);
+            if (index !== -1) {
+                allDepts[index].status = targetStatus;
+                dbSave('hscms_depts', allDepts);
+                showLockToast(`部门 “${allDepts[index].deptName}” 状态已切换为 ${targetStatus}`, true);
+            }
+        }
+
+        // Search Filter
+        function searchDepts() {
+            const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+            const status = document.getElementById('searchStatus').value;
+
+            filteredDepts = allDepts.filter(d => {
+                const matchKeyword = !keyword || d.deptName.toLowerCase().includes(keyword);
+                const matchStatus = !status || d.status === status;
+                return matchKeyword && matchStatus;
+            });
+
+            renderDeptTable();
+        }
+
+        // Reset Filter
+        function resetSearch() {
+            document.getElementById('searchKeyword').value = '';
+            document.getElementById('searchStatus').value = '';
+            
+            // Clear filters and restore state
+            filteredDepts = [...allDepts];
+            renderDeptTable();
+        }
+
+        // Recursive tree descendant finder to prevent cycle dependency
+        function getDescendantIds(deptId) {
+            let descendants = [deptId];
+            const children = allDepts.filter(d => d.parentId === deptId);
+            children.forEach(c => {
+                descendants = descendants.concat(getDescendantIds(c.deptId));
+            });
+            return descendants;
+        }
+
+        // Helper to populate upper parent options
+        function populateParentOptions(currentDeptId = null) {
+            const select = document.getElementById('formParentId');
+            select.innerHTML = '<option value="0">顶级部门</option>';
+
+            const excludedIds = currentDeptId ? getDescendantIds(currentDeptId) : [];
+
+            // Sorted hierarchical list for beautiful indent selection
+            const sorted = getHierarchicalSortedList(allDepts);
+            sorted.forEach(d => {
+                if (!excludedIds.includes(d.deptId)) {
+                    const indentStr = '&nbsp;&nbsp;'.repeat(d.level || 0);
+                    select.innerHTML += `<option value="${d.deptId}">${indentStr}${d.deptName}</option>`;
+                }
+            });
+        }
+
+        // Open Add Modal
+        function openAddDeptModal(defaultParentId = '0') {
+            document.getElementById('deptModalTitle').textContent = '新增部门';
+            document.getElementById('editDeptId').value = '';
+            
+            // Populate select list
+            populateParentOptions();
+
+            // Set inputs
+            document.getElementById('formParentId').value = defaultParentId;
+            document.getElementById('formDeptName').value = '';
+            document.getElementById('formOrderNum').value = '0';
+            document.getElementById('formStatus').value = '正常';
+
+            openModal('deptModal');
+        }
+
+        // Open Edit Modal
+        function openEditDeptModal(deptId) {
+            const d = allDepts.find(x => x.deptId === deptId);
+            if (!d) return;
+
+            document.getElementById('deptModalTitle').textContent = '修改部门';
+            document.getElementById('editDeptId').value = d.deptId;
+
+            // Populate upper options and exclude self + descendants
+            populateParentOptions(d.deptId);
+
+            document.getElementById('formParentId').value = d.parentId;
+            document.getElementById('formDeptName').value = d.deptName;
+            document.getElementById('formOrderNum').value = d.orderNum;
+            document.getElementById('formStatus').value = d.status;
+
+            openModal('deptModal');
+        }
+
+        // Form Submit
+        function submitDeptForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editDeptId').value;
+            const parentId = document.getElementById('formParentId').value;
+            const deptName = document.getElementById('formDeptName').value.trim();
+            const orderNum = parseInt(document.getElementById('formOrderNum').value) || 0;
+            const status = document.getElementById('formStatus').value;
+
+            if (!deptName) {
+                showLockToast('部门名称不能为空！');
+                return;
+            }
+
+            const now = new Date();
+            const curTimeStr = now.getFullYear() + '-' + 
+                               String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                               String(now.getDate()).padStart(2, '0') + ' ' + 
+                               String(now.getHours()).padStart(2, '0') + ':' + 
+                               String(now.getMinutes()).padStart(2, '0') + ':' + 
+                               String(now.getSeconds()).padStart(2, '0');
+
+            if (editId) {
+                // Update
+                const index = allDepts.findIndex(x => x.deptId === editId);
+                if (index !== -1) {
+                    allDepts[index].parentId = parentId;
+                    allDepts[index].deptName = deptName;
+                    allDepts[index].orderNum = orderNum;
+                    allDepts[index].status = status;
+
+                    dbSave('hscms_depts', allDepts);
+                    showLockToast('部门修改保存成功！', true);
+                }
+            } else {
+                // Insert
+                const newId = 'dept_' + Math.random().toString(36).substr(2, 9);
+                const newDept = {
+                    deptId: newId,
+                    parentId: parentId,
+                    deptName: deptName,
+                    orderNum: orderNum,
+                    status: status,
+                    createTime: curTimeStr
+                };
+                allDepts.push(newDept);
+                dbSave('hscms_depts', allDepts);
+                showLockToast('部门新增成功！', true);
+            }
+
+            closeModal('deptModal');
+            loadDeptsData();
+        }
+
+        // Delete
+        function deleteDept(deptId) {
+            const target = allDepts.find(x => x.deptId === deptId);
+            if (!target) return;
+
+            // Rule 1: check children
+            const hasChildren = allDepts.some(d => d.parentId === deptId);
+            if (hasChildren) {
+                showLockToast(`部门 “${target.deptName}” 包含下级子部门，禁止直接删除！`);
+                return;
+            }
+
+            // Rule 2: check user linkage
+            const usersList = dbGet('hscms_users', DEFAULT_USERS);
+            const userLink = usersList.some(u => u.deptName === target.deptName);
+            if (userLink) {
+                showLockToast(`部门 “${target.deptName}” 下仍有关联系统用户存在，禁止删除！`);
+                return;
+            }
+
+            if (confirm(`您确定要永久删除部门 “${target.deptName}” 吗？`)) {
+                allDepts = allDepts.filter(x => x.deptId !== deptId);
+                dbSave('hscms_depts', allDepts);
+                showLockToast('部门已顺利删除！', true);
+                loadDeptsData();
+            }
+        }
+    </script>
+</body>
+</html>
