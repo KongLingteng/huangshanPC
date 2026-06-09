@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>标签运营 - 黄山旅游AIGC内容管理平台</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .tag-pill {
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tag-pill.active {
+            background-color: var(--primary-color) !important;
+            color: #ffffff !important;
+            border-color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+        .tag-pill.active:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -147,13 +164,13 @@
                             定时上下架调度
                         </a>
                     </li>
-                    <li class="sub-nav-item" id="subnav-banner">
+                    <li class="sub-nav-item" id="subnav-banner" style="display: none;">
                         <a href="banner.html">
                             <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
                             Banner管理
                         </a>
                     </li>
-                    <li class="sub-nav-item" id="subnav-campaign">
+                    <li class="sub-nav-item" id="subnav-campaign" style="display: none;">
                         <a href="campaign.html">
                             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                             活动管理
@@ -171,45 +188,17 @@
                     </div>
                 </div>
                 <div class="canvas-body">
-                    <div class="tag-columns-container">
-                        <!-- 地域 -->
+                    <div class="tag-columns-container" style="grid-template-columns: 1fr;">
+                        <!-- 公共标签 -->
                         <div class="tag-column-card">
                             <div class="tag-column-header">
-                                <span>地域标签维度</span>
-                                <span style="font-size:11px; color:var(--text-light);">回车直接添加</span>
+                                <span>全量标签运营维度</span>
+                                <span style="font-size:11px; color:var(--text-light);">从 DAM 标签库自由选择</span>
                             </div>
                             <div class="tag-input-wrapper">
-                                <input type="text" class="form-control" placeholder="回车添加地域标签，如：光明顶" onkeydown="handleTagInput(event, 'geographic')">
+                                <input type="text" class="form-control" placeholder="输入搜索可选标签..." oninput="filterTags(this)">
                             </div>
-                            <div class="tag-pill-list" id="tagList-geographic">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-
-                        <!-- 风格 -->
-                        <div class="tag-column-card">
-                            <div class="tag-column-header">
-                                <span>风格标签维度</span>
-                                <span style="font-size:11px; color:var(--text-light);">回车直接添加</span>
-                            </div>
-                            <div class="tag-input-wrapper">
-                                <input type="text" class="form-control" placeholder="回车添加风格标签，如：写意" onkeydown="handleTagInput(event, 'style')">
-                            </div>
-                            <div class="tag-pill-list" id="tagList-style">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-
-                        <!-- 季节 -->
-                        <div class="tag-column-card">
-                            <div class="tag-column-header">
-                                <span>季节标签维度</span>
-                                <span style="font-size:11px; color:var(--text-light);">回车直接添加</span>
-                            </div>
-                            <div class="tag-input-wrapper">
-                                <input type="text" class="form-control" placeholder="回车添加季节标签，如：秋叶" onkeydown="handleTagInput(event, 'season')">
-                            </div>
-                            <div class="tag-pill-list" id="tagList-season">
+                            <div class="tag-pill-list" id="tagList" style="max-height: 480px; overflow-y: auto;">
                                 <!-- Populated dynamically -->
                             </div>
                         </div>
@@ -227,51 +216,94 @@
 
     <script src="js/common.js"></script>
     <script>
-        let tagsDb = {};
+        // 合并去重后的单一静态 DAM 全量标签池
+        const DAM_TAGS = [
+            "迎客松", "光明顶", "西海大峡谷", "莲花峰", "天都峰", "九龙瀑", "宏村", "呈坎", "屯溪老街", "新安江", "云谷寺", "慈光阁",
+            "国画", "写意", "水墨", "日出", "云海", "冬雪", "秋色", "泼墨", "极简", "重彩", "摄影", "航拍", "复古",
+            "春季", "夏季", "秋季", "冬季", "四季", "雨季", "旱季", "黄金周", "避暑"
+        ];
+
+        let tagsDb = [];
 
         function loadTags() {
-            tagsDb = dbGet('hscms_tags', {});
-            renderTags('geographic');
-            renderTags('style');
-            renderTags('season');
-        }
-
-        function renderTags(dimension) {
-            const list = document.getElementById(`tagList-${dimension}`);
-            const tagArray = tagsDb[dimension] || [];
-            list.innerHTML = tagArray.map(tag => `
-                <span class="tag-pill">
-                    ${tag}
-                    <span class="tag-pill-close" onclick="deleteTag('${tag}', '${dimension}')">&times;</span>
-                </span>
-            `).join('');
-        }
-
-        function handleTagInput(event, dimension) {
-            if (event.key === 'Enter') {
-                const value = event.target.value.trim();
-                if (value) {
-                    if (!tagsDb[dimension]) tagsDb[dimension] = [];
-                    if (tagsDb[dimension].includes(value)) {
-                        showLockToast('该标签已存在！');
-                    } else {
-                        tagsDb[dimension].push(value);
-                        event.target.value = '';
-                        dbSave('hscms_tags', tagsDb);
-                        showLockToast('标签添加成功！', true);
-                        renderTags(dimension);
-                    }
-                }
-            }
-        }
-
-        function deleteTag(tagValue, dimension) {
-            if (tagsDb[dimension]) {
-                tagsDb[dimension] = tagsDb[dimension].filter(t => t !== tagValue);
+            const raw = dbGet('hscms_tags', {});
+            // 向下自愈：如果是包含地理、风格、季节的旧对象结构，解包合并并去重
+            if (raw && !Array.isArray(raw)) {
+                tagsDb = [
+                    ...(raw.geographic || []),
+                    ...(raw.style || []),
+                    ...(raw.season || []),
+                    ...(raw.common || [])
+                ];
+                tagsDb = Array.from(new Set(tagsDb));
+                // 将升级后的扁平一维数组覆写存盘
                 dbSave('hscms_tags', tagsDb);
-                showLockToast('标签已删除', true);
-                renderTags(dimension);
+            } else if (Array.isArray(raw)) {
+                tagsDb = raw;
+            } else {
+                tagsDb = [];
             }
+            
+            renderTags();
+        }
+
+        // 渲染全量公共标签
+        function renderTags() {
+            const list = document.getElementById('tagList');
+            list.innerHTML = DAM_TAGS.map(tag => {
+                const isActive = tagsDb.includes(tag);
+                if (isActive) {
+                    return `<span class="tag-pill active" onclick="toggleTag('${tag}')">✓ ${tag}</span>`;
+                } else {
+                    return `<span class="tag-pill" onclick="toggleTag('${tag}')">${tag}</span>`;
+                }
+            }).join('');
+        }
+
+        // 点击切换标签状态
+        function toggleTag(tagValue) {
+            const index = tagsDb.indexOf(tagValue);
+
+            if (index > -1) {
+                // 已选择则取消
+                tagsDb.splice(index, 1);
+                showLockToast(`标签 [${tagValue}] 已取消选择。`, true);
+            } else {
+                // 未选择则加入
+                tagsDb.push(tagValue);
+                showLockToast(`标签 [${tagValue}] 选择成功！`, true);
+            }
+
+            dbSave('hscms_tags', tagsDb);
+            renderTags();
+
+            // 重新应用搜索过滤
+            const input = document.querySelector('.tag-column-card input');
+            if (input) {
+                filterTags(input);
+            }
+        }
+
+        // 输入搜索词实时检索过滤未选中标签
+        function filterTags(inputElement) {
+            const query = inputElement.value.trim().toLowerCase();
+            const list = document.getElementById('tagList');
+            const pills = list.querySelectorAll('.tag-pill');
+
+            pills.forEach(pill => {
+                const isSelected = pill.classList.contains('active');
+                if (isSelected) {
+                    pill.style.display = '';
+                    return;
+                }
+
+                const text = pill.textContent.trim().toLowerCase();
+                if (text.includes(query)) {
+                    pill.style.display = '';
+                } else {
+                    pill.style.display = 'none';
+                }
+            });
         }
 
         // Init load

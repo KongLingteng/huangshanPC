@@ -147,15 +147,21 @@
                             定时上下架调度
                         </a>
                     </li>
-                    <li class="sub-nav-item" id="subnav-banner">
+                    <li class="sub-nav-item" id="subnav-banner" style="display: none;">
                         <a href="banner.html">
-                            <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                            </svg>
                             Banner管理
                         </a>
                     </li>
-                    <li class="sub-nav-item active" id="subnav-campaign">
+                    <li class="sub-nav-item active" id="subnav-campaign" style="display: none;">
                         <a href="campaign.html">
-                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                            </svg>
                             活动管理
                         </a>
                     </li>
@@ -167,7 +173,7 @@
                 <div class="workspace-header">
                     <div class="workspace-title-section">
                         <h1>活动管理</h1>
-                        <p>营销运营团队可在 CMS 后台闭环完成互动活动的创建、可见性控制与素材打包下载</p>
+                        <p>维护系统活动以及其交互公开度等元信息</p>
                     </div>
                     <div class="workspace-actions">
                         <button class="btn btn-primary" onclick="openModal('campaignModal')">
@@ -205,7 +211,7 @@
         <div class="modal-card" style="max-width: 680px;">
             <div class="modal-header">
                 <h3>新建活动</h3>
-                <button class="modal-close-btn" onclick="closeModal('campaignModal')">&times;</button>
+                <button class="modal-close-btn" onclick="if (new URLSearchParams(window.location.search).get('editId')) { window.location.href='index.html'; } else { closeModal('campaignModal'); }">&times;</button>
             </div>
             <form id="campaignForm" onsubmit="saveCampaign(event)">
                 <div class="modal-body">
@@ -275,8 +281,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" onclick="closeModal('campaignModal')">取消</button>
-                    <button type="submit" class="btn btn-primary">发布活动</button>
+                    <button type="button" class="btn" onclick="if (new URLSearchParams(window.location.search).get('editId')) { window.location.href='index.html'; } else { closeModal('campaignModal'); }">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
                 </div>
             </form>
         </div>
@@ -373,11 +379,56 @@
                     </td>
                     <td>
                         <a class="action-link" href="campaign-detail.html?id=${c.id}">查看详情</a>
+                        <span class="action-link" onclick="openCampaignEditModal(${c.id})">编辑</span>
                         <span class="action-link" onclick="triggerMaterialDownload(${c.id})">下载参赛素材</span>
                         <span class="action-link danger" onclick="deleteCampaign(${c.id})">删除</span>
                     </td>
                 </tr>
             `).join('');
+        }
+
+        function openCampaignEditModal(id) {
+            const campaign = campaignsList.find(c => c.id === id);
+            if (!campaign) return;
+            
+            document.getElementById('campaignForm').dataset.editId = id;
+            document.getElementById('campaignModal').querySelector('h3').textContent = '编辑活动';
+            document.getElementById('campaignTitle').value = campaign.title;
+            document.getElementById('campaignTag').value = campaign.tag;
+            
+            if (campaign.start) {
+                document.getElementById('campaignStart').value = campaign.start.replace(' ', 'T');
+            }
+            if (campaign.end) {
+                document.getElementById('campaignEnd').value = campaign.end.replace(' ', 'T');
+            }
+            
+            // 互动权限
+            const radios = document.getElementsByName('campaignVisibility');
+            for (let radio of radios) {
+                if (radio.value === campaign.visibility) {
+                    radio.checked = true;
+                }
+            }
+            
+            // 详细规则
+            document.getElementById('campaignContent').value = campaign.detailContent || '';
+            
+            // 背景图预览
+            if (campaign.bgImage) {
+                document.getElementById('previewImg').src = campaign.bgImage;
+                document.getElementById('uploadPlaceholder').style.display = 'none';
+                document.getElementById('uploadPreview').style.display = 'flex';
+            } else {
+                document.getElementById('campaignBgFile').value = '';
+                document.getElementById('previewImg').src = '';
+                document.getElementById('uploadPlaceholder').style.display = 'block';
+                document.getElementById('uploadPreview').style.display = 'none';
+            }
+
+            document.getElementById('titleCounter').textContent = `${campaign.title.length} / 50`;
+            
+            openModal('campaignModal');
         }
 
         function validateCampaignTitle(input) {
@@ -402,26 +453,57 @@
             const endRaw = document.getElementById('campaignEnd').value.replace('T', ' ');
             const visibility = document.querySelector('input[name="campaignVisibility"]:checked').value;
             const bgImage = document.getElementById('previewImg').src || '';
+            const detailContent = document.getElementById('campaignContent').value || '';
 
             if (new Date(startRaw) > new Date(endRaw)) {
                 showLockToast('错误：失效时间不能早于生效时间！');
                 return;
             }
 
-            const newId = campaignsList.length ? Math.max(...campaignsList.map(c => c.id)) + 1 : 1;
-            campaignsList.push({
-                id: newId,
-                title,
-                tag,
-                start: startRaw,
-                end: endRaw,
-                visibility,
-                bgImage,
-                status: '进行中'
-            });
+            const editId = document.getElementById('campaignForm').dataset.editId;
+            const now = new Date();
+            let status = '进行中';
+            if (now < new Date(startRaw)) {
+                status = '未开始';
+            } else if (now > new Date(endRaw)) {
+                status = '已结束';
+            }
 
-            dbSave('hscms_campaigns', campaignsList);
-            campaignForm.reset();
+            if (editId) {
+                const campaign = campaignsList.find(c => c.id === parseInt(editId));
+                if (campaign) {
+                    campaign.title = title;
+                    campaign.tag = tag;
+                    campaign.start = startRaw;
+                    campaign.end = endRaw;
+                    campaign.visibility = visibility;
+                    campaign.bgImage = bgImage;
+                    campaign.detailContent = detailContent;
+                    campaign.status = status;
+                    
+                    dbSave('hscms_campaigns', campaignsList);
+                    showLockToast('活动修改成功！', true);
+                }
+            } else {
+                const newId = campaignsList.length ? Math.max(...campaignsList.map(c => c.id)) + 1 : 1;
+                campaignsList.push({
+                    id: newId,
+                    title,
+                    tag,
+                    start: startRaw,
+                    end: endRaw,
+                    visibility,
+                    bgImage,
+                    detailContent,
+                    status
+                });
+
+                dbSave('hscms_campaigns', campaignsList);
+                showLockToast('新一期活动发布成功！', true);
+            }
+
+            document.getElementById('campaignForm').reset();
+            delete document.getElementById('campaignForm').dataset.editId;
             
             // Reset background upload preview state
             document.getElementById('campaignBgFile').value = '';
@@ -431,8 +513,14 @@
 
             document.getElementById('titleCounter').textContent = '0 / 50';
             closeModal('campaignModal');
-            showLockToast('新一期活动发布成功！', true);
             loadCampaigns();
+
+            // 如果是跳转过来的编辑，保存后直接跳回内容管理列表
+            if (new URLSearchParams(window.location.search).get('editId')) {
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
         }
 
         function triggerBackgroundUpload() {
@@ -519,6 +607,13 @@
 
         // Init load
         loadCampaigns();
+
+        // Check if URL has editId parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('editId');
+        if (editId) {
+            openCampaignEditModal(parseInt(editId));
+        }
     </script>
 </body>
 </html>

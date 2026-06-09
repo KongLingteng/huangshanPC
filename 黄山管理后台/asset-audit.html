@@ -191,7 +191,7 @@
                 <ul class="sub-nav-list">
                     <li class="sub-nav-item active" id="tabPendingNav">
                         <a href="javascript:void(0)" onclick="switchTab('待审核')">
-                            待审核队列
+                            待审核列表
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabApprovedNav">
@@ -202,6 +202,11 @@
                     <li class="sub-nav-item" id="tabRejectedNav">
                         <a href="javascript:void(0)" onclick="switchTab('已驳回')">
                             已驳回记录
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabMaterialLibraryNav">
+                        <a href="material-library.html">
+                            素材库
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabTakeDownNav">
@@ -217,7 +222,7 @@
                 <!-- SINGLE DYNAMIC TABLE CONTAINER -->
                 <div class="workspace-header">
                     <div class="workspace-title-section">
-                        <h1 id="pageTitle">资产确权审核队列</h1>
+                        <h1 id="pageTitle">资产确权审核列表</h1>
                         <p id="pageDescription">人工审核创作者提交的原创素材，系统将自动发起蚂蚁区块链存证与国家版权局DCI 3.0编号自动申领。</p>
                     </div>
                     <div class="workspace-actions">
@@ -358,16 +363,8 @@
     </div>
 
     <!-- MOCK DCI CLAIM PROGRESS SCREEN -->
-    <div id="progressOverlay" class="progress-overlay">
-        <div class="progress-box">
-            <div class="progress-spinner"></div>
-            <h3 style="font-size:15px; color:#1e293b; font-weight:700;" id="progressTitle">正在核验作品指纹...</h3>
-            <p style="font-size:12px; color:#64748b; margin-top:8px;" id="progressDesc">已触发蚂蚁链不可逆智能合约锁定</p>
-            <div class="progress-bar-container">
-                <div id="progressBarFill" class="progress-bar-fill"></div>
-            </div>
-            <span style="font-size:11px; color:#94a3b8;" id="progressPercentage">0%</span>
-        </div>
+    <div id="progressOverlay" class="progress-overlay" style="display: none; align-items: center; justify-content: center;">
+        <div class="progress-spinner" style="width: 48px; height: 48px;"></div>
     </div>
 
     <div id="lockToast" class="toast-container">
@@ -382,14 +379,16 @@
         function switchTab(status) {
             currentTab = status;
             
-            // UI tab class
             document.getElementById('tabPendingNav').classList.remove('active');
             document.getElementById('tabApprovedNav').classList.remove('active');
             document.getElementById('tabRejectedNav').classList.remove('active');
+            if (document.getElementById('tabMaterialLibraryNav')) {
+                document.getElementById('tabMaterialLibraryNav').classList.remove('active');
+            }
 
             if (status === '待审核') {
                 document.getElementById('tabPendingNav').classList.add('active');
-                document.getElementById('pageTitle').textContent = '资产版权确权 - 待审核队列';
+                document.getElementById('pageTitle').textContent = '资产版权确权 - 待审核列表';
             } else if (status === '审核成功') {
                 document.getElementById('tabApprovedNav').classList.add('active');
                 document.getElementById('pageTitle').textContent = '资产版权确权 - 确权历史';
@@ -484,7 +483,6 @@
                 let actionColumn = '';
                 if (a.status === '待审核') {
                     actionColumn = `
-                        <a href="javascript:void(0)" class="action-link" onclick="openLinkUsageModal('${a.id}')">关联用途</a>
                         <a href="javascript:void(0)" class="action-link" onclick="approveAssetFlow('${a.id}')">通过</a>
                         <a href="javascript:void(0)" class="action-link danger" onclick="triggerRejectModal('${a.id}')">驳回申请</a>
                         <a href="asset-detail.html?id=${a.id}" class="action-link" style="margin-left: 8px;" target="_blank">详情</a>
@@ -495,23 +493,8 @@
                     `;
                 }
 
-                // 展示已关联的用途标签 (限制前3个以防高度撑开，超出部分以等N项...显示)
+                // 关联用途已挪入素材库，在此不再渲染用途标签
                 let usageTagsHtml = '';
-                if (a.linkedUsage && a.linkedUsage !== '') {
-                    const usages = a.linkedUsage.split(', ');
-                    let visibleTags = '';
-                    if (usages.length <= 3) {
-                        visibleTags = usages.map(u => `<span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap;">${u}</span>`).join('');
-                    } else {
-                        visibleTags = usages.slice(0, 3).map(u => `<span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap;">${u}</span>`).join('') +
-                                      `<span class="badge" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap; cursor: help;" title="${a.linkedUsage}">等${usages.length}项...</span>`;
-                    }
-                    usageTagsHtml = `<div style="margin-top: 6px; display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; overflow: hidden;">` + 
-                        visibleTags +
-                        `</div>`;
-                } else if (a.status === '待审核') {
-                    usageTagsHtml = `<div style="margin-top: 6px;"><span style="color: #ef4444; font-size: 11px; font-weight: 500;">⚠️ 未关联用途</span></div>`;
-                }
 
                 tr.innerHTML = `
                     <td>
@@ -569,12 +552,6 @@
             const a = assets.find(item => item.id === assetId);
             if (!a) return;
 
-            // Enforcement of usage link
-            if (!a.linkedUsage || a.linkedUsage === '') {
-                alert('请先完成【关联用途】的操作后，方可进行审核通过！');
-                return;
-            }
-
             // Conventional review division
             if (a.needProof === '否') {
                 if (confirm(`该素材（${a.title}）选择的是常规上架（不需存证确权）。\n确定要通过常规合规审核并直接通过吗？`)) {
@@ -584,40 +561,12 @@
             }
 
             const progressOverlay = document.getElementById('progressOverlay');
-            const fill = document.getElementById('progressBarFill');
-            const title = document.getElementById('progressTitle');
-            const desc = document.getElementById('progressDesc');
-            const percentText = document.getElementById('progressPercentage');
-
             progressOverlay.style.display = 'flex';
-            fill.style.width = '0%';
-            percentText.textContent = '0%';
             
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 5;
-                fill.style.width = progress + '%';
-                percentText.textContent = progress + '%';
-
-                if (progress === 20) {
-                    title.textContent = '正在读取文件哈希指纹...';
-                    desc.textContent = '读取 SHA-256：国家中心接口通信中';
-                } else if (progress === 50) {
-                    title.textContent = '正在呼叫国家版权保护中心 DCI 3.0...';
-                    desc.textContent = 'DCI 登记网关对接，生成版权标识代码';
-                } else if (progress === 80) {
-                    title.textContent = '正在下发数字版权存证标识(DCI)...';
-                    desc.textContent = '回写国家级确权证书档案库，下发通知';
-                }
-
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        finalizeApproval(assetId, true);
-                        progressOverlay.style.display = 'none';
-                    }, 200);
-                }
-            }, 80);
+            setTimeout(() => {
+                finalizeApproval(assetId, true);
+                progressOverlay.style.display = 'none';
+            }, 1200);
         }
 
         function finalizeApproval(assetId, isProofed) {
@@ -630,6 +579,19 @@
                 const authorUserId = author === '黄山行者' ? 'USER_8820' : 'USER_6672';
 
                 assets[aIdx].status = '审核成功';
+
+                // 默认显示关联所有用途
+                const usageConfig = dbGet('hscms_settings_usage_config', []);
+                let allUsages = [];
+                usageConfig.forEach(cat => {
+                    if (cat.specs && cat.specs.length > 0) {
+                        cat.specs.forEach(spec => {
+                            const specName = (typeof spec === 'object' && spec !== null) ? (spec.name || '') : String(spec);
+                            if (specName) allUsages.push(specName);
+                        });
+                    }
+                });
+                assets[aIdx].linkedUsage = allUsages.join(', ');
 
                 let successMsg = '';
                 let toastMsg = '';

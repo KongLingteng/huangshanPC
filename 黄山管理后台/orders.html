@@ -695,10 +695,6 @@
                     actionBtn += `<a href="javascript:void(0)" class="action-link" style="margin-left: 8px;" onclick="openCertModal('${o.orderId}', '${o.workName.replace(/'/g, "\\'")}')">确认出证</a>`;
                 }
 
-                if (o.status !== '已退款') {
-                    actionBtn += `<a href="javascript:void(0)" class="action-link danger" style="margin-left: 8px;" onclick="refundProofOrder('${o.orderId}')">退款</a>`;
-                }
-
                 tr.innerHTML = `
                     <td><code>${o.orderId}</code></td>
                     <td><strong style="color:#1f2937;">${o.workName}</strong></td>

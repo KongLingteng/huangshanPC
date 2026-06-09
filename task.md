@@ -87,3 +87,166 @@
   - [x] **手动联调与走查**：
     - [x] 校验各修改页面的操作按钮布局无异常，保留的详情等超链接仍可正常点击并起效
     - [x] 验证用户被重置违规后，合规检测列表已将其自动排除
+    - [x] 确保页面跳转无空白报错
+    - [x] 确保铃铛按钮在用户头像的左侧展示，且外边距保持美观对齐
+
+## 内容管理模块统一化 (超级新建入口) [已完成]
+- [x] **Phase 1: 页面文案净化与更名**
+  - [x] 修改 `index.html` 页面 `<title>` 为 `内容管理 - 黄山旅游AIGC内容管理平台`
+  - [x] 修改 `index.html` 二级侧边栏的第一个菜单项文案由 `专题管理` 改为 `内容管理`
+  - [x] 修改 `index.html` 主标题由 `专题管理` 改为 `内容管理`
+  - [x] 修改描述文案由 `运营人员可动态调整C端资产展示的专题，支持排序与安全删除控制` 改为 `运营人员可动态调整C端资产展示的专题、Banner与活动内容，支持排序与安全删除控制`
+  - [x] 将“新建专题”按钮更名为“新建内容”
+- [x] **Phase 2: “新建内容”多类型弹窗 DOM 重构**
+  - [x] 在 `topicModal` 表单中第一项新增 `内容类型` 下拉选择框（包含 专题、banner、活动 三种选项）
+  - [x] 建立专题表单字段容器，包含：专题名称、排序权重、启用状态
+  - [x] 建立 Banner 表单字段容器（默认隐藏），包含：Banner标题名称、跳转类型（下拉框：活动 / 素材）、关联活动下拉框（跳转类型为活动时显示）、素材选择预览与按钮（跳转类型为素材时显示）、启用状态开关
+  - [x] 建立活动表单字段容器（默认隐藏），包含：活动标题、活动时间区间（生效/失效时间）、活动标签、社区活动落地页背景图上传组件、发帖公开性单选、规则富文本说明框
+- [x] **Phase 3: 交互逻辑与弹窗控制 JavaScript 开发**
+  - [x] 编写内容类型切换逻辑，动态显隐三大类型表单字段组
+  - [x] 编写 Banner 跳转类型切换逻辑，动态控制关联活动下拉框或关联素材组件的显隐
+  - [x] 编写关联活动下拉框的填充函数，自动从本地 `hscms_campaigns` 中筛选并渲染“未开始”的活动列表
+  - [x] 实现 Banner 素材选择器的绑定，点击“选择素材”拉起 `MaterialSelector` 并保存与展示素材信息
+  - [x] 实现活动背景图的上传逻辑，读取为 Base64 以作预览显示
+- [x] **Phase 4: 多渠道数据分发保存逻辑**
+  - [x] 改造 `saveTopic` 提交逻辑为 `saveContent` 通用保存逻辑
+  - [x] **专题提交**：保存至 `hscms_topics` 存储，新创建时自动填充 `hscms_topic_materials` 空数组关联，并调用 `loadTopics()` 重新渲染页面的专题管理列表
+  - [x] **Banner提交**：收集字段，自动保存至 `hscms_banners` 并给出成功 Toast
+  - [x] **活动提交**：收集字段，自动保存至 `hscms_campaigns` 并给出成功 Toast
+- [x] **Phase 5: 验证与联调**
+  - [x] 在 `index.html` 页手动点击“新建内容”按钮
+  - [x] 测试添加“专题”，检查表格是否即时渲染，状态、权重与名称是否正确，LocalStorage 是否持久化
+
+## 标签运营从 DAM 拉取与自由选择重构 [已完成]
+- [x] **Phase 1: 结构文案更名与输入框移除**
+  - [x] 修改 `tag.html` 每个维度卡片下的提示，文案“回车直接添加”改为“从 DAM 标签库自由选择”
+  - [x] 移除旧的位置自定义回车添加 Input 框及其事件绑定
+  - [x] 新增标签检索过滤框 `<input type="text" class="form-control" placeholder="输入搜索可选标签..." oninput="filterTags(this, 'dimension')">`
+- [x] **Phase 2: 声明静态 DAM 全量标签池**
+  - [x] 在 JS 中声明包含地域、风格、季节三个维度的全量 `DAM_TAGS` 静态常量数据集
+- [x] **Phase 3: 标签高亮渲染与点击切换逻辑**
+  - [x] 重构 `renderTags` 渲染机制，改造成平铺该维度下的所有 DAM 标签
+  - [x] 为当前已选中的标签附加 `.active` 高亮样式类，未选中的附加 `.inactive` 样式
+  - [x] 编写点击切换函数 `toggleTag(tag, dimension)`，实现点击后在“已选中”和“未选中”状态间一键翻转，并同步写入 LocalStorage `hscms_tags` 中
+  - [x] 编写搜索过滤函数 `filterTags(input, dimension)`，根据输入字符对当前维度的未高亮标签进行实时隐藏/过滤，保障大量标签时的快速检索
+- [x] **Phase 4: 验证与联调**
+  - [x] 手动点击选中多个标签，校验高亮是否正确，本地存储是否成功同步
+  - [x] 取消勾选标签，验证列表及本地存储的同步响应
+  - [x] 输入检索字符，验证未选中的标签是否能被精准过滤，且已选中的高亮标签不受影响
+
+## 专题素材关联属性扩展 (显示名称/有效期/查看详情) [已完成]
+- [x] **Phase 1: 关联素材列表表格结构调整**
+  - [x] 修改 `index.html` 专题素材表格头：`素材名称` 更名为 `原始素材名称`
+  - [x] 表格头新增两列：`显示名称`、`上架时间`、`下架时间`
+  - [x] 表格操作列新增两个按钮链接：`查看详情`、`设置有效期`
+- [x] **Phase 2: 新增“设置有效期”与“查看详情” Modal**
+  - [x] 编写 `validityModal` 弹窗 DOM：包含上架时间与下架时间时间选择器 (`datetime-local`)
+  - [x] 编写 `materialDetailModal` 弹窗 DOM：包含素材名称、格式、类型、大小、归属文件夹的展示，以及基于图片或视频类型的原生渲染预览容器
+- [x] **Phase 3: 显示名称列表行内编辑 JavaScript 开发**
+  - [x] 在 `renderDetailMaterialsTable` 渲染中，读取每个素材的 `displayName`（若无则兜底显示原始名称），并绑定 `startDisplayNameEdit` 点击编辑事件
+  - [x] 编写 `startDisplayNameEdit` 行内编辑逻辑：点击原地转换为 input 输入框，支持 blur 或 Enter 键提交，编辑后同步保存至 `hscms_topic_materials` 对应项
+- [x] **Phase 4: 设置有效期与素材详情 JavaScript 开发**
+  - [x] 扩展关联素材存储结构，支持 `displayName`, `startTime`, `endTime` 字段属性
+  - [x] 编写 `openValidityModal` 方法，支持回显当前已设置的上架时间与下架时间，保存后同步更新至 LocalStorage 并刷新列表
+  - [x] 编写 `openMaterialDetailModal` 方法，读取素材详情并控制预览媒体的播放/展示
+- [x] **Phase 5: 验证与联调**
+  - [x] 验证显示名称的行内编辑、回车/失焦保存与 LocalStorage 实时同步
+  - [x] 验证设置有效期弹窗的回显与保存，上/下架时间成功渲染在列表对应列中
+  - [x] 验证查看详情弹窗在点击后能正确根据图片/视频类型展示大图预览或视频播放，字段回显无误
+
+## 专题素材列表预览与文件夹列字段调整 [已完成]
+- [x] **Phase 1: 关联素材列表表格结构微调**
+  - [x] 修改 `index.html` 专题素材表格头：最前面新增一列 `素材预览`
+  - [x] 移除表格头中的 `归属文件夹` 列
+  - [x] 修改表格行数据渲染：第一列新增图片/视频多媒体渐变图标微型缩略图预览，并移除文件夹 `m.folder` 那一列的 `<td>` 元素
+- [x] **Phase 2: 验证与联调**
+  - [x] 验证素材预览列在图片 and 视频类型下的差异化高级渐变样式渲染
+  - [x] 验证文件夹列是否已完全在页面消失，且列数对齐正常，未发生错位
+- [x] **Phase 3: 缩略图点击放大与悬停动效**
+  - [x] 在预览缩略图的 DOM 容器上绑定 `onclick` 事件，触发 `openMaterialDetailModal` 放大预览
+  - [x] 为缩略图容器添加 `cursor: pointer;` 鼠标手势与 hover 放大过渡动效，提升 UI 的动态精致感
+
+## 素材库新增与待审核列表重构 [已完成]
+- [x] **Phase 1: 二级侧边栏同步更名与素材库菜单挂载**
+  - [x] 修改 `asset-audit.html` 二级菜单：“待审核队列”更名为“待审核列表”，新增“素材库”导航链接指向 `material-library.html`
+  - [x] 修改 `take-down-requests.html` 二级菜单：同步更名并挂载“素材库”导航
+- [x] **Phase 2: 待审核页面功能重构（去用途化与自动关联）**
+  - [x] 修改 `asset-audit.html` 列表渲染：移除操作项中的“关联用途”按钮，移除用途标签与未关联警告显示
+  - [x] 修改 `asset-audit.html` 审核逻辑：移除通过审核时对关联用途的拦截判断，并在通过成功的瞬间自动将全量用途配置灌入其 `linkedUsage` 中
+- [x] **Phase 3: 新建上架素材库页面 (material-library.html)**
+  - [x] 开发 `material-library.html`：包含相同的全局及子菜单侧边栏，支持按关键词、上架状态、素材类型进行条件检索
+  - [x] 开发素材上架/下架切换逻辑：点击“上架”置为已上架，点击“下架”切换为已下架
+  - [x] 实现兜底自愈与精准返显：加载列表时，若发现任何通过审核的素材缺少关联用途，则自动关联并保存全量配置，使得列表中完美回显全部用途
+  - [x] 集成关联用途编辑弹窗：随时支持管理员在此页面手工勾选、一键全选或清除并更新用途
+- [x] **Phase 4: 手动验证**
+  - [x] 验证待审核页面直接通过无强校验拦截，且通过后该资产已默认获取全量用途
+  - [x] 验证素材库页已通过审核素材默认呈现关联全部用途，上/下架流程顺畅，关联用途弹窗数据回显及保存完好
+
+## 审核 Loading 页面简化 [已完成]
+- [x] **Phase 1: Loading DOM 结构极简重构**
+  - [x] 修改 `asset-audit.html` 的 `progressOverlay`：删除复杂的文字说明、进度条百分比，仅保留旋转转圈 div，提供 flex 居中样式
+- [x] **Phase 2: 交互动作逻辑升级防崩溃**
+- [x] 验证点击审核“通过”时，极简的转圈 Loading 居中展示无抖动，且 1.2 秒后流畅关闭，成功出证并无任何 JS 异常抛错
+
+## 确权退款与公告范围隐藏优化 [已完成]
+- [x] 隐藏确权订单的退款按钮 (`orders.html`)
+- [x] 隐藏通知公告的推送范围相关列与检索条件 (`announcements.html`)
+- [x] 适配 `searchAnnouncements` 和 `resetSearch` 逻辑，防止因 DOM 移除导致 JS 报错 (`announcements.html`)
+- [x] 隐藏新建及详情弹窗中的推送范围和接收受众组件 (`announcements.html`)
+- [x] 完成开发后更新 `walkthrough.md` 并提交用户验证
+
+## 资质审核证照图片水印与防下载优化 [已完成]
+- [x] 增加高防图片查验容器 `imagePreviewContainer` (`user-audit.html`)
+- [x] 重构 `openAttachmentPreview` 与表格的资质点击调用，支持根据 qualId 提取完整信息 (`user-audit.html`)
+- [x] 开发 Canvas 动态高仿证件底板绘制逻辑（区分身份证/营业执照等） (`user-audit.html`)
+- [x] 开发平铺动态防伪水印逻辑（仅限审核使用+当前时间+主体） (`user-audit.html`)
+- [x] 实现前端多重防盗图与不可下载控制（包含纯透明防护盖板、禁用右键与拖拽） (`user-audit.html`)
+- [x] 兼容并测试 PDF 文件的原样卡片预览降级逻辑 (`user-audit.html`)
+- [x] 完成开发后更新 `walkthrough.md` 并提交用户验证
+
+## Banner关联活动主图优化 [已完成]
+- [x] 在 `topicModal` 表单的 Banner 字段中新增“Banner主图”组件 (`黄山cms/index.html`)
+- [x] 适配 `adjustBannerFields`，在跳转类型为“活动”时展示“Banner主图”，为“素材”时隐藏 (`黄山cms/index.html`)
+- [x] 编写素材选择函数 `openBannerImageSelector` 从素材库选择图片并回显 (`黄山cms/index.html`)
+- [x] 适配 `saveContent` 逻辑，在跳转类型为“活动”时强校验并保存主图字段 `mainImage` (`黄山cms/index.html`)
+- [x] 适配 `openContentAdd` 的重置逻辑，在打开弹窗时清空“Banner主图”临时状态 (`黄山cms/index.html`)
+- [x] 完成开发后更新 `walkthrough.md` 并提交用户验证
+
+## 标签管理单维度扁平化优化 [已完成]
+- [x] 简化 `tag.html` 布局，将原本的地域、风格、季节三列卡片合并为唯一的“全量标签运营维度”卡片 (`黄山cms/tag.html`)
+- [x] 合并并去重 `DAM_TAGS` 为单一的平铺一维数组 (`黄山cms/tag.html`)
+- [x] 编写向下兼容与自愈加载逻辑 `loadTags`，支持将原多维度标签解包去重合为一维数组 (`黄山cms/tag.html`)
+- [x] 重构 `renderTags`、`toggleTag`、`filterTags` 以配合单一维度，移除 `dimension` 参数 (`黄山cms/tag.html`)
+- [x] 完成开发后更新 `walkthrough.md` 并提交用户验证
+
+## 内容管理合并列表与菜单隐藏 [已完成]
+- [x] 隐藏 `index.html`、`tag.html` 和 `schedule.html` 侧边栏二级菜单中的“Banner管理”与“活动管理”菜单项
+- [x] 将 `index.html` 列表表格头更新为复用公共字段：“名称/标题”、“内容类型”、“启用状态”、“操作”
+- [x] 重构 `index.html` 的 `renderTopicsTable` 逻辑，从 LocalStorage 合并获取 `hscms_topics`、`hscms_banners` 和 `hscms_campaigns` 进行统一渲染展示与排序
+- [x] 适配 `index.html` 列表的操作链接：专题保留编辑/素材详情/关联素材/删除，Banner和活动编辑超链接分别指向 `banner.html?editId=${id}` 和 `campaign.html?editId=${id}`
+- [x] 在 `index.html` 中补齐 Banner 和活动的删除及状态切换回调函数
+- [x] 在 `banner.html` 中补全 Banner主图字段 及其素材选择器 `openBannerImageSelector`
+- [x] 适配 `banner.html` 和 `campaign.html`，使其在 onload 时能够捕获 URL 传递的 `editId` 参数并弹窗回显进行编辑，修改保存后均跳回 `index.html`
+- [x] 适配 `banner.html` 和 `campaign.html` 的模态框取消/关闭机制，在 `editId` 模式下点击取消能正确跳回 `index.html`
+- [x] 更新 `walkthrough.md` 并记录所有修改
+
+## 内容管理合并列表行内排序与原地弹窗编辑优化 [已完成]
+- [x] 将 `index.html` 的主表格头加回“排序权重”公共列，支持专题、Banner、活动类型
+- [x] 编写 `startContentWeightEdit` 行内修改保存函数，点击权重数值弹出 input 回车/失焦保存至各自 LocalStorage 中，并自动触发按权重降序重新排序加载列表
+- [x] 剔除 Banner 和活动的编辑超链接跳转，改为触发 `openBannerEdit` 和 `openCampaignEdit` 原地弹窗回显编辑
+- [x] 重构 `index.html` 上的 `saveContent`，支持在编辑模式下查询、修改并覆写已有的 Banner 或活动对象数据
+- [x] 优化 `populateUnstartedCampaigns` 下拉选项函数，在编辑 Banner 时确保当前已关联的历史活动项能够正常加载并正确回显，防止显示空白
+- [x] 更新 `walkthrough.md` 并提交用户验证
+
+## 隐藏内容管理关联素材优化 [已完成]
+- [x] 隐藏 `index.html` 混合列表行内专题操作列中的“关联素材”按钮链接
+- [x] 隐藏 `index.html` 专题素材详情展示视图右上角的“关联素材”操作按钮
+- [x] 完成开发后更新 `walkthrough.md` 并提交用户验证
+
+## 专题素材置顶“显示到首页”功能 [已完成]
+- [x] 专题素材详情右上角恢复显示“关联素材”操作按钮（已由用户手动完成）
+- [x] 在 `index.html` 的专题素材列表每行的操作栏中，在“解除关联”后新增“显示到首页”操作链接
+- [x] 实现 `showMaterialOnIndexTop` 逻辑：提取当前专题下所有关联素材的权重，计算最大值，将目标素材权重设为最大权重 + 10（兜底为10），保存至 `hscms_topic_materials` 并重新渲染列表
+- [x] 更新 `walkthrough.md` 记录本次更新并提交验证
+
+

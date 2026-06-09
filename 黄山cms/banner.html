@@ -190,7 +190,7 @@
                             定时上下架调度
                         </a>
                     </li>
-                    <li class="sub-nav-item active" id="subnav-banner">
+                    <li class="sub-nav-item active" id="subnav-banner" style="display: none;">
                         <a href="banner.html">
                             <svg viewBox="0 0 24 24">
                                 <path
@@ -199,7 +199,7 @@
                             Banner管理
                         </a>
                     </li>
-                    <li class="sub-nav-item" id="subnav-campaign">
+                    <li class="sub-nav-item" id="subnav-campaign" style="display: none;">
                         <a href="campaign.html">
                             <svg viewBox="0 0 24 24">
                                 <path
@@ -255,7 +255,7 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h3>新建 Banner 配置</h3>
-                <button class="modal-close-btn" onclick="closeModal('bannerModal')">&times;</button>
+                <button class="modal-close-btn" onclick="if (new URLSearchParams(window.location.search).get('editId')) { window.location.href='index.html'; } else { closeModal('bannerModal'); }">&times;</button>
             </div>
             <form id="bannerForm" onsubmit="saveBanner(event)">
                 <div class="modal-body">
@@ -281,6 +281,19 @@
                         </select>
                     </div>
 
+                    <!-- Banner Main Image Group -->
+                    <div class="form-group" id="bannerImageGroup" style="display: none;">
+                        <label>Banner 主图</label>
+                        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+                            <input type="text" id="selectedBannerImagePreview" class="form-control" placeholder="从素材库选择Banner主图" readonly>
+                            <button type="button" class="btn btn-primary" onclick="openBannerImageSelector()" style="flex-shrink:0;">选择主图</button>
+                        </div>
+                        <div id="bannerImagePreviewContainer" style="display: none; margin-top: 6px; text-align: center; border: 1px solid #cbd5e1; padding: 6px; border-radius: 6px; background: #f8fafc;">
+                            <img id="bannerImagePreview" src="" style="max-height: 80px; max-width: 100%; border-radius: 4px; object-fit: cover;">
+                        </div>
+                        <input type="hidden" id="bannerImageTarget">
+                    </div>
+
                     <!-- Material Selection Group -->
                     <div class="form-group" id="materialSelectGroup" style="display: none;">
                         <label>关联素材</label>
@@ -302,7 +315,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" onclick="closeModal('bannerModal')">取消</button>
+                    <button type="button" class="btn" onclick="if (new URLSearchParams(window.location.search).get('editId')) { window.location.href='index.html'; } else { closeModal('bannerModal'); }">取消</button>
                     <button type="submit" class="btn btn-primary">保存</button>
                 </div>
             </form>
@@ -346,6 +359,7 @@
                             </label>
                         </td>
                         <td>
+                            <span class="action-link" onclick="openBannerEditModal(${b.id})">编辑</span>
                             <span class="action-link danger" onclick="deleteBanner(${b.id})">删除</span>
                         </td>
                     </tr>
@@ -354,35 +368,93 @@
         }
 
         function openBannerCreateModal() {
-            bannerForm.reset();
+            document.getElementById('bannerForm').reset();
+            delete document.getElementById('bannerForm').dataset.editId;
+            document.getElementById('bannerModal').querySelector('h3').textContent = '新建 Banner 配置';
+            
+            // 重置 Banner 主图状态
+            document.getElementById('bannerImageTarget').value = '';
+            document.getElementById('selectedBannerImagePreview').value = '';
+            document.getElementById('bannerImagePreviewContainer').style.display = 'none';
+
             openModal('bannerModal');
             adjustBannerFields();
+        }
+
+        function openBannerEditModal(id) {
+            const banner = bannersList.find(b => b.id === id);
+            if (!banner) return;
+            
+            document.getElementById('bannerForm').dataset.editId = id;
+            document.getElementById('bannerModal').querySelector('h3').textContent = '编辑 Banner 配置';
+            document.getElementById('bannerTitle').value = banner.title;
+            document.getElementById('bannerType').value = banner.type;
+            document.getElementById('bannerStatus').checked = banner.status === '启用';
+            
+            adjustBannerFields(); // 调整输入字段显隐，并在在此页面只改变required和display，不用每次都reset
+
+            if (banner.type === '活动') {
+                document.getElementById('bannerCampaignTarget').value = banner.target;
+                
+                // 处理 Banner 主图
+                if (banner.mainImage) {
+                    const materials = dbGet('hscms_materials', []);
+                    const m = materials.find(x => x.id === banner.mainImage);
+                    if (m) {
+                        document.getElementById('bannerImageTarget').value = m.id;
+                        document.getElementById('selectedBannerImagePreview').value = `[${m.type}] ${m.name} (${m.id})`;
+                        const previewContainer = document.getElementById('bannerImagePreviewContainer');
+                        const previewImg = document.getElementById('bannerImagePreview');
+                        previewImg.src = m.path || 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=200&auto=format&fit=crop';
+                        previewContainer.style.display = 'block';
+                    }
+                } else {
+                    document.getElementById('bannerImageTarget').value = '';
+                    document.getElementById('selectedBannerImagePreview').value = '';
+                    document.getElementById('bannerImagePreviewContainer').style.display = 'none';
+                }
+            } else {
+                document.getElementById('bannerTarget').value = banner.target;
+                const materials = dbGet('hscms_materials', []);
+                const m = materials.find(x => x.id === banner.target);
+                if (m) {
+                    document.getElementById('selectedMaterialPreview').value = `[${m.type}] ${m.name} (${m.id})`;
+                }
+            }
+            
+            openModal('bannerModal');
         }
 
         function adjustBannerFields() {
             const type = document.getElementById('bannerType').value;
             const campaignGroup = document.getElementById('campaignSelectGroup');
             const materialGroup = document.getElementById('materialSelectGroup');
+            const bannerImageGroup = document.getElementById('bannerImageGroup');
 
-            // Reset inputs
-            document.getElementById('bannerTarget').value = '';
-            document.getElementById('selectedMaterialPreview').value = '';
-            document.getElementById('bannerCampaignTarget').value = '';
+            // 填充活动列表，因为不管是新建还是编辑都需要保证这一列表加载
+            populateUnstartedCampaigns();
 
             if (type === '活动') {
                 campaignGroup.style.display = 'flex';
                 materialGroup.style.display = 'none';
+                if (bannerImageGroup) bannerImageGroup.style.display = 'block';
 
                 document.getElementById('bannerCampaignTarget').required = true;
+                document.getElementById('selectedBannerImagePreview').required = true;
                 document.getElementById('selectedMaterialPreview').required = false;
-
-                populateUnstartedCampaigns();
             } else {
                 campaignGroup.style.display = 'none';
                 materialGroup.style.display = 'flex';
+                if (bannerImageGroup) bannerImageGroup.style.display = 'none';
 
                 document.getElementById('bannerCampaignTarget').required = false;
+                document.getElementById('selectedBannerImagePreview').required = false;
                 document.getElementById('selectedMaterialPreview').required = true;
+
+                // 切换到素材时清空主图
+                document.getElementById('bannerImageTarget').value = '';
+                document.getElementById('selectedBannerImagePreview').value = '';
+                document.getElementById('bannerImagePreviewContainer').style.display = 'none';
             }
         }
 
@@ -390,15 +462,34 @@
             const campaigns = dbGet('hscms_campaigns', []);
             const unstarted = campaigns.filter(c => c.status === '未开始');
             const select = document.getElementById('bannerCampaignTarget');
+            
+            // 为了能展示已关联的历史活动，即使该活动已经开始了，在编辑回显时我们也需要把它包含在 select 里面，不然 select 无法正确匹配显示
+            const editId = document.getElementById('bannerForm').dataset.editId;
+            let currentTarget = '';
+            if (editId) {
+                const b = bannersList.find(x => x.id === parseInt(editId));
+                if (b && b.type === '活动') {
+                    currentTarget = b.target;
+                }
+            }
+
             select.innerHTML = '';
 
-            if (unstarted.length === 0) {
+            const campaignsToRender = [...unstarted];
+            if (currentTarget) {
+                const matchedCamp = campaigns.find(c => c.id === parseInt(currentTarget));
+                if (matchedCamp && !unstarted.some(c => c.id === matchedCamp.id)) {
+                    campaignsToRender.push(matchedCamp);
+                }
+            }
+
+            if (campaignsToRender.length === 0) {
                 const opt = document.createElement('option');
                 opt.value = '';
-                opt.textContent = '暂无未开始的活动';
+                opt.textContent = '暂无可用的活动';
                 select.appendChild(opt);
             } else {
-                unstarted.forEach(c => {
+                campaignsToRender.forEach(c => {
                     const opt = document.createElement('option');
                     opt.value = c.id;
                     opt.textContent = `${c.title} (${c.id})`;
@@ -414,7 +505,7 @@
                 selectedIds: currentId ? [currentId] : [],
                 onConfirm: (ids) => {
                     if (ids.length > 0) {
-                        const materials = dbGet('hscms_materials', DEFAULT_MATERIALS);
+                        const materials = dbGet('hscms_materials', []);
                         const m = materials.find(x => x.id === ids[0]);
                         if (m) {
                             document.getElementById('bannerTarget').value = m.id;
@@ -428,16 +519,55 @@
             });
         }
 
+        function openBannerImageSelector() {
+            const currentImageId = document.getElementById('bannerImageTarget').value;
+            MaterialSelector.open({
+                singleSelect: true,
+                selectedIds: currentImageId ? [currentImageId] : [],
+                onConfirm: (ids) => {
+                    if (ids.length > 0) {
+                        const materials = dbGet('hscms_materials', []);
+                        const m = materials.find(x => x.id === ids[0]);
+                        if (m) {
+                            document.getElementById('bannerImageTarget').value = m.id;
+                            document.getElementById('selectedBannerImagePreview').value = `[${m.type}] ${m.name} (${m.id})`;
+                            
+                            // 显示预览图
+                            const previewContainer = document.getElementById('bannerImagePreviewContainer');
+                            const previewImg = document.getElementById('bannerImagePreview');
+                            
+                            if (m.type === '图片') {
+                                previewImg.src = m.path || 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=200&auto=format&fit=crop';
+                            } else {
+                                previewImg.src = 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=200&auto=format&fit=crop';
+                            }
+                            previewContainer.style.display = 'block';
+                        }
+                    } else {
+                        document.getElementById('bannerImageTarget').value = '';
+                        document.getElementById('selectedBannerImagePreview').value = '';
+                        document.getElementById('bannerImagePreviewContainer').style.display = 'none';
+                    }
+                }
+            });
+        }
+
         function saveBanner(event) {
             event.preventDefault();
             const title = document.getElementById('bannerTitle').value;
             const type = document.getElementById('bannerType').value;
 
             let target = '';
+            let mainImage = '';
             if (type === '活动') {
                 target = document.getElementById('bannerCampaignTarget').value;
                 if (!target) {
                     showLockToast('错误：请选择一个关联的活动！');
+                    return;
+                }
+                mainImage = document.getElementById('bannerImageTarget').value;
+                if (!mainImage) {
+                    showLockToast('错误：请选择Banner主图！');
                     return;
                 }
             } else {
@@ -450,15 +580,44 @@
 
             const status = document.getElementById('bannerStatus').checked ? '启用' : '禁用';
 
-            const newId = bannersList.length ? Math.max(...bannersList.map(b => b.id)) + 1 : 1;
-            bannersList.push({ id: newId, title, type, target, status });
+            const editId = document.getElementById('bannerForm').dataset.editId;
+            if (editId) {
+                const banner = bannersList.find(b => b.id === parseInt(editId));
+                if (banner) {
+                    banner.title = title;
+                    banner.type = type;
+                    banner.target = target;
+                    banner.status = status;
+                    if (type === '活动') {
+                        banner.mainImage = mainImage;
+                    } else {
+                        delete banner.mainImage;
+                    }
+                    dbSave('hscms_banners', bannersList);
+                    showLockToast('Banner 配置修改成功！', true);
+                }
+            } else {
+                const newId = bannersList.length ? Math.max(...bannersList.map(b => b.id)) + 1 : 1;
+                const newBannerObj = { id: newId, title, type, target, status };
+                if (type === '活动') {
+                    newBannerObj.mainImage = mainImage;
+                }
+                bannersList.push(newBannerObj);
+                dbSave('hscms_banners', bannersList);
+                showLockToast('Banner 轮播配置发布成功！', true);
+            }
 
-            dbSave('hscms_banners', bannersList);
-
-            bannerForm.reset();
+            document.getElementById('bannerForm').reset();
+            delete document.getElementById('bannerForm').dataset.editId;
             closeModal('bannerModal');
-            showLockToast('Banner 轮播配置发布成功！', true);
             loadBanners();
+
+            // 如果是跳转过来的编辑，保存后直接跳回内容管理列表
+            if (new URLSearchParams(window.location.search).get('editId')) {
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
         }
 
         function toggleBannerStatus(id, el) {
@@ -481,6 +640,13 @@
 
         // Init load
         loadBanners();
+
+        // Check if URL has editId parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('editId');
+        if (editId) {
+            openBannerEditModal(parseInt(editId));
+        }
     </script>
 </body>
 

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 素材库</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            align-items: flex-end;
+        }
+        .search-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-col label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-list.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>资产确权</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item" id="tabPendingNav">
+                        <a href="asset-audit.html">
+                            待审核列表
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabApprovedNav">
+                        <a href="asset-audit.html?tab=approved">
+                            确权历史
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabRejectedNav">
+                        <a href="asset-audit.html?tab=rejected">
+                            已驳回记录
+                        </a>
+                    </li>
+                    <li class="sub-nav-item active" id="tabMaterialLibraryNav">
+                        <a href="material-library.html">
+                            素材库
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabTakeDownNav">
+                        <a href="take-down-requests.html">
+                            用户申请下架通知
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <div class="workspace-header">
+                    <div class="workspace-title-section">
+                        <h1>上架素材库</h1>
+                        <p>管理所有合规审核通过的摄影图片与视频素材。进行上架（默认关联全部用途）、下架以及细分用途配置的管理。</p>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <!-- Search Filters -->
+                    <div class="search-row">
+                        <div class="search-col">
+                            <label>检索关键词</label>
+                            <input type="text" id="assetKeyword" class="form-control" style="width:200px;" placeholder="资产名称/提交人/ID...">
+                        </div>
+                        <div class="search-col">
+                            <label>上架状态</label>
+                            <select id="searchSaleStatus" class="form-control" style="width:120px;">
+                                <option value="全部">全部状态</option>
+                                <option value="已上架">已上架</option>
+                                <option value="已下架">已下架</option>
+                            </select>
+                        </div>
+                        <div class="search-col">
+                            <label>素材类别</label>
+                            <select id="searchAssetType" class="form-control" style="width:120px;">
+                                <option value="全部">全部类型</option>
+                                <option value="图片">图片</option>
+                                <option value="视频">视频</option>
+                                <option value="文章">文章</option>
+                            </select>
+                        </div>
+                        <div class="search-col" style="flex-direction:row; gap:8px;">
+                            <button class="btn btn-primary" onclick="loadMaterialsList()">查询</button>
+                            <button class="btn" onclick="resetSearch()">重置</button>
+                        </div>
+                    </div>
+
+                    <!-- Materials table -->
+                    <div class="enterprise-card">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th>素材详情 (名称/ID/哈希)</th>
+                                    <th>提交人/类别</th>
+                                    <th>上架模式</th>
+                                    <th>DCI 确权编码</th>
+                                    <th>已关联用途</th>
+                                    <th>上架状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialsTableBody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: LINK ASSET USAGE DIALOG -->
+    <div id="usageModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>关联素材用途配置</h3>
+                <button class="modal-close-btn" onclick="closeModal('usageModal')">&times;</button>
+            </div>
+            <form id="usageForm" onsubmit="submitUsageLink(event)">
+                <input type="hidden" id="usageAssetId">
+                <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <p style="font-size:12px; color:#64748b; margin: 0;">请选择适合该素材的用途（可多选）：</p>
+                        <label style="font-size:12px; color:var(--primary-color); cursor:pointer; display:flex; align-items:center; gap:4px; margin:0; user-select:none;">
+                            <input type="checkbox" id="selectAllUsage" onchange="toggleSelectAllUsage(this)">
+                            <span>一键全选</span>
+                        </label>
+                    </div>
+                    <div id="usageOptionsWrapper" style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Dynamic Checkboxes Grouped by Parent Category -->
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 16px;">
+                    <button type="button" class="btn" onclick="closeModal('usageModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认关联</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadMaterialsList();
+        });
+
+        function loadMaterialsList() {
+            const keyword = document.getElementById('assetKeyword').value.trim().toLowerCase();
+            const saleStatus = document.getElementById('searchSaleStatus').value;
+            const assetType = document.getElementById('searchAssetType').value;
+
+            const assets = dbGet('hscms_asset_submissions', []);
+            // Only show approved assets (status === '审核成功')
+            let filtered = assets.filter(a => a.status === '审核成功');
+
+            // 兜底自愈机制：如果审核成功的资产没有关联用途，则默认其关联全量用途并写回 LocalStorage
+            let hasChanges = false;
+            const usageConfig = dbGet('hscms_settings_usage_config', []);
+            let allUsages = [];
+            usageConfig.forEach(cat => {
+                if (cat.specs && cat.specs.length > 0) {
+                    cat.specs.forEach(spec => {
+                        const specName = (typeof spec === 'object' && spec !== null) ? (spec.name || '') : String(spec);
+                        if (specName) allUsages.push(specName);
+                    });
+                }
+            });
+            const allUsagesStr = allUsages.join(', ');
+
+            assets.forEach(a => {
+                if (a.status === '审核成功' && (!a.linkedUsage || a.linkedUsage.trim() === '')) {
+                    a.linkedUsage = allUsagesStr;
+                    hasChanges = true;
+                }
+            });
+
+            if (hasChanges) {
+                dbSave('hscms_asset_submissions', assets);
+                filtered = assets.filter(a => a.status === '审核成功');
+            }
+
+            // Apply Keyword filter
+            if (keyword) {
+                filtered = filtered.filter(a => 
+                    a.id.toLowerCase().includes(keyword) || 
+                    a.title.toLowerCase().includes(keyword) || 
+                    a.author.toLowerCase().includes(keyword) ||
+                    a.hash.toLowerCase().includes(keyword)
+                );
+            }
+
+            // Apply sale status filter
+            if (saleStatus !== '全部') {
+                filtered = filtered.filter(a => {
+                    const onSale = a.onSale === true;
+                    return saleStatus === '已上架' ? onSale : !onSale;
+                });
+            }
+
+            // Apply asset type filter
+            if (assetType !== '全部') {
+                filtered = filtered.filter(a => {
+                    const t = a.title;
+                    if (assetType === '图片') {
+                        return t.includes('图') || t.includes('照片') || t.includes('摄影');
+                    } else if (assetType === '视频') {
+                        return t.includes('视频') || t.includes('镜头') || t.includes('片') || t.includes('影');
+                    } else if (assetType === '文章') {
+                        return t.includes('书') || t.includes('路线图') || t.includes('pdf') || t.includes('文章') || t.includes('手册') || t.includes('图（');
+                    }
+                    return true;
+                });
+            }
+
+            const tbody = document.getElementById('materialsTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">素材库内暂无已审核通过的素材记录</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(a => {
+                const tr = document.createElement('tr');
+                
+                // Proof Mode Badge
+                let proofModeBadge = '';
+                if (a.needProof === '是') {
+                    proofModeBadge = `<span class="badge" style="background-color: rgba(2, 132, 199, 0.1); color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.2); font-weight:600;">确权上架</span>`;
+                } else {
+                    proofModeBadge = `<span class="badge" style="background-color: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1;">常规上架</span>`;
+                }
+
+                // DCI Badge
+                let dciLayout = `<span style="color:#9ca3af; font-size:12px;">-</span>`;
+                if (a.dciCode && a.dciCode !== '-') {
+                    dciLayout = `<code class="hash-code" style="color:#1677ff;">${a.dciCode}</code>`;
+                }
+
+                // Show linked usages
+                let usageTagsHtml = '';
+                if (a.linkedUsage && a.linkedUsage !== '') {
+                    const usages = a.linkedUsage.split(', ');
+                    let visibleTags = '';
+                    if (usages.length <= 3) {
+                        visibleTags = usages.map(u => `<span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap;">${u}</span>`).join('');
+                    } else {
+                        visibleTags = usages.slice(0, 3).map(u => `<span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap;">${u}</span>`).join('') +
+                                      `<span class="badge" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.2); font-size: 10px; padding: 2px 6px; white-space: nowrap; cursor: help;" title="${a.linkedUsage}">等${usages.length}项...</span>`;
+                    }
+                    usageTagsHtml = `<div style="margin-top: 6px; display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; overflow: hidden;">` + 
+                        visibleTags +
+                        `</div>`;
+                } else {
+                    usageTagsHtml = `<div style="margin-top: 6px;"><span style="color: #94a3b8; font-size: 11px; font-style: italic;">未关联用途</span></div>`;
+                }
+
+                // Sale status Badge
+                const onSale = a.onSale === true;
+                let saleBadge = onSale 
+                    ? `<span class="badge badge-success">已上架</span>` 
+                    : `<span class="badge" style="background-color: #e2e8f0; color: #475569;">已下架</span>`;
+
+                // Actions Column
+                let actionBtn = '';
+                if (onSale) {
+                    actionBtn = `
+                        <a href="javascript:void(0)" class="action-link danger" onclick="toggleSaleStatus('${a.id}', false)">下架</a>
+                    `;
+                } else {
+                    actionBtn = `
+                        <a href="javascript:void(0)" class="action-link" onclick="toggleSaleStatus('${a.id}', true)">上架</a>
+                    `;
+                }
+
+                actionBtn += `
+                    <a href="javascript:void(0)" class="action-link" style="margin-left: 8px;" onclick="openLinkUsageModal('${a.id}')">关联用途</a>
+                    <a href="asset-detail.html?id=${a.id}" class="action-link" style="margin-left: 8px;" target="_blank">详情</a>
+                `;
+
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:600; color:#1f2937;">${a.title}</div>
+                        <div class="meta-detail-row">
+                            <span>ID: <code>${a.id}</code></span>
+                            <span>指纹 SHA-256: <code class="hash-code" onclick="navigator.clipboard.writeText('${a.hash}'); alert('哈希值已复制到剪贴板！');">${a.hash.substring(0, 16)}...</code></span>
+                        </div>
+                    </td>
+                    <td>
+                        <strong style="color:#334155;">${a.author}</strong>
+                        <div style="font-size:11px; color:#64748b;">${a.authorType}创作者</div>
+                    </td>
+                    <td>${proofModeBadge}</td>
+                    <td>${dciLayout}</td>
+                    <td>${usageTagsHtml}</td>
+                    <td>${saleBadge}</td>
+                    <td>${actionBtn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetSearch() {
+            document.getElementById('assetKeyword').value = '';
+            document.getElementById('searchSaleStatus').value = '全部';
+            document.getElementById('searchAssetType').value = '全部';
+            loadMaterialsList();
+        }
+
+        // Toggle sale status: up or down
+        function toggleSaleStatus(assetId, targetStatus) {
+            const assets = dbGet('hscms_asset_submissions', []);
+            const aIdx = assets.findIndex(item => item.id === assetId);
+            if (aIdx === -1) return;
+
+            if (targetStatus) {
+                // 上架逻辑：将 onSale 设为 true，并默认勾选所有已配置的用途
+                assets[aIdx].onSale = true;
+                
+                // 获取系统全部用途配置，自动将其全选
+                const usageConfig = dbGet('hscms_settings_usage_config', []);
+                let allUsages = [];
+                usageConfig.forEach(cat => {
+                    if (cat.specs && cat.specs.length > 0) {
+                        cat.specs.forEach(spec => {
+                            const specName = (typeof spec === 'object' && spec !== null) ? (spec.name || '') : String(spec);
+                            if (specName) allUsages.push(specName);
+                        });
+                    }
+                });
+
+                assets[aIdx].linkedUsage = allUsages.join(', ');
+                dbSave('hscms_asset_submissions', assets);
+                showLockToast('素材已成功上架，并默认关联了全量用途！', true);
+            } else {
+                // 下架逻辑：将 onSale 设为 false
+                assets[aIdx].onSale = false;
+                dbSave('hscms_asset_submissions', assets);
+                showLockToast('素材已下架成功！', true);
+            }
+
+            loadMaterialsList();
+        }
+
+        // --- Usage Modal Logic ---
+        function toggleSelectAllUsage(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="usageSpecCheckbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+        }
+
+        function updateSelectAllState() {
+            const totalCheckbox = document.querySelectorAll('input[name="usageSpecCheckbox"]');
+            const checkedCheckbox = document.querySelectorAll('input[name="usageSpecCheckbox"]:checked');
+            const selectAllCheckbox = document.getElementById('selectAllUsage');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = (totalCheckbox.length > 0 && totalCheckbox.length === checkedCheckbox.length);
+            }
+        }
+
+        function openLinkUsageModal(assetId) {
+            const assets = dbGet('hscms_asset_submissions', []);
+            const a = assets.find(item => item.id === assetId);
+            if (!a) return;
+
+            document.getElementById('usageAssetId').value = assetId;
+
+            const usageConfig = dbGet('hscms_settings_usage_config', []);
+            const wrapper = document.getElementById('usageOptionsWrapper');
+            wrapper.innerHTML = '';
+
+            if (usageConfig.length === 0) {
+                wrapper.innerHTML = `<div style="color:#ef4444; font-size:12px; text-align:center;">暂无任何素材用途分类，请先在系统设置中配置。</div>`;
+                openModal('usageModal');
+                return;
+            }
+
+            const currentUsages = a.linkedUsage ? a.linkedUsage.split(', ') : [];
+
+            usageConfig.forEach(category => {
+                const groupDiv = document.createElement('div');
+                groupDiv.style.border = '1px solid #e2e8f0';
+                groupDiv.style.borderRadius = '8px';
+                groupDiv.style.padding = '12px';
+                groupDiv.style.backgroundColor = '#f8fafc';
+
+                const header = document.createElement('div');
+                header.style.fontWeight = 'bold';
+                header.style.fontSize = '13px';
+                header.style.color = '#1e293b';
+                header.style.marginBottom = '8px';
+                header.textContent = category.name;
+                groupDiv.appendChild(header);
+
+                const listDiv = document.createElement('div');
+                listDiv.style.display = 'flex';
+                listDiv.style.flexDirection = 'column';
+                listDiv.style.gap = '8px';
+                listDiv.style.paddingLeft = '8px';
+
+                if (category.specs && category.specs.length > 0) {
+                    category.specs.forEach(spec => {
+                        let specName = '';
+                        let specPrice = 100;
+                        if (typeof spec === 'object' && spec !== null) {
+                            specName = spec.name || '';
+                            specPrice = typeof spec.price !== 'undefined' ? spec.price : 100;
+                        } else {
+                            specName = String(spec);
+                        }
+
+                        const label = document.createElement('label');
+                        label.style.display = 'flex';
+                        label.style.alignItems = 'center';
+                        label.style.gap = '8px';
+                        label.style.fontSize = '12.5px';
+                        label.style.color = '#475569';
+                        label.style.cursor = 'pointer';
+
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.name = 'usageSpecCheckbox';
+                        checkbox.value = specName;
+                        checkbox.onchange = updateSelectAllState;
+                        if (currentUsages.includes(specName)) {
+                            checkbox.checked = true;
+                        }
+
+                        const textSpan = document.createElement('span');
+                        textSpan.innerHTML = `${specName} <strong style="color:var(--primary-color);">(￥${specPrice})</strong>`;
+
+                        label.appendChild(checkbox);
+                        label.appendChild(textSpan);
+                        listDiv.appendChild(label);
+                    });
+                } else {
+                    const noSpecs = document.createElement('div');
+                    noSpecs.style.color = '#94a3b8';
+                    noSpecs.style.fontSize = '12px';
+                    noSpecs.style.fontStyle = 'italic';
+                    noSpecs.textContent = '暂无细分规格';
+                    listDiv.appendChild(noSpecs);
+                }
+
+                groupDiv.appendChild(listDiv);
+                wrapper.appendChild(groupDiv);
+            });
+
+            updateSelectAllState();
+            openModal('usageModal');
+        }
+
+        function submitUsageLink(e) {
+            e.preventDefault();
+            const assetId = document.getElementById('usageAssetId').value;
+            const checkedBoxes = document.querySelectorAll('input[name="usageSpecCheckbox"]:checked');
+            const selectedUsages = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const assets = dbGet('hscms_asset_submissions', []);
+            const aIdx = assets.findIndex(a => a.id === assetId);
+
+            if (aIdx !== -1) {
+                assets[aIdx].linkedUsage = selectedUsages.join(', ');
+                dbSave('hscms_asset_submissions', assets);
+
+                showLockToast('关联用途成功！', true);
+                closeModal('usageModal');
+                loadMaterialsList();
+            }
+        }
+    </script>
+</body>
+</html>
