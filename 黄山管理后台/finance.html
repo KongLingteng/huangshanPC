@@ -194,17 +194,17 @@
             <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
             <aside class="sub-sidebar">
                 <div class="sub-sidebar-title">
-                    <span>财务结算</span>
+                    <span></span>
                 </div>
                 <ul class="sub-nav-list">
                     <li class="sub-nav-item active" id="tabQueueNav">
                         <a href="javascript:void(0)" onclick="switchTab('queue')">
-                            申请结算列表
+                            申请提现管理
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabHistoryNav">
                         <a href="javascript:void(0)" onclick="switchTab('history')">
-                            打款历史
+                            提现历史记录
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabConfigNav" style="display: none;">
@@ -221,7 +221,7 @@
                 <div id="queueTab" class="tab-content active" style="width: 100%;">
                     <div class="workspace-header">
                         <div class="workspace-title-section">
-                            <h1>申请结算列表</h1>
+                            <h1>申请提现管理</h1>
                             <p>审核供稿人提现提报，系统自动核算 T+7 资金解冻锁与最低 100 元提现阈值限制。</p>
                         </div>
                     </div>
@@ -273,7 +273,7 @@
                 <div id="historyTab" class="tab-content" style="width: 100%;">
                     <div class="workspace-header">
                         <div class="workspace-title-section">
-                            <h1>打款历史</h1>
+                            <h1>提现历史记录</h1>
                             <p>查询已打款、已清结算的财务划账历史，以及因安全合规原因被退回的记录。</p>
                         </div>
                     </div>
@@ -551,7 +551,7 @@
             tbody.innerHTML = '';
 
             if (history.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的历史清算记录</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的历史提现记录</td></tr>`;
                 return;
             }
 

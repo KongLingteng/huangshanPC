@@ -186,22 +186,22 @@
             <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
             <aside class="sub-sidebar">
                 <div class="sub-sidebar-title">
-                    <span>资产确权</span>
+                    <span></span>
                 </div>
                 <ul class="sub-nav-list">
                     <li class="sub-nav-item active" id="tabPendingNav">
                         <a href="javascript:void(0)" onclick="switchTab('待审核')">
-                            待审核列表
+                            素材待审核列表
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabApprovedNav">
                         <a href="javascript:void(0)" onclick="switchTab('审核成功')">
-                            确权历史
+                            蚂蚁链确权历史
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabRejectedNav">
                         <a href="javascript:void(0)" onclick="switchTab('已驳回')">
-                            已驳回记录
+                            素材驳回记录
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabMaterialLibraryNav">
@@ -214,6 +214,11 @@
                             用户申请下架通知
                         </a>
                     </li>
+                    <li class="sub-nav-item" id="tabUsageNav">
+                        <a href="material-usage.html">
+                            素材交易用途配置
+                        </a>
+                    </li>
                 </ul>
             </aside>
 
@@ -222,11 +227,7 @@
                 <!-- SINGLE DYNAMIC TABLE CONTAINER -->
                 <div class="workspace-header">
                     <div class="workspace-title-section">
-                        <h1 id="pageTitle">资产确权审核列表</h1>
-                        <p id="pageDescription">人工审核创作者提交的原创素材，系统将自动发起蚂蚁区块链存证与国家版权局DCI 3.0编号自动申领。</p>
-                    </div>
-                    <div class="workspace-actions">
-                        <span class="badge badge-success" style="padding: 6px 12px; font-weight:600;">DCI 3.0 接口：就绪</span>
+                        <h1 id="pageTitle">素材待审核列表</h1>
                     </div>
                 </div>
 
@@ -388,13 +389,13 @@
 
             if (status === '待审核') {
                 document.getElementById('tabPendingNav').classList.add('active');
-                document.getElementById('pageTitle').textContent = '资产版权确权 - 待审核列表';
+                document.getElementById('pageTitle').textContent = '素材待审核列表';
             } else if (status === '审核成功') {
                 document.getElementById('tabApprovedNav').classList.add('active');
-                document.getElementById('pageTitle').textContent = '资产版权确权 - 确权历史';
+                document.getElementById('pageTitle').textContent = '蚂蚁链确权历史';
             } else if (status === '已驳回') {
                 document.getElementById('tabRejectedNav').classList.add('active');
-                document.getElementById('pageTitle').textContent = '资产版权确权 - 已驳回记录';
+                document.getElementById('pageTitle').textContent = '素材驳回记录';
             }
 
             loadAssetsList();
@@ -877,7 +878,15 @@
         }
 
         // Init page
-        loadAssetsList();
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+        if (tabParam === 'approved') {
+            switchTab('审核成功');
+        } else if (tabParam === 'rejected') {
+            switchTab('已驳回');
+        } else {
+            switchTab('待审核');
+        }
     </script>
 </body>
 </html>

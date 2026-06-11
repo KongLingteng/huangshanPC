@@ -162,23 +162,32 @@
                         <div class="search-row">
                             <div class="search-col">
                                 <label>检索关键词</label>
-                                <input type="text" id="matKeyword" class="form-control" style="width:200px;" placeholder="订单ID/素材名/买家ID...">
+                                <input type="text" id="matKeyword" class="form-control" style="width:180px;" placeholder="订单ID/素材名/买家ID...">
                             </div>
                             <div class="search-col">
-                                <label>交易渠道</label>
+                                <label>支付渠道</label>
                                 <select id="matChannel" class="form-control" style="width:120px;">
                                     <option value="全部">全部渠道</option>
+                                    <option value="余额">余额</option>
+                                    <option value="微信支付">微信</option>
                                     <option value="支付宝">支付宝</option>
-                                    <option value="微信支付">微信支付</option>
                                 </select>
                             </div>
                             <div class="search-col">
                                 <label>订单状态</label>
                                 <select id="matStatus" class="form-control" style="width:120px;">
                                     <option value="全部">全部状态</option>
-                                    <option value="已完成">已完成</option>
-                                    <option value="已退款">已退款</option>
+                                    <option value="交易成功">交易成功</option>
+                                    <option value="交易失败">交易失败</option>
                                 </select>
+                            </div>
+                            <div class="search-col">
+                                <label>交易开始日期</label>
+                                <input type="date" id="matStartDate" class="form-control" style="width:140px;">
+                            </div>
+                            <div class="search-col">
+                                <label>交易结束日期</label>
+                                <input type="date" id="matEndDate" class="form-control" style="width:140px;">
                             </div>
                             <div class="search-col" style="flex-direction:row; gap:8px;">
                                 <button class="btn btn-primary" onclick="searchMaterialOrders()">查询</button>
@@ -233,16 +242,32 @@
                         <div class="search-row">
                             <div class="search-col">
                                 <label>检索关键词</label>
-                                <input type="text" id="proofKeyword" class="form-control" style="width:200px;" placeholder="订单ID/作品名称/申请主体...">
+                                <input type="text" id="proofKeyword" class="form-control" style="width:180px;" placeholder="订单ID/作品名称/申请主体...">
                             </div>
                             <div class="search-col">
-                                <label>证书状态</label>
+                                <label>支付渠道</label>
+                                <select id="proofChannel" class="form-control" style="width:120px;">
+                                    <option value="全部">全部渠道</option>
+                                    <option value="余额">余额</option>
+                                    <option value="微信支付">微信</option>
+                                    <option value="支付宝">支付宝</option>
+                                </select>
+                            </div>
+                            <div class="search-col">
+                                <label>订单状态</label>
                                 <select id="proofStatus" class="form-control" style="width:120px;">
                                     <option value="全部">全部状态</option>
-                                    <option value="已出证">已出证</option>
-                                    <option value="处理中">处理中</option>
-                                    <option value="已退款">已退款</option>
+                                    <option value="交易成功">交易成功</option>
+                                    <option value="交易失败">交易失败</option>
                                 </select>
+                            </div>
+                            <div class="search-col">
+                                <label>交易开始日期</label>
+                                <input type="date" id="proofStartDate" class="form-control" style="width:140px;">
+                            </div>
+                            <div class="search-col">
+                                <label>交易结束日期</label>
+                                <input type="date" id="proofEndDate" class="form-control" style="width:140px;">
                             </div>
                             <div class="search-col" style="flex-direction:row; gap:8px;">
                                 <button class="btn btn-primary" onclick="searchProofOrders()">查询</button>
@@ -259,6 +284,7 @@
                                         <th>确权作品名称</th>
                                         <th>申请主体</th>
                                         <th>确权费</th>
+                                        <th>支付渠道</th>
                                         <th>证书状态</th>
                                         <th>证书编号</th>
                                         <th>交易时间</th>
@@ -402,6 +428,10 @@
                         <div>
                             <span style="color: #64748b; font-weight: 500;">申请主体:</span>
                             <span id="pDetApplicant" style="margin-left: 6px; font-weight: 500; color: #374151;">-</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-weight: 500;">支付渠道:</span>
+                            <span id="pDetChannel" class="badge" style="margin-left: 6px; background: #f1f5f9; color: #475569;">-</span>
                         </div>
                         <div>
                             <span style="color: #64748b; font-weight: 500;">交易时间:</span>
@@ -613,6 +643,8 @@
             const keyword = document.getElementById('matKeyword').value.trim().toLowerCase();
             const channel = document.getElementById('matChannel').value;
             const status = document.getElementById('matStatus').value;
+            const startDate = document.getElementById('matStartDate').value;
+            const endDate = document.getElementById('matEndDate').value;
 
             filteredMaterials = rawOrders.filter(o => {
                 const matchesKeyword = !keyword || 
@@ -620,8 +652,23 @@
                     o.materialName.toLowerCase().includes(keyword) || 
                     o.buyerId.toLowerCase().includes(keyword);
                 const matchesChannel = channel === '全部' || o.channel === channel;
-                const matchesStatus = status === '全部' || o.status === status;
-                return matchesKeyword && matchesChannel && matchesStatus;
+                
+                let matchesStatus = true;
+                if (status === '交易成功') {
+                    matchesStatus = o.status === '已完成';
+                } else if (status === '交易失败') {
+                    matchesStatus = o.status === '已退款';
+                }
+                
+                const orderDate = (o.time && o.time.length >= 10) ? o.time.substring(0, 10) : '';
+                let matchesDate = true;
+                if (startDate) {
+                    matchesDate = matchesDate && (orderDate >= startDate);
+                }
+                if (endDate) {
+                    matchesDate = matchesDate && (orderDate <= endDate);
+                }
+                return matchesKeyword && matchesChannel && matchesStatus && matchesDate;
             });
 
             materialPage = 1;
@@ -632,6 +679,8 @@
             document.getElementById('matKeyword').value = '';
             document.getElementById('matChannel').value = '全部';
             document.getElementById('matStatus').value = '全部';
+            document.getElementById('matStartDate').value = '';
+            document.getElementById('matEndDate').value = '';
             loadMaterialOrders();
             materialPage = 1;
         }
@@ -641,6 +690,20 @@
         // ==========================================
         function loadProofOrders() {
             const rawOrders = dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
+            
+            // 数据自愈补全支付渠道属性
+            const presetChannels = ['支付宝', '微信支付', '余额'];
+            let needSave = false;
+            rawOrders.forEach((o, index) => {
+                if (!o.channel) {
+                    o.channel = presetChannels[index % 3];
+                    needSave = true;
+                }
+            });
+            if (needSave) {
+                dbSave('hscms_proof_orders', rawOrders);
+            }
+
             filteredProofs = rawOrders;
             renderProofTable();
         }
@@ -664,7 +727,7 @@
             renderPaginationButtons('proof', totalPages);
 
             if (pageRecords.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding: 24px;">未检索到符合条件的存证确权订单记录！</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#9ca3af; padding: 24px;">未检索到符合条件的存证确权订单记录！</td></tr>`;
                 return;
             }
 
@@ -700,6 +763,7 @@
                     <td><strong style="color:#1f2937;">${o.workName}</strong></td>
                     <td><span style="font-weight:500; color:#475569;">${o.applicant}</span></td>
                     <td><span style="font-weight:600; color:#4f46e5;">￥${o.price.toFixed(2)}</span></td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#475569;">${o.channel || '-'}</span></td>
                     <td>${statusBadge}</td>
                     <td>${certSpan}</td>
                     <td style="color:#64748b; font-size:12px;">${o.time}</td>
@@ -730,37 +794,57 @@
                     
                     showLockToast(`确权订单 ${orderId} 退款及证书注销手续已成功办理！`, true);
                     
-                    // Keep original search filters
-                    const keyword = document.getElementById('proofKeyword').value.trim().toLowerCase();
-                    const status = document.getElementById('proofStatus').value;
-                    
-                    // Filter again
-                    filteredProofs = rawOrders.filter(item => {
-                        const matchesKeyword = !keyword || 
-                            item.orderId.toLowerCase().includes(keyword) || 
-                            item.workName.toLowerCase().includes(keyword) || 
-                            item.applicant.toLowerCase().includes(keyword);
-                        const matchesStatus = status === '全部' || item.status === status;
-                        return matchesKeyword && matchesStatus;
-                    });
-                    
-                    renderProofTable();
+                    // 统一调用查询函数，避免逻辑遗漏并保持当前的检索状态（包含渠道、日期范围等）
+                    searchProofOrders();
                 }
             }
         }
 
         function searchProofOrders() {
             const rawOrders = dbGet('hscms_proof_orders', DEFAULT_PROOF_ORDERS);
+            
+            // 确保渠道数据自愈
+            const presetChannels = ['支付宝', '微信支付', '余额'];
+            let needSave = false;
+            rawOrders.forEach((item, index) => {
+                if (!item.channel) {
+                    item.channel = presetChannels[index % 3];
+                    needSave = true;
+                }
+            });
+            if (needSave) {
+                dbSave('hscms_proof_orders', rawOrders);
+            }
+
             const keyword = document.getElementById('proofKeyword').value.trim().toLowerCase();
+            const channel = document.getElementById('proofChannel').value;
             const status = document.getElementById('proofStatus').value;
+            const startDate = document.getElementById('proofStartDate').value;
+            const endDate = document.getElementById('proofEndDate').value;
 
             filteredProofs = rawOrders.filter(o => {
                 const matchesKeyword = !keyword || 
                     o.orderId.toLowerCase().includes(keyword) || 
                     o.workName.toLowerCase().includes(keyword) || 
                     o.applicant.toLowerCase().includes(keyword);
-                const matchesStatus = status === '全部' || o.status === status;
-                return matchesKeyword && matchesStatus;
+                const matchesChannel = channel === '全部' || o.channel === channel;
+                
+                let matchesStatus = true;
+                if (status === '交易成功') {
+                    matchesStatus = o.status === '已出证' || o.status === '处理中';
+                } else if (status === '交易失败') {
+                    matchesStatus = o.status === '已退款';
+                }
+                
+                const orderDate = (o.time && o.time.length >= 10) ? o.time.substring(0, 10) : '';
+                let matchesDate = true;
+                if (startDate) {
+                    matchesDate = matchesDate && (orderDate >= startDate);
+                }
+                if (endDate) {
+                    matchesDate = matchesDate && (orderDate <= endDate);
+                }
+                return matchesKeyword && matchesChannel && matchesStatus && matchesDate;
             });
 
             proofPage = 1;
@@ -769,7 +853,10 @@
 
         function resetProofSearch() {
             document.getElementById('proofKeyword').value = '';
+            document.getElementById('proofChannel').value = '全部';
             document.getElementById('proofStatus').value = '全部';
+            document.getElementById('proofStartDate').value = '';
+            document.getElementById('proofEndDate').value = '';
             loadProofOrders();
             proofPage = 1;
         }
@@ -798,19 +885,8 @@
                 showLockToast(`订单 ${orderId} 已成功登记链上证书并完成确权出证！`, true);
                 closeModal('certModal');
 
-                // Keep original filters
-                const keyword = document.getElementById('proofKeyword').value.trim().toLowerCase();
-                const status = document.getElementById('proofStatus').value;
-                filteredProofs = rawOrders.filter(o => {
-                    const matchesKeyword = !keyword || 
-                        o.orderId.toLowerCase().includes(keyword) || 
-                        o.workName.toLowerCase().includes(keyword) || 
-                        o.applicant.toLowerCase().includes(keyword);
-                    const matchesStatus = status === '全部' || o.status === status;
-                    return matchesKeyword && matchesStatus;
-                });
-
-                renderProofTable();
+                // 统一调用查询函数，避免逻辑遗漏并保持当前的检索状态
+                searchProofOrders();
             }
         }
 
@@ -972,6 +1048,7 @@
 
             document.getElementById('pDetDciCode').textContent = dciCode;
             document.getElementById('pDetAntChain').textContent = antChainShow;
+            document.getElementById('pDetChannel').textContent = o.channel || '-';
 
             // 查验回执
             const ledgerEl = document.getElementById('pDetLedger');

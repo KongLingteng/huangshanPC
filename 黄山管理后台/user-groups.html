@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄山运营管理系统 - 用户群组设置</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .search-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- TOP HEADER MODULE -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <span class="platform-title">黄山运营管理后台</span>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar-circle">管</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="viewport-main">
+            <!-- PRIMARY LEFT SIDEBAR -->
+            <aside class="left-sidebar">
+                <div class="nav-group-top">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <span>首页</span>
+                    </a>
+                    <a href="ugc.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <span>社区运营</span>
+                    </a>
+                    <a href="asset-audit.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>素材</span>
+                    </a>
+                    <a href="finance.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>交易</span>
+                    </a>
+                    <a href="user-audit.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>用户</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <span>订单</span>
+                    </a>
+                    <a href="contracts.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <span>合同配置</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73-1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59(1.69)-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <span>设置</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
+            <aside class="sub-sidebar">
+                <div class="sub-sidebar-title">
+                    <span>用户管理</span>
+                </div>
+                <ul class="sub-nav-list">
+                    <li class="sub-nav-item" id="tabListNav">
+                        <a href="user-list.html">
+                            用户列表
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabPendingNav">
+                        <a href="user-audit.html?tab=pending">
+                            资质审核
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabHistoryNav">
+                        <a href="user-audit.html?tab=history">
+                            审核历史
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabProfilesNav">
+                        <a href="user-audit.html?tab=profiles">
+                            合规检测
+                        </a>
+                    </li>
+                    <li class="sub-nav-item active" id="tabGroupsNav">
+                        <a href="user-groups.html">
+                            用户群组设置
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN WORKSPACE -->
+            <main class="workspace-canvas">
+                <div class="workspace-header">
+                    <div class="workspace-title-section">
+                        <h1>用户群组设置</h1>
+                        <p>管理系统中的用户群组分类，可实现对群组的新增、编辑、删除等操作，支持与用户记录绑定。</p>
+                    </div>
+                </div>
+
+                <div class="canvas-body">
+                    <!-- Filters & Tools -->
+                    <div class="search-row">
+                        <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                            提示：删除群组时将进行强引用核查，若包含关联成员将予以强行拦截。
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddGroupModal()">
+                            ➕ 新增群组
+                        </button>
+                    </div>
+
+                    <!-- Groups table -->
+                    <div class="enterprise-card">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th>群组 ID</th>
+                                    <th>群组名称</th>
+                                    <th>关联人数</th>
+                                    <th>群组状态</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="groupsTableBody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT GROUP -->
+    <div id="groupModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 id="groupModalTitle">新增用户群组</h3>
+                <button class="modal-close-btn" onclick="closeModal('groupModal')">&times;</button>
+            </div>
+            <form id="groupForm" onsubmit="submitGroupForm(event)">
+                <input type="hidden" id="groupId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label style="font-weight: 600;">群组名称</label>
+                        <input type="text" id="groupName" class="form-control" required placeholder="请输入群组名称（如：核心摄影团队）">
+                    </div>
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label style="font-weight: 600;">启用状态</label>
+                        <select id="groupStatus" class="form-control" style="width: 100%;">
+                            <option value="启用">启用</option>
+                            <option value="禁用">禁用</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 16px;">
+                    <button type="button" class="btn" onclick="closeModal('groupModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lockToast" class="toast-container">
+        <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
+        <span id="lockToastText"></span>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            initDatabase();
+            loadGroupsData();
+        });
+
+        function loadGroupsData() {
+            const defaultGroups = [
+                { id: 'GRP_1001', name: '官方自营账号', status: '启用', createTime: '2026-06-01' },
+                { id: 'GRP_1002', name: '特邀摄影创作者', status: '启用', createTime: '2026-06-02' },
+                { id: 'GRP_1003', name: '自媒体合作机构', status: '启用', createTime: '2026-06-03' }
+            ];
+            
+            // 确保数据库存在该表
+            dbGet('hscms_user_groups', defaultGroups);
+            renderGroupsTable();
+        }
+
+        function renderGroupsTable() {
+            const groups = dbGet('hscms_user_groups', []);
+            const users = dbGet('hscms_users', []);
+            const tbody = document.getElementById('groupsTableBody');
+            tbody.innerHTML = '';
+
+            if (groups.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#9ca3af; padding: 24px;">暂无用户群组数据记录</td></tr>`;
+                return;
+            }
+
+            groups.forEach(g => {
+                const tr = document.createElement('tr');
+                
+                // 动态计算该群组下的用户关联人数
+                const matchedCount = users.filter(u => u.groupName === g.name).length;
+
+                // 状态 Badge
+                const statusBadge = g.status === '启用'
+                    ? `<span class="badge badge-success">启用</span>`
+                    : `<span class="badge" style="background-color:#e2e8f0; color:#475569;">禁用</span>`;
+
+                tr.innerHTML = `
+                    <td><code>${g.id}</code></td>
+                    <td><strong style="color:#1f2937;">${g.name}</strong></td>
+                    <td><strong style="color:var(--primary-color); font-size: 13.5px;">${matchedCount} 人</strong></td>
+                    <td>${statusBadge}</td>
+                    <td style="color:#64748b; font-size:12px;">${g.createTime}</td>
+                    <td>
+                        <a href="javascript:void(0)" class="action-link" onclick="openEditGroupModal('${g.id}')">编辑</a>
+                        <a href="javascript:void(0)" class="action-link danger" style="margin-left: 8px;" onclick="deleteGroup('${g.id}', ${matchedCount})">删除</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openAddGroupModal() {
+            document.getElementById('groupModalTitle').textContent = '新增用户群组';
+            document.getElementById('groupId').value = '';
+            document.getElementById('groupName').value = '';
+            document.getElementById('groupStatus').value = '启用';
+            openModal('groupModal');
+        }
+
+        function openEditGroupModal(groupId) {
+            const groups = dbGet('hscms_user_groups', []);
+            const g = groups.find(item => item.id === groupId);
+            if (!g) return;
+
+            document.getElementById('groupModalTitle').textContent = '修改用户群组';
+            document.getElementById('groupId').value = g.id;
+            document.getElementById('groupName').value = g.name;
+            document.getElementById('groupStatus').value = g.status;
+            openModal('groupModal');
+        }
+
+        function submitGroupForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('groupId').value;
+            const name = document.getElementById('groupName').value.trim();
+            const status = document.getElementById('groupStatus').value;
+
+            if (!name) return;
+
+            const groups = dbGet('hscms_user_groups', []);
+            
+            // 校验重名 (修改时排除自身)
+            const isDuplicate = groups.some(g => g.name === name && g.id !== id);
+            if (isDuplicate) {
+                showLockToast('群组名称已存在，请勿重复创建！', false);
+                return;
+            }
+
+            if (id) {
+                // 编辑保存
+                const gIdx = groups.findIndex(g => g.id === id);
+                if (gIdx !== -1) {
+                    const oldName = groups[gIdx].name;
+                    groups[gIdx].name = name;
+                    groups[gIdx].status = status;
+                    dbSave('hscms_user_groups', groups);
+
+                    // 多向联动修改：若群组名有变更，需要同步更新关联了该群组的所有用户记录
+                    if (oldName !== name) {
+                        const users = dbGet('hscms_users', []);
+                        let needSaveUsers = false;
+                        users.forEach(u => {
+                            if (u.groupName === oldName) {
+                                u.groupName = name;
+                                needSaveUsers = true;
+                            }
+                        });
+                        if (needSaveUsers) {
+                            dbSave('hscms_users', users);
+                        }
+                    }
+
+                    showLockToast('群组信息更新保存成功！', true);
+                }
+            } else {
+                // 新增
+                let maxId = 1000;
+                groups.forEach(g => {
+                    const num = parseInt(g.id.replace('GRP_', ''));
+                    if (!isNaN(num) && num > maxId) {
+                        maxId = num;
+                    }
+                });
+                const newId = 'GRP_' + (maxId + 1);
+                
+                const now = new Date();
+                const nowStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+
+                groups.push({
+                    id: newId,
+                    name: name,
+                    status: status,
+                    createTime: nowStr
+                });
+                dbSave('hscms_user_groups', groups);
+                showLockToast('新群组已成功创建！', true);
+            }
+
+            closeModal('groupModal');
+            loadGroupsData();
+        }
+
+        function deleteGroup(groupId, matchedCount) {
+            // 强引用拦截校验
+            if (matchedCount > 0) {
+                showLockToast(`该群组下仍有绑定的用户(${matchedCount}人)，无法删除！`, false);
+                return;
+            }
+
+            if (!confirm('确定要删除此用户群组吗？此操作无法撤销。')) {
+                return;
+            }
+
+            const groups = dbGet('hscms_user_groups', []);
+            const filtered = groups.filter(g => g.id !== groupId);
+            dbSave('hscms_user_groups', filtered);
+            
+            showLockToast('群组物理删除成功！', true);
+            loadGroupsData();
+        }
+    </script>
+</body>
+</html>

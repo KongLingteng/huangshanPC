@@ -330,9 +330,7 @@
                     <li class="sub-nav-item" id="tabLimitNav">
                         <a href="javascript:void(0)" onclick="switchTab('limit')">AIGC额度管控</a>
                     </li>
-                    <li class="sub-nav-item" id="tabUsageNav">
-                        <a href="javascript:void(0)" onclick="switchTab('usage')">素材用途配置</a>
-                    </li>
+
                     <li class="sub-nav-item" id="tabAssetRejectNav">
                         <a href="javascript:void(0)" onclick="switchTab('asset-reject')">素材驳回原因配置</a>
                     </li>
@@ -431,22 +429,7 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: USAGE TREE CONFIG -->
-                <div id="usageTab" class="tab-content">
-                    <div class="workspace-header" style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:flex-end;">
-                        <div class="workspace-title-section">
-                            <h1>素材交易用途配置</h1>
-                            <p>管理数字资产被购买时的授权范围。共分两级：父级用途分类和子级用途细分规格。</p>
-                        </div>
-                        <div>
-                            <button class="btn btn-primary" onclick="openAddParentUsageModal()">+ 新增一级分类</button>
-                        </div>
-                    </div>
 
-                    <div class="tree-container" id="usageTreeWrapper">
-                        <!-- Dynamic Tree nodes -->
-                    </div>
-                </div>
 
                 <!-- TAB 4: ASSET REJECT CONFIG -->
                 <div id="assetRejectTab" class="tab-content">
@@ -576,64 +559,7 @@
         </div>
     </div>
 
-    <!-- MODAL 1: ADD/EDIT PARENT CATEGORY -->
-    <div id="parentUsageModal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 id="parentModalTitle">新增版权一级分类</h3>
-                <button class="modal-close-btn" onclick="closeModal('parentUsageModal')">&times;</button>
-            </div>
-            <form onsubmit="submitParentUsage(event)">
-                <input type="hidden" id="editParentId" value="">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label style="font-weight:600; font-size:12.5px; margin-bottom: 4px; display:block;">分类名称</label>
-                        <input type="text" id="parentUsageName" class="form-control" required placeholder="例如：商业广告宣传">
-                    </div>
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label style="font-weight:600; font-size:12.5px; margin-bottom: 4px; display:block;">分类描述</label>
-                        <input type="text" id="parentUsageDesc" class="form-control" required placeholder="例如：用于户外大屏、产品画册、新媒体商业推广等">
-                    </div>
-                </div>
-                <div class="modal-footer" style="margin-top: 16px;">
-                    <button type="button" class="btn" onclick="closeModal('parentUsageModal')">取消</button>
-                    <button type="submit" class="btn btn-primary">确认保存</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
-    <!-- MODAL 2: ADD/EDIT CHILD SPEC -->
-    <div id="childSpecModal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 id="childModalTitle">新增用途规格细分</h3>
-                <button class="modal-close-btn" onclick="closeModal('childSpecModal')">&times;</button>
-            </div>
-            <form onsubmit="submitChildSpec(event)">
-                <input type="hidden" id="childParentId" value="">
-                <input type="hidden" id="editChildIndex" value="-1">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label style="font-weight:600; font-size:12.5px; margin-bottom: 4px; display:block;">一级用途分类</label>
-                        <input type="text" id="childParentName" class="form-control" disabled value="">
-                    </div>
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label style="font-weight:600; font-size:12.5px; margin-bottom: 4px; display:block;">用途细分名称</label>
-                        <input type="text" id="childSpecName" class="form-control" required placeholder="例如：地铁楼宇广告配图">
-                    </div>
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label style="font-weight:600; font-size:12.5px; margin-bottom: 4px; display:block;">用途配置价格（元）</label>
-                        <input type="number" id="childSpecPrice" class="form-control" required min="0" placeholder="例如：100">
-                    </div>
-                </div>
-                <div class="modal-footer" style="margin-top: 16px;">
-                    <button type="button" class="btn" onclick="closeModal('childSpecModal')">取消</button>
-                    <button type="submit" class="btn btn-primary">确认保存</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <div id="lockToast" class="toast-container">
         <svg id="lockToastIcon" class="toast-icon" viewBox="0 0 24 24"></svg>
@@ -665,8 +591,8 @@
         // Tab selection logic
         function switchTab(tab) {
             // Manage active classes on subbar
-            const navIds = ['tabAuditNav', 'tabLimitNav', 'tabUsageNav', 'tabAssetRejectNav', 'tabPostShieldNav', 'tabSplitNav'];
-            const contentIds = ['auditTab', 'limitTab', 'usageTab', 'assetRejectTab', 'postShieldTab', 'splitTab'];
+            const navIds = ['tabAuditNav', 'tabLimitNav', 'tabAssetRejectNav', 'tabPostShieldNav', 'tabSplitNav'];
+            const contentIds = ['auditTab', 'limitTab', 'assetRejectTab', 'postShieldTab', 'splitTab'];
             
             navIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -688,8 +614,6 @@
                 loadAuditForm();
             } else if (tab === 'limit') {
                 loadLimitForm();
-            } else if (tab === 'usage') {
-                loadUsageTree();
             } else if (tab === 'asset-reject') {
                 loadRejectReasons();
             } else if (tab === 'post-shield') {
@@ -746,252 +670,6 @@
             dbSave('hscms_settings_aigc_limit', limit);
             showLockToast('初始账户 AIGC 赠送限额参数已成功保存！', true);
             loadLimitForm();
-        }
-
-        // ==========================================
-        // TAB 3: USAGE TREE CONFIG
-        // ==========================================
-        function loadUsageTree() {
-            const list = dbGet('hscms_settings_usage_config', []);
-            const wrapper = document.getElementById('usageTreeWrapper');
-            wrapper.innerHTML = '';
-
-            if (list.length === 0) {
-                wrapper.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-light); font-style:italic;">暂无任何素材用途分类，请添加一级分类。</div>`;
-                return;
-            }
-
-            list.forEach(node => {
-                const nodeDiv = document.createElement('div');
-                nodeDiv.className = 'tree-node';
-                
-                // specs html builder
-                let specsHtml = '';
-                if (node.specs && node.specs.length > 0) {
-                    node.specs.forEach((spec, idx) => {
-                        let name = '';
-                        let price = 100;
-                        if (typeof spec === 'object' && spec !== null) {
-                            name = spec.name || '';
-                            price = typeof spec.price !== 'undefined' ? spec.price : 100;
-                        } else {
-                            name = String(spec);
-                        }
-                        specsHtml += `
-                            <div class="spec-item">
-                                <span class="spec-name">${name} <span style="color: var(--primary-color); font-weight: bold; margin-left: 8px;">(￥${price})</span></span>
-                                <div class="spec-actions">
-                                    <a href="javascript:void(0)" class="action-link" onclick="openEditChildModal(${node.id}, ${idx})">修改</a>
-                                    <a href="javascript:void(0)" class="action-link danger" onclick="deleteChildSpec(${node.id}, ${idx})">删除</a>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    specsHtml = `<div style="color: var(--text-light); font-size:12.5px; font-style:italic; padding: 6px 0;">该分类下暂无细分规格用途</div>`;
-                }
-
-                nodeDiv.innerHTML = `
-                    <div class="tree-node-header">
-                        <div class="tree-node-title">
-                            <span class="tree-node-name">${node.name}</span>
-                            <span class="tree-node-desc" title="分类说明">${node.desc}</span>
-                        </div>
-                        <div class="tree-node-actions">
-                            <button class="btn btn-sm btn-primary" style="padding: 2px 8px; font-size:11px;" onclick="openAddChildModal(${node.id})">+ 细分规格</button>
-                            <button class="btn btn-sm" style="padding: 2px 8px; font-size:11px;" onclick="openEditParentModal(${node.id})">编辑</button>
-                            <button class="btn btn-sm btn-danger" style="padding: 2px 8px; font-size:11px;" onclick="deleteParentUsage(${node.id})">删除</button>
-                        </div>
-                    </div>
-                    <div class="tree-node-body">
-                        <div class="specs-list">
-                            ${specsHtml}
-                        </div>
-                    </div>
-                `;
-                wrapper.appendChild(nodeDiv);
-            });
-        }
-
-        // Parent Usage Operations
-        function openAddParentUsageModal() {
-            document.getElementById('editParentId').value = '';
-            document.getElementById('parentUsageName').value = '';
-            document.getElementById('parentUsageDesc').value = '';
-            document.getElementById('parentModalTitle').textContent = '新增版权一级分类';
-            openModal('parentUsageModal');
-        }
-
-        function openEditParentModal(parentId) {
-            const list = dbGet('hscms_settings_usage_config', []);
-            const parent = list.find(item => item.id === parentId);
-            if (!parent) return;
-
-            document.getElementById('editParentId').value = parent.id;
-            document.getElementById('parentUsageName').value = parent.name;
-            document.getElementById('parentUsageDesc').value = parent.desc;
-            document.getElementById('parentModalTitle').textContent = '编辑一级分类';
-            openModal('parentUsageModal');
-        }
-
-        function submitParentUsage(e) {
-            e.preventDefault();
-            const parentId = document.getElementById('editParentId').value;
-            const name = document.getElementById('parentUsageName').value.trim();
-            const desc = document.getElementById('parentUsageDesc').value.trim();
-
-            if (!name || !desc) return;
-
-            let list = dbGet('hscms_settings_usage_config', []);
-
-            // Check repeat name
-            const duplicate = list.some(item => item.name.toLowerCase() === name.toLowerCase() && String(item.id) !== String(parentId));
-            if (duplicate) {
-                alert('分类名称已存在，请检查并换一个名字！');
-                return;
-            }
-
-            if (parentId) {
-                // Update
-                const idx = list.findIndex(item => String(item.id) === String(parentId));
-                if (idx !== -1) {
-                    list[idx].name = name;
-                    list[idx].desc = desc;
-                }
-            } else {
-                // Create
-                const maxId = list.length > 0 ? Math.max(...list.map(item => item.id)) : 0;
-                list.push({
-                    id: maxId + 1,
-                    name: name,
-                    desc: desc,
-                    specs: []
-                });
-            }
-
-            dbSave('hscms_settings_usage_config', list);
-            showLockToast('一级版权用途保存成功！', true);
-            closeModal('parentUsageModal');
-            loadUsageTree();
-        }
-
-        function deleteParentUsage(parentId) {
-            if (confirm('警告：删除该版权大类后，其下所有子类及用途细分配置将被一同删除。是否确定？')) {
-                let list = dbGet('hscms_settings_usage_config', []);
-                list = list.filter(item => item.id !== parentId);
-                dbSave('hscms_settings_usage_config', list);
-                showLockToast('大类及其所属细分配置已删除。', true);
-                loadUsageTree();
-            }
-        }
-
-        // Child Spec Operations
-        function openAddChildModal(parentId) {
-            const list = dbGet('hscms_settings_usage_config', []);
-            const parent = list.find(item => item.id === parentId);
-            if (!parent) return;
-
-            document.getElementById('childParentId').value = parentId;
-            document.getElementById('editChildIndex').value = "-1";
-            document.getElementById('childParentName').value = parent.name;
-            document.getElementById('childSpecName').value = '';
-            document.getElementById('childSpecPrice').value = '100';
-            document.getElementById('childModalTitle').textContent = '新增用途规格细分';
-            openModal('childSpecModal');
-        }
-
-        function openEditChildModal(parentId, childIdx) {
-            const list = dbGet('hscms_settings_usage_config', []);
-            const parent = list.find(item => item.id === parentId);
-            if (!parent || !parent.specs || !parent.specs[childIdx]) return;
-
-            const spec = parent.specs[childIdx];
-            let name = '';
-            let price = 100;
-            if (typeof spec === 'object' && spec !== null) {
-                name = spec.name || '';
-                price = typeof spec.price !== 'undefined' ? spec.price : 100;
-            } else {
-                name = String(spec);
-            }
-
-            document.getElementById('childParentId').value = parentId;
-            document.getElementById('editChildIndex').value = childIdx;
-            document.getElementById('childParentName').value = parent.name;
-            document.getElementById('childSpecName').value = name;
-            document.getElementById('childSpecPrice').value = price;
-            document.getElementById('childModalTitle').textContent = '修改用途规格细分';
-            openModal('childSpecModal');
-        }
-
-        function submitChildSpec(e) {
-            e.preventDefault();
-            const parentId = parseInt(document.getElementById('childParentId').value);
-            const childIdx = parseInt(document.getElementById('editChildIndex').value);
-            const specName = document.getElementById('childSpecName').value.trim();
-            const specPriceVal = document.getElementById('childSpecPrice').value.trim();
-
-            if (!specName) return;
-
-            const price = parseFloat(specPriceVal);
-            if (isNaN(price) || price < 0) {
-                alert('请输入大于等于 0 的有效价格！');
-                return;
-            }
-
-            const list = dbGet('hscms_settings_usage_config', []);
-            const parentIdx = list.findIndex(item => item.id === parentId);
-            if (parentIdx === -1) return;
-
-            const parent = list[parentIdx];
-            
-            // Check child duplicate name - 兼容对象和字符串
-            const duplicate = parent.specs.some((spec, idx) => {
-                let existingName = '';
-                if (typeof spec === 'object' && spec !== null) {
-                    existingName = spec.name || '';
-                } else {
-                    existingName = String(spec);
-                }
-                return existingName.toLowerCase() === specName.toLowerCase() && idx !== childIdx;
-            });
-            if (duplicate) {
-                alert('该细分用途在该父级下已存在，请换一个名称！');
-                return;
-            }
-
-            const specData = {
-                name: specName,
-                price: price
-            };
-
-            if (childIdx >= 0) {
-                // Update
-                parent.specs[childIdx] = specData;
-            } else {
-                // Create
-                if (!parent.specs) parent.specs = [];
-                parent.specs.push(specData);
-            }
-
-            list[parentIdx] = parent;
-            dbSave('hscms_settings_usage_config', list);
-            showLockToast('细分规格配置保存成功！', true);
-            closeModal('childSpecModal');
-            loadUsageTree();
-        }
-
-        function deleteChildSpec(parentId, childIdx) {
-            if (confirm('确定要删除该条授权规格细分吗？')) {
-                const list = dbGet('hscms_settings_usage_config', []);
-                const parentIdx = list.findIndex(item => item.id === parentId);
-                if (parentIdx !== -1) {
-                    list[parentIdx].specs.splice(childIdx, 1);
-                    dbSave('hscms_settings_usage_config', list);
-                    showLockToast('用途规格细分已移除。', true);
-                    loadUsageTree();
-                }
-            }
         }
 
         // ==========================================

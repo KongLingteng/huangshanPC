@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,16 +18,19 @@
             border: 1px solid var(--border-color);
             align-items: flex-end;
         }
+
         .search-col {
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
-        .search-col label {
+
+        新增/修改平台用户 .search-col label {
             font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
         }
+
         .user-avatar-rect {
             width: 32px;
             height: 32px;
@@ -41,6 +45,7 @@
             object-fit: cover;
             border: 1px solid #cbd5e1;
         }
+
         .quota-container {
             display: flex;
             flex-direction: column;
@@ -48,6 +53,7 @@
             font-size: 12px;
             min-width: 140px;
         }
+
         .quota-item {
             display: flex;
             justify-content: space-between;
@@ -55,23 +61,28 @@
             border-bottom: 1px dashed #f1f5f9;
             padding-bottom: 2px;
         }
+
         .quota-label {
             color: var(--text-muted);
         }
+
         .quota-val {
             font-weight: 600;
             color: #374151;
         }
+
         .form-tip {
             font-size: 11px;
             color: #64748b;
             margin-top: 4px;
             display: block;
         }
+
         .tab-content {
             display: block;
             width: 100%;
         }
+
         .pagination-btn {
             background: #ffffff;
             border: 1px solid var(--border-color);
@@ -82,15 +93,18 @@
             color: #374151;
             transition: all 0.2s ease;
         }
+
         .pagination-btn:hover {
             border-color: var(--primary-color);
             color: var(--primary-color);
         }
+
         .pagination-btn.active {
             background: var(--primary-color);
             border-color: var(--primary-color);
             color: #ffffff;
         }
+
         .pagination-btn:disabled {
             background: #f1f5f9;
             color: #94a3b8;
@@ -99,6 +113,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="app-container">
@@ -107,7 +122,8 @@
             <div class="header-left">
                 <div class="logo-container">
                     <svg viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
                     </svg>
                 </div>
                 <span class="platform-title">黄山运营管理后台</span>
@@ -125,35 +141,60 @@
             <aside class="left-sidebar">
                 <div class="nav-group-top">
                     <a href="index.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
                         <span>首页</span>
                     </a>
                     <a href="ugc.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" />
+                        </svg>
                         <span>社区运营</span>
                     </a>
                     <a href="asset-audit.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                        </svg>
                         <span>素材</span>
                     </a>
                     <a href="finance.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+                        </svg>
                         <span>交易</span>
                     </a>
                     <a href="user-audit.html" class="nav-item active">
-                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
                         <span>用户</span>
                     </a>
                     <a href="orders.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
                         <span>订单</span>
                     </a>
                     <a href="contracts.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                        </svg>
                         <span>合同配置</span>
                     </a>
                     <a href="settings.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73(a1.69)-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73(a1.69)-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+                            <path
+                                d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+                        </svg>
                         <span>设置</span>
                     </a>
                 </div>
@@ -185,6 +226,11 @@
                             合规检测
                         </a>
                     </li>
+                    <li class="sub-nav-item" id="tabGroupsNav">
+                        <a href="user-groups.html">
+                            用户群组设置
+                        </a>
+                    </li>
                 </ul>
             </aside>
 
@@ -203,7 +249,8 @@
                         <div class="search-row">
                             <div class="search-col">
                                 <label>用户昵称</label>
-                                <input type="text" id="searchNickname" class="form-control" style="width:180px;" placeholder="模糊搜索昵称/ID...">
+                                <input type="text" id="searchNickname" class="form-control" style="width:180px;"
+                                    placeholder="模糊搜索昵称/ID...">
                             </div>
                             <div class="search-col">
                                 <label>用户身份</label>
@@ -221,8 +268,18 @@
                             <div class="search-col" style="flex-direction:row; gap:8px; align-items:center;">
                                 <button class="btn btn-primary" onclick="searchUsers()">查询</button>
                                 <button class="btn" onclick="resetSearch()">重置</button>
-                                <button id="batchQuotaBtn" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="openBatchQuotaModal()" disabled>批量设置 AIGC 额度</button>
-                                <span id="selectedCountText" style="font-size: 12px; color: var(--text-muted); display: none; white-space: nowrap;">已选中 0 位用户</span>
+                                <button class="btn btn-primary"
+                                    style="padding: 6px 12px; font-size: 12px; background-color: #10b981; border-color: #10b981;"
+                                    onclick="openAddUserModal()">新增用户</button>
+                                <button class="btn btn-primary"
+                                    style="padding: 6px 12px; font-size: 12px; background-color: #8b5cf6; border-color: #8b5cf6;"
+                                    onclick="openImportUserModal()">批量导入</button>
+                                <button id="batchQuotaBtn" class="btn btn-primary"
+                                    style="padding: 6px 12px; font-size: 12px;" onclick="openBatchQuotaModal()"
+                                    disabled>批量设置 AIGC 额度</button>
+                                <span id="selectedCountText"
+                                    style="font-size: 12px; color: var(--text-muted); display: none; white-space: nowrap;">已选中
+                                    0 位用户</span>
                             </div>
                         </div>
 
@@ -231,10 +288,13 @@
                             <table class="enterprise-table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 40px; text-align: center;"><input type="checkbox" id="selectAllUsers" onchange="toggleSelectAllUsers(this)"></th>
+                                        <th style="width: 40px; text-align: center;"><input type="checkbox"
+                                                id="selectAllUsers" onchange="toggleSelectAllUsers(this)"></th>
                                         <th>头像</th>
                                         <th>用户 ID</th>
                                         <th>用户昵称</th>
+                                        <th>手机号</th>
+                                        <th>所属群组</th>
                                         <th>所属机构</th>
                                         <th>AIGC能力额度 (已用/限制)</th>
                                         <th>用户身份</th>
@@ -247,19 +307,22 @@
                                     <!-- Dynamic -->
                                 </tbody>
                             </table>
-                            
+
                             <!-- Pagination -->
-                            <div class="pagination-container" style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:0 8px;">
+                            <div class="pagination-container"
+                                style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:0 8px;">
                                 <div style="font-size:12px; color:var(--text-muted);" id="pageInfo">
                                     共 0 条记录，当前第 1/1 页
                                 </div>
                                 <div style="display:flex; align-items:center; gap:12px;">
-                                    <select id="pageSizeSelect" class="form-control" style="width:100px; padding:4px 8px;" onchange="changePageSize()">
+                                    <select id="pageSizeSelect" class="form-control"
+                                        style="width:100px; padding:4px 8px;" onchange="changePageSize()">
                                         <option value="5">5 条/页</option>
                                         <option value="10">10 条/页</option>
                                         <option value="20">20 条/页</option>
                                     </select>
-                                    <div class="pagination-buttons" id="paginationButtons" style="display:flex; gap:6px;">
+                                    <div class="pagination-buttons" id="paginationButtons"
+                                        style="display:flex; gap:6px;">
                                         <!-- Dynamic buttons -->
                                     </div>
                                 </div>
@@ -281,23 +344,27 @@
             <form id="quotaForm" onsubmit="submitQuotaChange(event)">
                 <input type="hidden" id="quotaUserId">
                 <div class="modal-body">
-                    <p style="font-size:12.5px; color:#475569; margin-bottom:16px; font-weight:600;" id="quotaUserDetails"></p>
-                    
+                    <p style="font-size:12.5px; color:#475569; margin-bottom:16px; font-weight:600;"
+                        id="quotaUserDetails"></p>
+
                     <div class="form-group">
                         <label style="font-weight: 600;">AI 生文总额度</label>
-                        <input type="number" id="quotaTextLimit" class="form-control" required min="0" placeholder="请输入限制次数">
+                        <input type="number" id="quotaTextLimit" class="form-control" required min="0"
+                            placeholder="请输入限制次数">
                         <span class="form-tip" id="quotaTextTip">当前已用: 0 次</span>
                     </div>
-                    
+
                     <div class="form-group" style="margin-top: 12px;">
                         <label style="font-weight: 600;">AI 生图总额度</label>
-                        <input type="number" id="quotaImageLimit" class="form-control" required min="0" placeholder="请输入限制次数">
+                        <input type="number" id="quotaImageLimit" class="form-control" required min="0"
+                            placeholder="请输入限制次数">
                         <span class="form-tip" id="quotaImageTip">当前已用: 0 次</span>
                     </div>
 
                     <div class="form-group" style="margin-top: 12px;">
                         <label style="font-weight: 600;">AI 生视频总额度</label>
-                        <input type="number" id="quotaVideoLimit" class="form-control" required min="0" placeholder="请输入限制秒数">
+                        <input type="number" id="quotaVideoLimit" class="form-control" required min="0"
+                            placeholder="请输入限制秒数">
                         <span class="form-tip" id="quotaVideoTip">当前已用: 0 秒</span>
                     </div>
                 </div>
@@ -318,21 +385,25 @@
             </div>
             <form id="batchQuotaForm" onsubmit="submitBatchQuotaChange(event)">
                 <div class="modal-body">
-                    <p style="font-size:12.5px; color:#475569; margin-bottom:16px; font-weight:600;" id="batchQuotaDetails">已选中 0 位用户</p>
-                    
+                    <p style="font-size:12.5px; color:#475569; margin-bottom:16px; font-weight:600;"
+                        id="batchQuotaDetails">已选中 0 位用户</p>
+
                     <div class="form-group">
                         <label style="font-weight: 600;">AI 生文总额度</label>
-                        <input type="number" id="batchQuotaTextLimit" class="form-control" required min="0" placeholder="请输入限制字数">
+                        <input type="number" id="batchQuotaTextLimit" class="form-control" required min="0"
+                            placeholder="请输入限制字数">
                     </div>
-                    
+
                     <div class="form-group" style="margin-top: 12px;">
                         <label style="font-weight: 600;">AI 生图总额度</label>
-                        <input type="number" id="batchQuotaImageLimit" class="form-control" required min="0" placeholder="请输入限制张数">
+                        <input type="number" id="batchQuotaImageLimit" class="form-control" required min="0"
+                            placeholder="请输入限制张数">
                     </div>
 
                     <div class="form-group" style="margin-top: 12px;">
                         <label style="font-weight: 600;">AI 生视频总额度</label>
-                        <input type="number" id="batchQuotaVideoLimit" class="form-control" required min="0" placeholder="请输入限制秒数">
+                        <input type="number" id="batchQuotaVideoLimit" class="form-control" required min="0"
+                            placeholder="请输入限制秒数">
                     </div>
                 </div>
                 <div class="modal-footer" style="margin-top: 16px;">
@@ -362,10 +433,20 @@
 
         function loadUsersData() {
             const users = dbGet('hscms_users', DEFAULT_USERS);
-            
-            // 为特定机构创作者注入企业名称（所属机构）数据
+
+            // 为特定机构创作者注入企业名称（所属机构）数据，并且补全群组与手机号数据以做自愈兼容
             let needSave = false;
-            users.forEach(u => {
+
+            const presetPhones = {
+                'USER_8820': '13811112222',
+                'USER_5541': '13933334444',
+                'USER_6672': '13655556666',
+                'USER_1001': '13788889999',
+                'USER_1002': '15011113333',
+                'USER_1003': '18822224444'
+            };
+
+            users.forEach((u, index) => {
                 if (u.userId === 'USER_6672' && !u.orgName) {
                     u.orgName = '黄山松石文化传媒有限公司';
                     needSave = true;
@@ -376,6 +457,28 @@
                 }
                 if (u.userId === 'USER_1008' && !u.orgName) {
                     u.orgName = '安徽徽州人家文旅工作室';
+                    needSave = true;
+                }
+
+                // 补全手机号
+                if (!u.phoneNumber) {
+                    if (presetPhones[u.userId]) {
+                        u.phoneNumber = presetPhones[u.userId];
+                    } else {
+                        u.phoneNumber = '159' + String(10000000 + index).substring(1);
+                    }
+                    needSave = true;
+                }
+
+                // 补全所属群组
+                if (!u.groupName) {
+                    if (u.userId === 'USER_8820' || u.userId === 'USER_5541') {
+                        u.groupName = '特邀摄影创作者';
+                    } else if (u.userId === 'USER_6672') {
+                        u.groupName = '自媒体合作机构';
+                    } else {
+                        u.groupName = '官方自营账号';
+                    }
                     needSave = true;
                 }
             });
@@ -400,12 +503,12 @@
             // Calculate pagination parameters
             const totalRecords = filteredUsersList.length;
             const totalPages = Math.ceil(totalRecords / pageSize) || 1;
-            
+
             // Adjust current page if out of bounds
             if (currentPage > totalPages) {
                 currentPage = totalPages;
             }
-            
+
             const startIdx = (currentPage - 1) * pageSize;
             const endIdx = Math.min(startIdx + pageSize, totalRecords);
             const pageRecords = filteredUsersList.slice(startIdx, endIdx);
@@ -415,13 +518,13 @@
             renderPaginationButtons(totalPages);
 
             if (pageRecords.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的用户账户数据</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; color:#9ca3af; padding: 24px;">暂无匹配的用户账户数据</td></tr>`;
                 return;
             }
 
             pageRecords.forEach(u => {
                 const tr = document.createElement('tr');
-                
+
                 // Avatar circle or word logo
                 let avatarPill = '';
                 if (u.avatar) {
@@ -432,8 +535,8 @@
 
                 // Check blacklist state
                 const isBanned = blacklist.some(b => b.userId === u.userId);
-                const statusBadge = isBanned 
-                    ? `<span class="badge badge-danger">已封禁</span>` 
+                const statusBadge = isBanned
+                    ? `<span class="badge badge-danger">已封禁</span>`
                     : `<span class="badge badge-success">正常</span>`;
 
                 // Render AIGC Quota
@@ -449,6 +552,9 @@
                 if (identity === '个人供稿') identityColor = '#10b981';
                 if (identity === '机构供稿') identityColor = '#8b5cf6';
 
+                const phoneNumber = u.phoneNumber || '-';
+                const groupName = u.groupName || '-';
+
                 tr.innerHTML = `
                     <td style="text-align: center;">
                         <input type="checkbox" name="userCheckbox" value="${u.userId}" onchange="updateBatchBtnState()">
@@ -456,6 +562,8 @@
                     <td>${avatarPill}</td>
                     <td><code>${u.userId}</code></td>
                     <td><strong style="color:#1f2937;">${u.nickname}</strong></td>
+                    <td><code>${phoneNumber}</code></td>
+                    <td><span class="badge" style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size:11px; font-weight:600;">${groupName}</span></td>
                     <td style="color:#475569; font-size:13px;">${u.orgName || '-'}</td>
                     <td>
                         <div class="quota-container">
@@ -568,7 +676,7 @@
             document.getElementById('searchNickname').value = '';
             document.getElementById('searchIdentity').value = '全部';
             document.getElementById('searchJoinTime').value = '';
-            
+
             loadUsersData();
             currentPage = 1;
         }
@@ -607,7 +715,7 @@
         function submitQuotaChange(e) {
             e.preventDefault();
             const userId = document.getElementById('quotaUserId').value;
-            
+
             const newTextLimit = parseInt(document.getElementById('quotaTextLimit').value);
             const newImageLimit = parseInt(document.getElementById('quotaImageLimit').value);
             const newVideoLimit = parseInt(document.getElementById('quotaVideoLimit').value);
@@ -660,7 +768,7 @@
         function updateBatchBtnState() {
             const checkboxes = document.querySelectorAll('input[name="userCheckbox"]');
             const checkedBoxes = document.querySelectorAll('input[name="userCheckbox"]:checked');
-            
+
             const batchBtn = document.getElementById('batchQuotaBtn');
             const selectedText = document.getElementById('selectedCountText');
             const selectAllCheckbox = document.getElementById('selectAllUsers');
@@ -688,7 +796,7 @@
             if (count === 0) return;
 
             document.getElementById('batchQuotaDetails').textContent = `已选中 ${count} 位用户，将统一调整其 AIGC 能力额度限制:`;
-            
+
             // 默认初值
             document.getElementById('batchQuotaTextLimit').value = 1000;
             document.getElementById('batchQuotaImageLimit').value = 100;
@@ -700,7 +808,7 @@
         // 提交批量额度变更
         function submitBatchQuotaChange(e) {
             e.preventDefault();
-            
+
             const newTextLimit = parseInt(document.getElementById('batchQuotaTextLimit').value);
             const newImageLimit = parseInt(document.getElementById('batchQuotaImageLimit').value);
             const newVideoLimit = parseInt(document.getElementById('batchQuotaVideoLimit').value);
@@ -735,11 +843,402 @@
                 dbSave('hscms_users', users);
                 showLockToast(`成功批量配置了 ${updateCount} 位用户的 AIGC 额度！`, true);
                 closeModal('batchQuotaModal');
-                
+
                 // 保留当前的检索过滤条件进行刷新
                 searchUsers();
             }
         }
+
+        // --- Add and Import user modal logic ---
+        function selectAddAvatar(el) {
+            const options = document.querySelectorAll('.avatar-option');
+            options.forEach(opt => {
+                opt.style.borderColor = 'transparent';
+                opt.style.opacity = '0.6';
+                opt.classList.remove('active');
+            });
+            el.style.borderColor = 'var(--primary-color)';
+            el.style.opacity = '1';
+            el.classList.add('active');
+            document.getElementById('addUserAvatar').value = el.src;
+        }
+
+        function openAddUserModal() {
+            // 1. 获取并渲染可用的启用群组
+            const groups = dbGet('hscms_user_groups', [
+                { id: 'GRP_1001', name: '官方自营账号', status: '启用', createTime: '2026-06-01' },
+                { id: 'GRP_1002', name: '特邀摄影创作者', status: '启用', createTime: '2026-06-02' },
+                { id: 'GRP_1003', name: '自媒体合作机构', status: '启用', createTime: '2026-06-03' }
+            ]);
+            const select = document.getElementById('addUserGroup');
+            select.innerHTML = '';
+
+            const activeGroups = groups.filter(g => g.status === '启用');
+            if (activeGroups.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '-- 暂无可用群组，请先配置 --';
+                select.appendChild(opt);
+            } else {
+                activeGroups.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.name;
+                    opt.textContent = g.name;
+                    select.appendChild(opt);
+                });
+            }
+
+            // 2. 清空表单并重置头像
+            document.getElementById('addUserPhone').value = '';
+            document.getElementById('addUserNickname').value = '';
+
+            const firstAvatarOption = document.querySelector('.avatar-option');
+            if (firstAvatarOption) {
+                selectAddAvatar(firstAvatarOption);
+            }
+
+            openModal('addUserModal');
+        }
+
+        function submitAddUser(e) {
+            e.preventDefault();
+            const phone = document.getElementById('addUserPhone').value.trim();
+            const nickname = document.getElementById('addUserNickname').value.trim();
+            const avatar = document.getElementById('addUserAvatar').value;
+            const groupName = document.getElementById('addUserGroup').value;
+
+            if (!phone || !nickname) {
+                showLockToast('手机号或昵称不可为空！', false);
+                return;
+            }
+
+            if (!groupName) {
+                showLockToast('请先创建并选择所属群组！', false);
+                return;
+            }
+
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const userIdx = users.findIndex(u => u.phoneNumber === phone);
+
+            if (userIdx !== -1) {
+                showLockToast(`该手机号 ${phone} 已存在于系统中，请勿重复添加！`, false);
+                return;
+            } else {
+                // 新增逻辑
+                let maxId = 1000;
+                users.forEach(u => {
+                    const num = parseInt(u.userId.replace('USER_', ''));
+                    if (!isNaN(num) && num > maxId) {
+                        maxId = num;
+                    }
+                });
+                const newUserId = 'USER_' + (maxId + 1);
+
+                const now = new Date();
+                const nowStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+
+                users.push({
+                    userId: newUserId,
+                    nickname: nickname,
+                    avatar: avatar,
+                    phoneNumber: phone,
+                    groupName: groupName,
+                    orgName: '-',
+                    role: '普通用户',
+                    identity: '普通用户',
+                    joinTime: nowStr,
+                    status: '正常',
+                    aiTextLimit: 1000,
+                    aiTextUsed: 0,
+                    aiImageLimit: 100,
+                    aiImageUsed: 0,
+                    aiVideoLimit: 20,
+                    aiVideoUsed: 0
+                });
+
+                dbSave('hscms_users', users);
+                showLockToast('新用户档案添加成功！', true);
+            }
+
+            closeModal('addUserModal');
+            loadUsersData();
+        }
+
+        function openImportUserModal() {
+            document.getElementById('importFile').value = '';
+            document.getElementById('importText').value = '';
+            openModal('importUserModal');
+        }
+
+        function downloadImportTemplate() {
+            const headers = "用户昵称,用户手机号,用户所属群组\n";
+            const row1 = "张三,13800001111,特邀摄影创作者\n";
+            const row2 = "李四,13900002222,官方自营账号\n";
+            const csvContent = headers + row1 + row2;
+
+            // 采用 UTF-8 + BOM 编码以下载标准 CSV 模板，防止 Windows 系统下 Excel 打开乱码
+            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "user_import_template.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function handleImportFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('importText').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+
+        function submitImportText() {
+            const text = document.getElementById('importText').value.trim();
+            if (!text) {
+                showLockToast('请输入或上传需要导入的用户数据！', false);
+                return;
+            }
+
+            const defaultAvatars = [
+                "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop"
+            ];
+
+            const users = dbGet('hscms_users', DEFAULT_USERS);
+            const rows = text.split('\n');
+
+            // 提取群组作为安全校验
+            const groups = dbGet('hscms_user_groups', []);
+            const validGroupNames = groups.map(g => g.name);
+
+            // Phase 1: 扫描校验，确保所有行的所属群组都能匹配上
+            let checkFailed = false;
+            let checkFailedMsg = '';
+
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i].trim();
+                if (!row) continue;
+
+                // 跳过表头
+                if (i === 0 && (row.includes('昵称') || row.includes('手机号') || row.includes('群组'))) {
+                    continue;
+                }
+
+                const columns = row.split(',');
+                if (columns.length < 2) continue;
+
+                const nickname = columns[0].trim();
+                const phone = columns[1].trim();
+                const groupName = columns[2] ? columns[2].trim() : '';
+
+                if (!phone || !nickname) continue;
+
+                // 检验群组匹配性（若未定义或匹配不上，直接失败）
+                if (!groupName || !validGroupNames.includes(groupName)) {
+                    checkFailed = true;
+                    checkFailedMsg = `导入失败：行 ${i + 1} 中的群组 “${groupName || '空'}” 匹配不上系统已配置的群组！`;
+                    break;
+                }
+            }
+
+            if (checkFailed) {
+                showLockToast(checkFailedMsg, false);
+                return;
+            }
+
+            // Phase 2: 校验全部通过，执行批量导入（支持已存在手机号修改，不存在手机号新增）
+            let newAdded = 0;
+            let updated = 0;
+
+            const now = new Date();
+            const nowStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+
+            rows.forEach((row, index) => {
+                const trimmedRow = row.trim();
+                if (!trimmedRow) return;
+
+                if (index === 0 && (trimmedRow.includes('昵称') || trimmedRow.includes('手机号') || trimmedRow.includes('群组'))) {
+                    return;
+                }
+
+                const columns = trimmedRow.split(',');
+                if (columns.length < 2) return;
+
+                const nickname = columns[0].trim();
+                const phone = columns[1].trim();
+                const groupName = columns[2] ? columns[2].trim() : '';
+
+                if (!phone || !nickname) return;
+
+                const userIdx = users.findIndex(u => u.phoneNumber === phone);
+
+                if (userIdx !== -1) {
+                    // 已存在，修改用户信息
+                    users[userIdx].nickname = nickname;
+                    users[userIdx].groupName = groupName;
+                    updated++;
+                } else {
+                    // 不存在，新增用户
+                    let maxId = 1000;
+                    users.forEach(u => {
+                        const num = parseInt(u.userId.replace('USER_', ''));
+                        if (!isNaN(num) && num > maxId) {
+                            maxId = num;
+                        }
+                    });
+                    const newUserId = 'USER_' + (maxId + 1 + newAdded);
+                    const randomAvatar = defaultAvatars[Math.floor(Math.random() * 5)];
+
+                    users.push({
+                        userId: newUserId,
+                        nickname: nickname,
+                        avatar: randomAvatar,
+                        phoneNumber: phone,
+                        groupName: groupName,
+                        orgName: '-',
+                        role: '普通用户',
+                        identity: '普通用户',
+                        joinTime: nowStr,
+                        status: '正常',
+                        aiTextLimit: 1000,
+                        aiTextUsed: 0,
+                        aiImageLimit: 100,
+                        aiImageUsed: 0,
+                        aiVideoLimit: 20,
+                        aiVideoUsed: 0
+                    });
+                    newAdded++;
+                }
+            });
+
+            if (newAdded > 0 || updated > 0) {
+                dbSave('hscms_users', users);
+                showLockToast(`导入成功！新增用户 ${newAdded} 位，修改更新用户 ${updated} 位。`, true);
+                closeModal('importUserModal');
+                loadUsersData();
+            } else {
+                showLockToast('未成功解析到任何有效的用户导入数据！', false);
+            }
+        }
     </script>
+
+    <!-- MODAL: ADD USER -->
+    <div id="addUserModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3>新增平台用户</h3>
+                <button class="modal-close-btn" onclick="closeModal('addUserModal')">&times;</button>
+            </div>
+            <form id="addUserForm" onsubmit="submitAddUser(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label style="font-weight: 600; font-size: 12.5px;">用户手机号</label>
+                        <input type="text" id="addUserPhone" class="form-control" required placeholder="请输入用户11位手机号">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600; font-size: 12.5px;">用户昵称</label>
+                        <input type="text" id="addUserNickname" class="form-control" required placeholder="请输入用户昵称">
+                    </div>
+
+                    <!-- 默认 5 头像选择 -->
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label
+                            style="font-weight: 600; display: block; margin-bottom: 8px; font-size: 12.5px;">选择用户头像</label>
+                        <input type="hidden" id="addUserAvatar"
+                            value="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop">
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <img class="avatar-option"
+                                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop"
+                                onclick="selectAddAvatar(this)"
+                                style="width: 44px; height: 44px; border-radius: 50%; cursor: pointer; border: 3px solid var(--primary-color); opacity: 1; padding: 1px; object-fit: cover; transition: all 0.2s;">
+                            <img class="avatar-option"
+                                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop"
+                                onclick="selectAddAvatar(this)"
+                                style="width: 44px; height: 44px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; opacity: 0.6; padding: 1px; object-fit: cover; transition: all 0.2s;">
+                            <img class="avatar-option"
+                                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&auto=format&fit=crop"
+                                onclick="selectAddAvatar(this)"
+                                style="width: 44px; height: 44px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; opacity: 0.6; padding: 1px; object-fit: cover; transition: all 0.2s;">
+                            <img class="avatar-option"
+                                src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop"
+                                onclick="selectAddAvatar(this)"
+                                style="width: 44px; height: 44px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; opacity: 0.6; padding: 1px; object-fit: cover; transition: all 0.2s;">
+                            <img class="avatar-option"
+                                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop"
+                                onclick="selectAddAvatar(this)"
+                                style="width: 44px; height: 44px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; opacity: 0.6; padding: 1px; object-fit: cover; transition: all 0.2s;">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label style="font-weight: 600; font-size: 12.5px;">选择所属群组</label>
+                        <select id="addUserGroup" class="form-control" required style="width: 100%;">
+                            <!-- Dynamic populated from user groups -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 16px;">
+                    <button type="button" class="btn" onclick="closeModal('addUserModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">确认保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: IMPORT USER -->
+    <div id="importUserModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>批量导入平台用户</h3>
+                <button class="modal-close-btn" onclick="closeModal('importUserModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Yellow Tips -->
+                <div style="background-color: #fffbeb; border: 1px solid #fef08a; padding: 12px; border-radius: 6px; margin-bottom: 16px; display: flex; gap: 8px; align-items: flex-start;">
+                    <span style="font-size: 16px; margin-top: -2px;">💡</span>
+                    <div style="font-size: 12px; color: #854d0e; line-height: 1.5;">
+                        <strong>导入规则：</strong><br>
+                        1. 用户手机号已存在即为修改用户信息；<br>
+                        2. 用户手机号不存在即为新增；<br>
+                        3. <strong style="color: #b91c1c;">用户所属群组匹配不上将会导致导入失败!</strong>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 12.5px;">1.
+                        模板下载</label>
+                    <button type="button" class="btn"
+                        style="background:#e0f2fe; color:#0369a1; border: 1px solid #bae6fd;"
+                        onclick="downloadImportTemplate()">
+                        📥 下载标准导入 CSV 模板
+                    </button>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 12.5px;">2.
+                        上传文件导入</label>
+                    <input type="file" id="importFile" accept=".csv" class="form-control"
+                        style="width: 100%; border: 1px dashed #cbd5e1; padding: 16px 12px; height: auto;"
+                        onchange="handleImportFile(this)">
+                </div>
+
+                <input type="hidden" id="importText">
+            </div>
+            <div class="modal-footer" style="margin-top: 16px;">
+                <button type="button" class="btn" onclick="closeModal('importUserModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitImportText()">确认导入</button>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

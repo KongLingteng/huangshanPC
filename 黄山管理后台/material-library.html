@@ -92,22 +92,22 @@
             <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
             <aside class="sub-sidebar">
                 <div class="sub-sidebar-title">
-                    <span>资产确权</span>
+                    <span></span>
                 </div>
                 <ul class="sub-nav-list">
                     <li class="sub-nav-item" id="tabPendingNav">
                         <a href="asset-audit.html">
-                            待审核列表
+                            素材待审核列表
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabApprovedNav">
                         <a href="asset-audit.html?tab=approved">
-                            确权历史
+                            蚂蚁链确权历史
                         </a>
                     </li>
                     <li class="sub-nav-item" id="tabRejectedNav">
                         <a href="asset-audit.html?tab=rejected">
-                            已驳回记录
+                            素材驳回记录
                         </a>
                     </li>
                     <li class="sub-nav-item active" id="tabMaterialLibraryNav">
@@ -118,6 +118,11 @@
                     <li class="sub-nav-item" id="tabTakeDownNav">
                         <a href="take-down-requests.html">
                             用户申请下架通知
+                        </a>
+                    </li>
+                    <li class="sub-nav-item" id="tabUsageNav">
+                        <a href="material-usage.html">
+                            素材交易用途配置
                         </a>
                     </li>
                 </ul>
@@ -171,7 +176,9 @@
                                     <th>提交人/类别</th>
                                     <th>上架模式</th>
                                     <th>DCI 确权编码</th>
+                                    <th>已关联模板</th>
                                     <th>已关联用途</th>
+                                    <th>素材星级</th>
                                     <th>上架状态</th>
                                     <th>操作</th>
                                 </tr>
@@ -196,6 +203,12 @@
             <form id="usageForm" onsubmit="submitUsageLink(event)">
                 <input type="hidden" id="usageAssetId">
                 <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="font-weight:600; font-size:12.5px; margin-bottom: 6px; display:block;">选择用途配置模板</label>
+                        <select id="modalUsageTemplateSelect" class="form-control" onchange="onTemplateChange()" style="width: 100%;">
+                            <!-- Dynamic templates list -->
+                        </select>
+                    </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <p style="font-size:12px; color:#64748b; margin: 0;">请选择适合该素材的用途（可多选）：</p>
                         <label style="font-size:12px; color:var(--primary-color); cursor:pointer; display:flex; align-items:center; gap:4px; margin:0; user-select:none;">
@@ -236,23 +249,35 @@
             // Only show approved assets (status === '审核成功')
             let filtered = assets.filter(a => a.status === '审核成功');
 
-            // 兜底自愈机制：如果审核成功的资产没有关联用途，则默认其关联全量用途并写回 LocalStorage
+            // 兜底自愈机制：如果审核成功的资产没有关联用途，则默认其关联首个价格模板下的全量用途并写回 LocalStorage
             let hasChanges = false;
-            const usageConfig = dbGet('hscms_settings_usage_config', []);
+            const templates = dbGet('hscms_settings_usage_templates', []);
             let allUsages = [];
-            usageConfig.forEach(cat => {
-                if (cat.specs && cat.specs.length > 0) {
-                    cat.specs.forEach(spec => {
-                        const specName = (typeof spec === 'object' && spec !== null) ? (spec.name || '') : String(spec);
-                        if (specName) allUsages.push(specName);
-                    });
-                }
-            });
+            let defaultTemplateId = null;
+
+            if (templates.length > 0) {
+                defaultTemplateId = templates[0].id;
+                const usageConfig = templates[0].usageConfig || [];
+                usageConfig.forEach(cat => {
+                    if (cat.specs && cat.specs.length > 0) {
+                        cat.specs.forEach(spec => {
+                            const specName = (typeof spec === 'object' && spec !== null) ? (spec.name || '') : String(spec);
+                            if (specName) allUsages.push(specName);
+                        });
+                    }
+                });
+            }
             const allUsagesStr = allUsages.join(', ');
 
             assets.forEach(a => {
                 if (a.status === '审核成功' && (!a.linkedUsage || a.linkedUsage.trim() === '')) {
+                    a.linkedTemplateId = defaultTemplateId;
                     a.linkedUsage = allUsagesStr;
+                    hasChanges = true;
+                }
+                // 素材星级自愈，默认 3 星级
+                if (!a.starLevel) {
+                    a.starLevel = 3;
                     hasChanges = true;
                 }
             });
@@ -299,7 +324,7 @@
             tbody.innerHTML = '';
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">素材库内暂无已审核通过的素材记录</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#9ca3af; padding: 24px;">素材库内暂无已审核通过的素材记录</td></tr>`;
                 return;
             }
 
@@ -338,6 +363,22 @@
                     usageTagsHtml = `<div style="margin-top: 6px;"><span style="color: #94a3b8; font-size: 11px; font-style: italic;">未关联用途</span></div>`;
                 }
 
+                // 获取已关联的模板名称
+                let templateName = '-';
+                if (a.linkedTemplateId) {
+                    const matchedTemplate = templates.find(t => t.id === a.linkedTemplateId);
+                    if (matchedTemplate) {
+                        templateName = matchedTemplate.name;
+                    }
+                } else if (templates.length > 0) {
+                    // 自愈默认展示第一个模板名
+                    templateName = templates[0].name;
+                }
+
+                // Render Star Level
+                const starCount = a.starLevel || 3;
+                const starLayout = `<span style="font-size:12.5px; font-weight: 600; color:#eab308;" title="${starCount}星素材">${starCount}星</span>`;
+
                 // Sale status Badge
                 const onSale = a.onSale === true;
                 let saleBadge = onSale 
@@ -375,7 +416,9 @@
                     </td>
                     <td>${proofModeBadge}</td>
                     <td>${dciLayout}</td>
+                    <td><span class="badge" style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size:11px; font-weight:600;">${templateName}</span></td>
                     <td>${usageTagsHtml}</td>
+                    <td>${starLayout}</td>
                     <td>${saleBadge}</td>
                     <td>${actionBtn}</td>
                 `;
@@ -397,26 +440,30 @@
             if (aIdx === -1) return;
 
             if (targetStatus) {
-                // 上架逻辑：将 onSale 设为 true，并默认勾选所有已配置的用途
                 assets[aIdx].onSale = true;
                 
-                // 获取系统全部用途配置，自动将其全选
-                const usageConfig = dbGet('hscms_settings_usage_config', []);
-                let allUsages = [];
-                usageConfig.forEach(cat => {
-                    if (cat.specs && cat.specs.length > 0) {
-                        cat.specs.forEach(spec => {
-                            const specName = (typeof spec === 'object' && spec !== null) ? (spec.name || '') : String(spec);
-                            if (specName) allUsages.push(specName);
+                // 如果素材没有绑定任何模板，自动关联首个价格模板及全部用途
+                if (!assets[aIdx].linkedTemplateId || !assets[aIdx].linkedUsage) {
+                    const templates = dbGet('hscms_settings_usage_templates', []);
+                    if (templates.length > 0) {
+                        assets[aIdx].linkedTemplateId = templates[0].id;
+                        let allUsages = [];
+                        const usageConfig = templates[0].usageConfig || [];
+                        usageConfig.forEach(cat => {
+                            if (cat.specs && cat.specs.length > 0) {
+                                cat.specs.forEach(spec => {
+                                    const specName = (typeof spec === 'object' && spec !== null) ? (spec.name || '') : String(spec);
+                                    if (specName) allUsages.push(specName);
+                                });
+                            }
                         });
+                        assets[aIdx].linkedUsage = allUsages.join(', ');
                     }
-                });
-
-                assets[aIdx].linkedUsage = allUsages.join(', ');
+                }
+                
                 dbSave('hscms_asset_submissions', assets);
-                showLockToast('素材已成功上架，并默认关联了全量用途！', true);
+                showLockToast('素材已成功上架！', true);
             } else {
-                // 下架逻辑：将 onSale 设为 false
                 assets[aIdx].onSale = false;
                 dbSave('hscms_asset_submissions', assets);
                 showLockToast('素材已下架成功！', true);
@@ -449,17 +496,69 @@
 
             document.getElementById('usageAssetId').value = assetId;
 
-            const usageConfig = dbGet('hscms_settings_usage_config', []);
-            const wrapper = document.getElementById('usageOptionsWrapper');
-            wrapper.innerHTML = '';
+            // 1. 获取全量用途价格模板
+            const templates = dbGet('hscms_settings_usage_templates', []);
+            const select = document.getElementById('modalUsageTemplateSelect');
+            select.innerHTML = '';
 
-            if (usageConfig.length === 0) {
-                wrapper.innerHTML = `<div style="color:#ef4444; font-size:12px; text-align:center;">暂无任何素材用途分类，请先在系统设置中配置。</div>`;
+            if (templates.length === 0) {
+                select.innerHTML = `<option value="">-- 暂无可用模板，请先配置 --</option>`;
+                document.getElementById('usageOptionsWrapper').innerHTML = `<div style="color:#ef4444; font-size:12px; text-align:center;">暂无任何授权用途模板，请先前往配置。</div>`;
                 openModal('usageModal');
                 return;
             }
 
-            const currentUsages = a.linkedUsage ? a.linkedUsage.split(', ') : [];
+            templates.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.textContent = t.name;
+                select.appendChild(opt);
+            });
+
+            // 2. 回显或默认选中关联的模板 ID
+            const currentTemplateId = a.linkedTemplateId || templates[0].id;
+            select.value = currentTemplateId;
+
+            // 3. 渲染选中模板下的复选框树
+            renderTemplateUsages(currentTemplateId, a.linkedUsage);
+
+            openModal('usageModal');
+        }
+
+        // 模板下拉切换事件
+        function onTemplateChange() {
+            const select = document.getElementById('modalUsageTemplateSelect');
+            const templateId = parseInt(select.value);
+            if (!templateId) return;
+
+            const assetId = document.getElementById('usageAssetId').value;
+            const assets = dbGet('hscms_asset_submissions', []);
+            const a = assets.find(item => item.id === assetId);
+            if (!a) return;
+
+            // 如果切换到了与素材已保存模板不同的模板，默认一键全选所有项以防空；相同则回显已关联的用途
+            const matchedTemplate = (a.linkedTemplateId === templateId);
+            const usagesToHighlight = matchedTemplate ? a.linkedUsage : '';
+
+            renderTemplateUsages(templateId, usagesToHighlight);
+        }
+
+        // 动态根据模板配置生成两级多选复选框
+        function renderTemplateUsages(templateId, linkedUsageStr) {
+            const templates = dbGet('hscms_settings_usage_templates', []);
+            const t = templates.find(item => item.id === templateId);
+            const wrapper = document.getElementById('usageOptionsWrapper');
+            wrapper.innerHTML = '';
+
+            if (!t || !t.usageConfig || t.usageConfig.length === 0) {
+                wrapper.innerHTML = `<div style="color:#94a3b8; font-size:12px; text-align:center; font-style:italic; padding: 20px;">该价格模板下暂无任何授权用途二级配置。</div>`;
+                updateSelectAllState();
+                return;
+            }
+
+            const usageConfig = t.usageConfig;
+            const currentUsages = linkedUsageStr ? linkedUsageStr.split(', ') : [];
+            const shouldSelectAllDefault = (!linkedUsageStr || linkedUsageStr.trim() === ''); // 没有已选规格时，默认一键全选
 
             usageConfig.forEach(category => {
                 const groupDiv = document.createElement('div');
@@ -506,7 +605,8 @@
                         checkbox.name = 'usageSpecCheckbox';
                         checkbox.value = specName;
                         checkbox.onchange = updateSelectAllState;
-                        if (currentUsages.includes(specName)) {
+                        
+                        if (shouldSelectAllDefault || currentUsages.includes(specName)) {
                             checkbox.checked = true;
                         }
 
@@ -531,12 +631,15 @@
             });
 
             updateSelectAllState();
-            openModal('usageModal');
         }
 
+        // 保存用途关联配置
         function submitUsageLink(e) {
             e.preventDefault();
             const assetId = document.getElementById('usageAssetId').value;
+            const select = document.getElementById('modalUsageTemplateSelect');
+            const templateId = parseInt(select.value);
+
             const checkedBoxes = document.querySelectorAll('input[name="usageSpecCheckbox"]:checked');
             const selectedUsages = Array.from(checkedBoxes).map(cb => cb.value);
 
@@ -544,10 +647,11 @@
             const aIdx = assets.findIndex(a => a.id === assetId);
 
             if (aIdx !== -1) {
+                assets[aIdx].linkedTemplateId = templateId || null;
                 assets[aIdx].linkedUsage = selectedUsages.join(', ');
                 dbSave('hscms_asset_submissions', assets);
 
-                showLockToast('关联用途成功！', true);
+                showLockToast('关联用途与模板配置成功！', true);
                 closeModal('usageModal');
                 loadMaterialsList();
             }

@@ -404,6 +404,13 @@ function initDatabase() {
         { id: 'TDR_1001', assetId: 'SUB_8003', assetTitle: '独家黄山导游手绘路线图（矢量PDF）', author: '黄山行者', reason: '商用版使用授权合同已到期，申请平台下架原素材。', submitTime: '2026-06-08 09:00:00', status: '未读' },
         { id: 'TDR_1002', assetId: 'SUB_8004', assetTitle: '云谷寺秋色全景图', author: '徽风文化传媒', reason: '作品版权将转售于第三方机构，应第三方要求在平台申请下架。', submitTime: '2026-06-08 09:30:00', status: '未读' }
     ]);
+
+    // 初始化用户群组配置表
+    dbGet('hscms_user_groups', [
+        { id: 'GRP_1001', name: '官方自营账号', status: '启用', createTime: '2026-06-01' },
+        { id: 'GRP_1002', name: '特邀摄影创作者', status: '启用', createTime: '2026-06-02' },
+        { id: 'GRP_1003', name: '自媒体合作机构', status: '启用', createTime: '2026-06-03' }
+    ]);
 }
 
 // Initialize on Script load
