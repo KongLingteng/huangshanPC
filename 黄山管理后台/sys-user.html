@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,11 +19,13 @@
             border: 1px solid var(--border-color);
             align-items: flex-end;
         }
+
         .search-col {
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
+
         .search-col label {
             font-size: 11px;
             font-weight: 600;
@@ -36,15 +39,18 @@
             align-items: center;
             margin-bottom: 16px;
         }
+
         .toolbar-left {
             display: flex;
             gap: 8px;
         }
+
         .toolbar-right {
             display: flex;
             gap: 8px;
             align-items: center;
         }
+
         .tool-btn-icon {
             display: inline-flex;
             align-items: center;
@@ -58,10 +64,12 @@
             color: #64748b;
             transition: all 0.2s;
         }
+
         .tool-btn-icon:hover {
             border-color: var(--primary-color);
             color: var(--primary-color);
         }
+
         .tool-btn-icon svg {
             width: 16px;
             height: 16px;
@@ -79,15 +87,18 @@
             color: #374151;
             transition: all 0.2s ease;
         }
+
         .pagination-btn:hover {
             border-color: var(--primary-color);
             color: var(--primary-color);
         }
+
         .pagination-btn.active {
             background: var(--primary-color);
             border-color: var(--primary-color);
             color: #ffffff;
         }
+
         .pagination-btn:disabled {
             background: #f1f5f9;
             color: #94a3b8;
@@ -102,11 +113,13 @@
             width: 40px;
             height: 22px;
         }
+
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -118,6 +131,7 @@
             transition: .3s;
             border-radius: 22px;
         }
+
         .slider:before {
             position: absolute;
             content: "";
@@ -129,10 +143,12 @@
             transition: .3s;
             border-radius: 50%;
         }
-        input:checked + .slider {
+
+        input:checked+.slider {
             background-color: var(--primary-color);
         }
-        input:checked + .slider:before {
+
+        input:checked+.slider:before {
             transform: translateX(18px);
         }
 
@@ -151,15 +167,18 @@
             background: #f8fafc;
             border: 1px solid #e2e8f0;
         }
+
         .action-icon-btn:hover {
             background: #e2e8f0;
             color: var(--primary-color);
         }
+
         .action-icon-btn.danger:hover {
             background: #fee2e2;
             color: #ef4444;
             border-color: #fecaca;
         }
+
         .action-icon-btn svg {
             width: 14px;
             height: 14px;
@@ -172,11 +191,13 @@
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
+
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
+
         .form-group label {
             font-size: 12.5px;
             font-weight: 600;
@@ -194,6 +215,7 @@
             border-radius: 8px;
             margin-top: 6px;
         }
+
         .role-check-item {
             display: flex;
             align-items: center;
@@ -203,6 +225,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="app-container">
@@ -211,7 +234,8 @@
             <div class="header-left">
                 <div class="logo-container">
                     <svg viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
                     </svg>
                 </div>
                 <span class="platform-title">黄山运营管理后台</span>
@@ -229,36 +253,66 @@
             <aside class="left-sidebar">
                 <div class="nav-group-top" id="primarySidebar">
                     <a href="index.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
                         <span>首页</span>
                     </a>
                     <a href="ugc.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" />
+                        </svg>
                         <span>社区运营</span>
                     </a>
                     <a href="asset-audit.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                        <span>素材</span>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                        </svg>
+                        <span>素材管理</span>
                     </a>
                     <a href="finance.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-                        <span>交易</span>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+                        </svg>
+                        <span>提现管理</span>
                     </a>
                     <a href="user-list.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                        <span>用户</span>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                        <span>用户管理</span>
                     </a>
                     <a href="orders.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                        <span>订单</span>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
+                        <span>订单管理</span>
                     </a>
                     <a href="contracts.html" class="nav-item">
-                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                        </svg>
                         <span>合同配置</span>
                     </a>
-                    <a href="settings.html" class="nav-item active">
-                        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
-                        <span>设置</span>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38-2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+                        </svg>
+                        <span>系统设置</span>
+                    </a>
+                    <a href="sys-user.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+                        </svg>
+                        <span>系统管理</span>
                     </a>
                 </div>
             </aside>
@@ -266,30 +320,9 @@
             <!-- SUB SIDEBAR (MIDDLE COLUMN) -->
             <aside class="sub-sidebar">
                 <div class="sub-sidebar-title">
-                    <span>系统设置</span>
+                    <span>系统管理</span>
                 </div>
                 <ul class="sub-nav-list">
-                    <li class="sub-nav-item" id="tabAuditNav">
-                        <a href="settings.html?tab=audit">审核配置</a>
-                    </li>
-                    <li class="sub-nav-item" id="tabLimitNav">
-                        <a href="settings.html?tab=limit">AIGC额度管控</a>
-                    </li>
-                    <li class="sub-nav-item" id="tabUsageNav">
-                        <a href="settings.html?tab=usage">素材用途配置</a>
-                    </li>
-                    <li class="sub-nav-item" id="tabAssetRejectNav">
-                        <a href="settings.html?tab=asset-reject">素材驳回原因配置</a>
-                    </li>
-                    <li class="sub-nav-item" id="tabPostShieldNav">
-                        <a href="settings.html?tab=post-shield">帖子下架配置</a>
-                    </li>
-                    <li class="sub-nav-item" id="tabSplitNav">
-                        <a href="settings.html?tab=split">分成策略配置</a>
-                    </li>
-                    <li class="sub-nav-item" id="tabAnnouncementsNav">
-                        <a href="announcements.html">通知公告</a>
-                    </li>
                     <li class="sub-nav-item active" id="tabSysUserNav">
                         <a href="sys-user.html">系统用户管理</a>
                     </li>
@@ -322,15 +355,8 @@
                     <div class="search-row">
                         <div class="search-col">
                             <label>模糊搜索</label>
-                            <input type="text" id="searchKeyword" class="form-control" style="width:200px;" placeholder="搜索用户名称/昵称/电话">
-                        </div>
-                        <div class="search-col">
-                            <label>状态</label>
-                            <select id="searchStatus" class="form-control" style="width:140px;">
-                                <option value="">请选择状态</option>
-                                <option value="正常">正常</option>
-                                <option value="停用">停用</option>
-                            </select>
+                            <input type="text" id="searchKeyword" class="form-control" style="width:200px;"
+                                placeholder="搜索用户名称/昵称/电话">
                         </div>
                         <div class="search-col">
                             <label>创建时间</label>
@@ -349,16 +375,19 @@
                     <!-- Toolbar Buttons -->
                     <div class="toolbar-row">
                         <div class="toolbar-left">
-                            <button class="btn btn-primary" onclick="openAddUserModal()">+ 新增</button>
-                            <button class="btn" id="btnBulkEdit" onclick="openEditSelectedUser()" style="background:#22c55e; border-color:#22c55e; color:#ffffff;" disabled>修改</button>
-                            <button class="btn btn-danger" id="btnBulkDelete" onclick="deleteSelectedUsers()" disabled>删除</button>
                         </div>
                         <div class="toolbar-right">
                             <button class="tool-btn-icon" onclick="toggleSearchRow()" title="显示/隐藏搜索栏">
-                                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                                </svg>
                             </button>
                             <button class="tool-btn-icon" onclick="loadUsersTable()" title="刷新">
-                                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -376,7 +405,6 @@
                                     <th>用户昵称</th>
                                     <th>部门名称</th>
                                     <th>联系电话</th>
-                                    <th>状态</th>
                                     <th>创建时间</th>
                                     <th style="width: 180px; text-align:center;">操作</th>
                                 </tr>
@@ -387,12 +415,15 @@
                         </table>
 
                         <!-- Pagination -->
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:12px 16px; border-top:1px solid var(--border-color);">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:12px 16px; border-top:1px solid var(--border-color);">
                             <div style="font-size:12px; color:var(--text-muted);" id="pageInfo">
                                 共 0 条，第 1/1 页
                             </div>
                             <div style="display:flex; align-items:center; gap:12px;">
-                                <select id="pageSizeSelect" class="form-control" style="width:100px; padding: 2px 8px; height: 28px; font-size: 12px;" onchange="changePageSize(this.value)">
+                                <select id="pageSizeSelect" class="form-control"
+                                    style="width:100px; padding: 2px 8px; height: 28px; font-size: 12px;"
+                                    onchange="changePageSize(this.value)">
                                     <option value="10">10条/页</option>
                                     <option value="20">20条/页</option>
                                     <option value="50">50条/页</option>
@@ -402,9 +433,12 @@
                                 </div>
                                 <div style="display:flex; align-items:center; gap:4px; font-size:12px; color:#475569;">
                                     <span>前往</span>
-                                    <input type="number" id="gotoPageInput" class="form-control" style="width: 50px; text-align:center; height: 26px; padding:2px;" min="1" value="1">
+                                    <input type="number" id="gotoPageInput" class="form-control"
+                                        style="width: 50px; text-align:center; height: 26px; padding:2px;" min="1"
+                                        value="1">
                                     <span>页</span>
-                                    <button class="pagination-btn" style="padding: 2px 6px; height: 26px;" onclick="gotoPage()">确定</button>
+                                    <button class="pagination-btn" style="padding: 2px 6px; height: 26px;"
+                                        onclick="gotoPage()">确定</button>
                                 </div>
                             </div>
                         </div>
@@ -427,11 +461,13 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>用户名称 (登录名)*</label>
-                            <input type="text" id="formUsername" class="form-control" required placeholder="请输入登录账号，如 admin">
+                            <input type="text" id="formUsername" class="form-control" required
+                                placeholder="请输入登录账号，如 admin">
                         </div>
                         <div class="form-group">
                             <label>用户昵称*</label>
-                            <input type="text" id="formNickname" class="form-control" required placeholder="请输入用户昵称，如 惟舍之旅">
+                            <input type="text" id="formNickname" class="form-control" required
+                                placeholder="请输入用户昵称，如 惟舍之旅">
                         </div>
                         <div class="form-group">
                             <label>部门名称</label>
@@ -448,13 +484,6 @@
                             <input type="text" id="formPhoneNumber" class="form-control" placeholder="请输入11位手机号码">
                         </div>
                         <div class="form-group">
-                            <label>状态</label>
-                            <select id="formStatus" class="form-control">
-                                <option value="正常">正常</option>
-                                <option value="停用">停用</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label>岗位</label>
                             <select id="formPost" class="form-control">
                                 <option value="董事长">董事长</option>
@@ -467,10 +496,14 @@
                     <div class="form-group" style="margin-top: 14px;">
                         <label>分配角色</label>
                         <div class="role-check-grid" id="formRolesGrid">
-                            <label class="role-check-item"><input type="checkbox" name="formRoles" value="超级管理员"> 超级管理员</label>
-                            <label class="role-check-item"><input type="checkbox" name="formRoles" value="部门管理员"> 部门管理员</label>
-                            <label class="role-check-item"><input type="checkbox" name="formRoles" value="供稿人角色"> 供稿人角色</label>
-                            <label class="role-check-item"><input type="checkbox" name="formRoles" value="普通角色"> 普通角色</label>
+                            <label class="role-check-item"><input type="checkbox" name="formRoles" value="超级管理员">
+                                超级管理员</label>
+                            <label class="role-check-item"><input type="checkbox" name="formRoles" value="部门管理员">
+                                部门管理员</label>
+                            <label class="role-check-item"><input type="checkbox" name="formRoles" value="供稿人角色">
+                                供稿人角色</label>
+                            <label class="role-check-item"><input type="checkbox" name="formRoles" value="普通角色">
+                                普通角色</label>
                         </div>
                     </div>
                 </div>
@@ -498,7 +531,8 @@
                     </div>
                     <div class="form-group" style="margin-top: 12px;">
                         <label>请输入新密码*</label>
-                        <input type="password" id="resetPwdNewVal" class="form-control" required placeholder="请输入新密码" minlength="6">
+                        <input type="password" id="resetPwdNewVal" class="form-control" required placeholder="请输入新密码"
+                            minlength="6">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -526,10 +560,14 @@
                     <div class="form-group" style="margin-top: 14px;">
                         <label>勾选赋予角色</label>
                         <div class="role-check-grid">
-                            <label class="role-check-item"><input type="checkbox" name="assignRoles" value="超级管理员"> 超级管理员</label>
-                            <label class="role-check-item"><input type="checkbox" name="assignRoles" value="部门管理员"> 部门管理员</label>
-                            <label class="role-check-item"><input type="checkbox" name="assignRoles" value="供稿人角色"> 供稿人角色</label>
-                            <label class="role-check-item"><input type="checkbox" name="assignRoles" value="普通角色"> 普通角色</label>
+                            <label class="role-check-item"><input type="checkbox" name="assignRoles" value="超级管理员">
+                                超级管理员</label>
+                            <label class="role-check-item"><input type="checkbox" name="assignRoles" value="部门管理员">
+                                部门管理员</label>
+                            <label class="role-check-item"><input type="checkbox" name="assignRoles" value="供稿人角色">
+                                供稿人角色</label>
+                            <label class="role-check-item"><input type="checkbox" name="assignRoles" value="普通角色">
+                                普通角色</label>
                         </div>
                     </div>
                 </div>
@@ -645,7 +683,7 @@
             const totalPages = Math.ceil(total / pageSize) || 1;
 
             if (curPage > totalPages) curPage = totalPages;
-            
+
             const start = (curPage - 1) * pageSize;
             const end = Math.min(start + pageSize, total);
             const pageData = filteredUsers.slice(start, end);
@@ -655,14 +693,13 @@
             renderPaginationButtons(totalPages);
 
             if (pageData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#9ca3af; padding:24px;">暂无匹配的系统用户数据！</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#9ca3af; padding:24px;">暂无匹配的系统用户数据！</td></tr>`;
                 updateToolbarState();
                 return;
             }
 
             pageData.forEach(u => {
                 const tr = document.createElement('tr');
-                const isChecked = u.status === '正常' ? 'checked' : '';
 
                 tr.innerHTML = `
                     <td style="text-align:center;">
@@ -673,20 +710,8 @@
                     <td>${u.nickname}</td>
                     <td>${u.deptName}</td>
                     <td>${u.phoneNumber || '-'}</td>
-                    <td>
-                        <label class="switch">
-                            <input type="checkbox" ${isChecked} onchange="toggleUserStatus('${u.userId}', this.checked)">
-                            <span class="slider"></span>
-                        </label>
-                    </td>
                     <td style="font-size:12px; color:#64748b;">${u.createTime}</td>
                     <td style="text-align:center;">
-                        <button class="action-icon-btn" onclick="openEditUserModal('${u.userId}')" title="修改用户">
-                            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                        </button>
-                        <button class="action-icon-btn danger" onclick="deleteSingleUser('${u.userId}')" title="删除用户">
-                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                        </button>
                         <button class="action-icon-btn" onclick="openResetPassword('${u.userId}')" title="重置密码">
                             <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
                         </button>
@@ -765,14 +790,15 @@
         // Search action
         function searchUsers() {
             const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
-            const status = document.getElementById('searchStatus').value;
+            const statusEl = document.getElementById('searchStatus');
+            const status = statusEl ? statusEl.value : '';
             const dateStart = document.getElementById('searchDateStart').value;
             const dateEnd = document.getElementById('searchDateEnd').value;
 
             filteredUsers = allUsers.filter(u => {
-                const matchesKeyword = !keyword || 
-                    u.username.toLowerCase().includes(keyword) || 
-                    u.nickname.toLowerCase().includes(keyword) || 
+                const matchesKeyword = !keyword ||
+                    u.username.toLowerCase().includes(keyword) ||
+                    u.nickname.toLowerCase().includes(keyword) ||
                     (u.phoneNumber && u.phoneNumber.includes(keyword));
 
                 const matchesStatus = !status || u.status === status;
@@ -793,7 +819,8 @@
 
         function resetSearch() {
             document.getElementById('searchKeyword').value = '';
-            document.getElementById('searchStatus').value = '';
+            const statusEl = document.getElementById('searchStatus');
+            if (statusEl) statusEl.value = '';
             document.getElementById('searchDateStart').value = '';
             document.getElementById('searchDateEnd').value = '';
             filteredUsers = [...allUsers];
@@ -825,8 +852,10 @@
                 if (c.checked) selectedCount++;
             });
 
-            document.getElementById('btnBulkEdit').disabled = selectedCount !== 1;
-            document.getElementById('btnBulkDelete').disabled = selectedCount === 0;
+            const btnBulkEdit = document.getElementById('btnBulkEdit');
+            if (btnBulkEdit) btnBulkEdit.disabled = selectedCount !== 1;
+            const btnBulkDelete = document.getElementById('btnBulkDelete');
+            if (btnBulkDelete) btnBulkDelete.disabled = selectedCount === 0;
         }
 
         function toggleCheckAll(checked) {
@@ -848,7 +877,8 @@
             document.getElementById('formNickname').value = '';
             document.getElementById('formDeptName').value = '总部';
             document.getElementById('formPhoneNumber').value = '';
-            document.getElementById('formStatus').value = '正常';
+            const statusEl = document.getElementById('formStatus');
+            if (statusEl) statusEl.value = '正常';
             document.getElementById('formPost').value = '运营专员';
 
             const roleChecks = document.getElementsByName('formRoles');
@@ -868,7 +898,8 @@
             document.getElementById('formNickname').value = u.nickname || '';
             document.getElementById('formDeptName').value = u.deptName || '总部';
             document.getElementById('formPhoneNumber').value = u.phoneNumber || '';
-            document.getElementById('formStatus').value = u.status || '正常';
+            const statusEl = document.getElementById('formStatus');
+            if (statusEl) statusEl.value = u.status || '正常';
             document.getElementById('formPost').value = u.post || '运营专员';
 
             const roleChecks = document.getElementsByName('formRoles');
@@ -898,7 +929,8 @@
             const nickname = document.getElementById('formNickname').value.trim();
             const deptName = document.getElementById('formDeptName').value;
             const phoneNumber = document.getElementById('formPhoneNumber').value.trim();
-            const status = document.getElementById('formStatus').value;
+            const statusEl = document.getElementById('formStatus');
+            const status = statusEl ? statusEl.value : '正常';
             const post = document.getElementById('formPost').value;
 
             // Form validation
@@ -945,7 +977,7 @@
 
                 const formatTime = (d) => {
                     const pad = (n) => String(n).padStart(2, '0');
-                    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+                    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
                 };
 
                 const newUserId = 'USER_' + Math.floor(1000 + Math.random() * 9000);
@@ -1079,4 +1111,5 @@
         }
     </script>
 </body>
+
 </html>
