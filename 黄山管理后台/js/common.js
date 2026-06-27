@@ -334,10 +334,17 @@ function initDatabase() {
     dbGet('hscms_contracts', DEFAULT_CONTRACTS);
 
     // 新增设置相关的配置表
-    dbGet('hscms_settings_audit_config', {
-        assetAiAudit: true,
-        communityAiAudit: true
+    const auditConfig = dbGet('hscms_settings_audit_config', {
+        textAiAudit: true,
+        imageAiAudit: true,
+        videoAiAudit: true
     });
+    if (auditConfig.textAiAudit === undefined || auditConfig.imageAiAudit === undefined || auditConfig.videoAiAudit === undefined) {
+        auditConfig.textAiAudit = auditConfig.textAiAudit !== undefined ? auditConfig.textAiAudit : true;
+        auditConfig.imageAiAudit = auditConfig.imageAiAudit !== undefined ? auditConfig.imageAiAudit : true;
+        auditConfig.videoAiAudit = auditConfig.videoAiAudit !== undefined ? auditConfig.videoAiAudit : true;
+        dbSave('hscms_settings_audit_config', auditConfig);
+    }
     dbGet('hscms_settings_aigc_limit', {
         initTextLimit: 1000,
         initImageLimit: 100,

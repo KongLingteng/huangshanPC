@@ -13,3 +13,13 @@
 - **表格列彻底隐藏**：移除了 `sys-user.html` 表格表头中的 `<th>状态</th>` 以及单行数据中原本用来渲染状态切换 Switch 滑块的 `<td>` 元素。同时，将列表无数据时的提示单元格宽度 `colspan` 从 `9` 缩减到 `8` 保证样式自适应。
 - **表单弹窗优化**：移除了“新增/编辑用户”模态框中供管理员选择用户“正常”或“停用”状态的下拉选择项。在 `openAddUserModal()`、`openEditUserModal()`、`submitUserForm()` 中对 `formStatus` 下拉框进行了非空判断处理（若隐藏，提交新增用户时自动缺省赋予 `'正常'` 状态），确保系统原有数据库业务模型兼容且无报错。
 - **布局错位修正**：修复了在删除“状态”搜索条件时因缺失 `</div>` 闭合标签而引起的高级检索行元素嵌套错位问题。
+
+## 新增变更内容 (内容审核配置重构)
+- **旧开关移除**：已彻底移除 `settings.html` 审核配置模块下的“素材版权自动确权 AI 审查”和“社区论坛贴 AI 实时审核”两个旧开关相关的 HTML 和 JS 代码。
+- **三项独立合规检测引入**：
+  - **文本AI合规检测**：控制对社区帖子和评论发布、用户昵称、个人简介的自动检测。
+  - **图片AI合规检测**：控制针对社区帖子中的图片、素材供稿（图片类型）、用户上传自定义头像的检测。
+  - **视频AI合规检测**：控制针对社区帖子中的视频、素材供稿（视频类型）的检测。
+- **数据层及页面脚本改造**：
+  - 更新了 [common.js](file:///c:/Users/Administrator/Desktop/project/黄山CMS和管理后台/黄山管理后台/js/common.js) 的 `initDatabase` 默认数据库配置，将 `hscms_settings_audit_config` 更改为包含 `textAiAudit`、`imageAiAudit` 和 `videoAiAudit` 的新结构，并添加了自动兼容升级旧配置属性的安全兜底代码。
+  - 改造了 [settings.html](file:///c:/Users/Administrator/Desktop/project/黄山CMS和管理后台/黄山管理后台/settings.html) 的 `loadAuditForm()` 和 `saveAuditConfig()` 加载与保存逻辑，包含对 DOM 节点的安全非空防护校验，确保配置能正确与 LocalStorage 双向同步且无任何 JavaScript 报错。

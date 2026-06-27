@@ -14,3 +14,9 @@
 - [x] 移除 `sys-user.html` 用户编辑弹窗表单中的“状态”设置项 HTML
 - [x] 优化 `sys-user.html` 的 JavaScript 函数进行非空防护（`searchUsers`, `resetSearch`, `openAddUserModal`, `openEditUserModal`, `submitUserForm`）
 - [x] 本地自测与验证
+- [x] 移除 `settings.html` 审核配置选项卡中的旧版两个 AI 审查引擎开关
+- [x] 在 `settings.html` 中新增“文本AI合规检测”、“图片AI合规检测”、“视频AI合规检测”三个独立的开关及对应的详细说明
+- [x] 修改 `settings.html` 中的 JavaScript 加载函数 `loadAuditForm`，以正确读取和显示三个新配置开关的状态
+- [x] 修改 `settings.html` 中的 JavaScript 保存函数 `saveAuditConfig`，使保存操作正确写入三个独立的配置项到 LocalStorage
+- [x] 修改 `js/common.js` 的 `initDatabase` 初始化逻辑，将 `hscms_settings_audit_config` 默认配置由旧的两个字段改为三个新字段的默认开启状态
+- [x] 手动验证上述配置开关状态的初始化、切换和保存等功能正常运行

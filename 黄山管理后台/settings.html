@@ -365,21 +365,31 @@
                         <div class="config-section-title">智能内容审查引擎开关</div>
                         <div class="toggle-row">
                             <div class="toggle-info">
-                                <span class="toggle-label">素材版权自动确权 AI 审查</span>
-                                <span class="toggle-desc">开启后，供稿人上传素材申请版权认证时，先由预审模型对清晰度、敏感元素及近似相似度进行排查。</span>
+                                <span class="toggle-label">文本AI合规检测</span>
+                                <span class="toggle-desc">开启后，对检测社区帖子和评论发布、用户昵称、个人简介进行检测。</span>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="assetAiAuditCheck" onchange="saveAuditConfig()">
+                                <input type="checkbox" id="textAiAuditCheck" onchange="saveAuditConfig()">
                                 <span class="slider"></span>
                             </label>
                         </div>
                         <div class="toggle-row">
                             <div class="toggle-info">
-                                <span class="toggle-label">社区论坛贴 AI 实时审核</span>
-                                <span class="toggle-desc">开启后，社区帖子与评论发表后，系统自动呼叫文本敏感模型，匹配敏感词库，不合规者自动标记为已屏蔽下架。</span>
+                                <span class="toggle-label">图片AI合规检测</span>
+                                <span class="toggle-desc">开启后，针对社区帖子中的图片、素材供稿(图片类型)、用户上传自定义头像进行检测。</span>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="communityAiAuditCheck" onchange="saveAuditConfig()">
+                                <input type="checkbox" id="imageAiAuditCheck" onchange="saveAuditConfig()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <span class="toggle-label">视频AI合规检测</span>
+                                <span class="toggle-desc">开启后，针对社区帖子中的视频、素材供稿(视频类型) 进行检测。</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="videoAiAuditCheck" onchange="saveAuditConfig()">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -615,15 +625,26 @@
         // TAB 1: AUDIT CONFIG
         // ==========================================
         function loadAuditForm() {
-            const config = dbGet('hscms_settings_audit_config', { assetAiAudit: true, communityAiAudit: true });
-            document.getElementById('assetAiAuditCheck').checked = !!config.assetAiAudit;
-            document.getElementById('communityAiAuditCheck').checked = !!config.communityAiAudit;
+            const config = dbGet('hscms_settings_audit_config', { textAiAudit: true, imageAiAudit: true, videoAiAudit: true });
+            
+            const textCheck = document.getElementById('textAiAuditCheck');
+            const imageCheck = document.getElementById('imageAiAuditCheck');
+            const videoCheck = document.getElementById('videoAiAuditCheck');
+            
+            if (textCheck) textCheck.checked = config.textAiAudit !== undefined ? !!config.textAiAudit : true;
+            if (imageCheck) imageCheck.checked = config.imageAiAudit !== undefined ? !!config.imageAiAudit : true;
+            if (videoCheck) videoCheck.checked = config.videoAiAudit !== undefined ? !!config.videoAiAudit : true;
         }
 
         function saveAuditConfig() {
+            const textCheck = document.getElementById('textAiAuditCheck');
+            const imageCheck = document.getElementById('imageAiAuditCheck');
+            const videoCheck = document.getElementById('videoAiAuditCheck');
+
             const config = {
-                assetAiAudit: document.getElementById('assetAiAuditCheck').checked,
-                communityAiAudit: document.getElementById('communityAiAuditCheck').checked
+                textAiAudit: textCheck ? textCheck.checked : true,
+                imageAiAudit: imageCheck ? imageCheck.checked : true,
+                videoAiAudit: videoCheck ? videoCheck.checked : true
             };
             dbSave('hscms_settings_audit_config', config);
             showLockToast('安全预审引擎配置已保存！', true);
