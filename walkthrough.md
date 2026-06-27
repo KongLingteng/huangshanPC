@@ -23,3 +23,30 @@
 - **数据层及页面脚本改造**：
   - 更新了 [common.js](file:///c:/Users/Administrator/Desktop/project/黄山CMS和管理后台/黄山管理后台/js/common.js) 的 `initDatabase` 默认数据库配置，将 `hscms_settings_audit_config` 更改为包含 `textAiAudit`、`imageAiAudit` 和 `videoAiAudit` 的新结构，并添加了自动兼容升级旧配置属性的安全兜底代码。
   - 改造了 [settings.html](file:///c:/Users/Administrator/Desktop/project/黄山CMS和管理后台/黄山管理后台/settings.html) 的 `loadAuditForm()` 和 `saveAuditConfig()` 加载与保存逻辑，包含对 DOM 节点的安全非空防护校验，确保配置能正确与 LocalStorage 双向同步且无任何 JavaScript 报错。
+
+## 新增变更内容 (AIGC 风格预设页面新增与CRUD管理)
+- **菜单与页面结构新增**：
+  - 在 [settings.html](file:///c:/Users/Administrator/Desktop/project/黄山CMS和管理后台/黄山管理后台/settings.html) 子导航栏新增“AIGC风格预设”菜单项，关联 `switchTab('aigc-style')`。
+  - 在选项卡区域新增 `aigcStyleTab` 面板，包含一个左右分栏的配置容器（左侧为已配置的风格预设卡片/表格展示，支持实时切换启用/禁用状态、编辑和删除；右侧为表单录入区）。
+- **字段及交互联动设计**：
+  - 支持字段：风格名称、风格类型（AI生文 / AI生图）、图标、提示词、状态（启用 / 禁用）。
+  - **图标上传联动**：选择“AI生图”时显示图标上传项，若选择“AI生文”则自动隐藏该上传项。图标上传组件支持前端本地 `FileReader` 转换为 Base64 进行持久化，并展示清晰预览图。
+- **持久化及CRUD逻辑**：
+  - 更新 [common.js](file:///c:/Users/Administrator/Desktop/project/黄山CMS和管理后台/黄山管理后台/js/common.js) 的 `initDatabase`，初始化内置默认的 AIGC 风格数据 `hscms_settings_aigc_styles`（含 AI生文、AI生图示例）。
+  - 编写 `settings.html` 中的 `loadAigcStyles()` 列表渲染、`editAigcStyle()` 数据回显、`deleteAigcStyle()` 数据移除、`saveAigcStyle()` 提交更新等全部客户端 JS 业务逻辑，严格执行非空校验与防错处理。
+
+## 新增变更内容 (AIGC 提示词预设功能新增)
+- **菜单与页面结构新增**：
+  - 子导航栏新添“AIGC提示词预设”菜单，动作切换参数为 `switchTab('aigc-preset')`。
+  - 新增独立的双层结构控制面板 `aigcPresetTab`。左侧树形区域呈现：一级场景（场景名、类型、启用禁用状态），下方级联嵌套渲染其关联的二级提示词列表（提示词标题、详细指令内容缩略）。
+- **双模表单管理交互**：
+  - 右侧配置面板支持双表单模式动态切换：
+    - **场景模式**：可录入场景名称、风格类型（AI生文/生图）、状态（启用/禁用）。
+    - **提示词模式**：在选中一级场景下添加或编辑详细提示词，包含所属场景下拉框、提示词标题、内容文本域。
+  - 新增/编辑/删除动作高度联动。点击一级的“添加提示词”或二级的“编辑提示词”自动在右侧切换表单并锁定所属场景。
+- **数据结构与双层CRUD实现**：
+  - 在 [common.js](file:///c:/Users/Administrator/Desktop/project/黄山CMS和管理后台/黄山管理后台/js/common.js) 的 `initDatabase` 中注册全新的二级结构默认表 `hscms_settings_aigc_presets`。
+  - 编写了独立的 JS CRUD 控制函数，保证一级场景的修改/删除能同步级联更新它底下的二级提示词数组。所有读写操作直接落入 LocalStorage 数据库。
+  - 在“AIGC提示词预设”的二级项中移除了“提示词标题”输入框与数据属性，二级子项仅维护提示词模板内容。进一步将二级提示词的卡片结构精简，去除了卡片中的“提示词模板 #x”编号和额外的嵌套容器，直接以更扁平直观的提示词文案列表呈现，且支持超长文本省略截断与悬浮完整提示。
+  - 将“AIGC风格预设”与“AIGC提示词预设”的表单输入项 Label 统一规范化对齐为 **“提示词模板”**；同时两边卡片内容中均移除了“提示词模板：”的小前缀标题，直接清爽显示提示词文本。
+

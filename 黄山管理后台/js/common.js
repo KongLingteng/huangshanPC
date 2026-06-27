@@ -295,8 +295,69 @@ const DEFAULT_CONTRACTS = {
 <p>如乙方因版权抄袭引发法律诉讼纠纷，需独立承担全部责任，甲方有权扣除其全部未提现分成收益并封禁其供稿权限。</p>`
 };
 
+const DEFAULT_AIGC_STYLES = [
+    {
+        name: "写实风光",
+        type: "AI生图",
+        icon: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%233b82f6'/><text x='50%' y='50%' font-size='14' fill='white' font-family='sans-serif' text-anchor='middle' dominant-baseline='middle'>写实</text></svg>",
+        prompt: "真实黄山自然风光，奇松怪石，云海日出，高清晰度，8k，细节丰富，写实风格",
+        status: "启用"
+    },
+    {
+        name: "文旅宣传文案",
+        type: "AI生文",
+        icon: null,
+        prompt: "请为黄山写一段优美的旅游宣传文案。要求：语言典雅生动，融合徽州文化底蕴，突出黄山松石云海的独特魅力，字数在150字以内。",
+        status: "启用"
+    },
+    {
+        name: "水墨国风",
+        type: "AI生图",
+        icon: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e293b'/><text x='50%' y='50%' font-size='14' fill='white' font-family='sans-serif' text-anchor='middle' dominant-baseline='middle'>水墨</text></svg>",
+        prompt: "中国传统水墨画，写意黄山，留白艺术，泼墨山水，古风意境，水墨晕染",
+        status: "禁用"
+    }
+];
+
+const DEFAULT_AIGC_PRESETS = [
+    {
+        id: 1,
+        name: "黄山自然风光摄影",
+        type: "AI生图",
+        status: "启用",
+        prompts: [
+            {
+                id: 101,
+                content: "真实黄山雪景，飞来石特写，白雪挂在奇松与怪石上，云海缭绕，朝阳初升，金色光线，8k分辨率，超高画质"
+            },
+            {
+                id: 102,
+                content: "黄山光明顶俯瞰，波澜壮阔的云海如瀑布般流淌，太阳从地平线升起，红霞满天，写实摄影风格，广角镜头"
+            }
+        ]
+    },
+    {
+        id: 2,
+        name: "新媒体文旅推广",
+        type: "AI生文",
+        status: "启用",
+        prompts: [
+            {
+                id: 201,
+                content: "请为来黄山旅游的年轻游客撰写一段适合发朋友圈的精美文案。要求：情感细腻，包含‘奇松’、‘云海’和‘日出’等意象，文笔清新脱俗，在100字左右。"
+            },
+            {
+                id: 202,
+                content: "针对黄山两天一夜自驾攻略，生成5个极具吸引力的小红书爆款标题，并给出一段条理清晰、包含必备避坑指南的行文大纲。"
+            }
+        ]
+    }
+];
+
 // Database Initialization
 function initDatabase() {
+    dbGet('hscms_settings_aigc_presets', DEFAULT_AIGC_PRESETS);
+    dbGet('hscms_settings_aigc_styles', DEFAULT_AIGC_STYLES);
     dbGet('hscms_topics', DEFAULT_TOPICS);
     dbGet('hscms_tags', DEFAULT_TAGS);
     

@@ -343,6 +343,12 @@
                     <li class="sub-nav-item" id="tabSplitNav">
                         <a href="javascript:void(0)" onclick="switchTab('split')">分成策略配置</a>
                     </li>
+                    <li class="sub-nav-item" id="tabAigcStyleNav">
+                        <a href="javascript:void(0)" onclick="switchTab('aigc-style')">AIGC风格预设</a>
+                    </li>
+                    <li class="sub-nav-item" id="tabAigcPresetNav">
+                        <a href="javascript:void(0)" onclick="switchTab('aigc-preset')">AIGC提示词预设</a>
+                    </li>
                     <li class="sub-nav-item" id="tabAnnouncementsNav">
                         <a href="announcements.html">通知公告</a>
                     </li>
@@ -553,6 +559,145 @@
                     </div>
                 </div>
 
+                <!-- TAB 7: AIGC STYLE PRESETS -->
+                <div id="aigcStyleTab" class="tab-content">
+                    <div class="workspace-header" style="margin-bottom: 20px;">
+                        <div class="workspace-title-section">
+                            <h1>AIGC风格预设配置</h1>
+                            <p>配置和管理系统生成文章（AI生文）或生成图像（AI生图）时的提示词模板与风格预设。</p>
+                        </div>
+                    </div>
+
+                    <div class="crud-container">
+                        <!-- Left Section: Style list -->
+                        <div class="config-panel">
+                            <div class="config-section-title">现有风格预设列表</div>
+                            <div class="reasons-list-box" id="aigcStylesWrapper">
+                                <!-- Dynamic AIGC Styles list -->
+                            </div>
+                        </div>
+
+                        <!-- Right Section: Create/Edit Form -->
+                        <div class="config-panel" style="align-self: flex-start;">
+                            <div class="config-section-title" id="aigcStyleFormTitle">新增风格预设</div>
+                            <form onsubmit="saveAigcStyle(event)">
+                                <input type="hidden" id="editAigcStyleIndex" value="-1">
+                                <div class="form-group">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">风格名称</label>
+                                    <input type="text" id="aigcStyleName" class="form-control" required placeholder="例如：写实风光">
+                                </div>
+                                <div class="form-group" style="margin-top: 12px;">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">风格类型</label>
+                                    <select id="aigcStyleType" class="form-control" required onchange="toggleAigcStyleType()">
+                                        <option value="AI生文">AI生文</option>
+                                        <option value="AI生图">AI生图</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="aigcIconUploadGroup" style="margin-top: 12px; display:none;">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">上传图标 (限 100KB 以内图片)</label>
+                                    <input type="file" id="aigcStyleIconInput" class="form-control" accept="image/*" onchange="handleAigcIconSelect(event)">
+                                    <div id="aigcIconPreviewContainer" style="margin-top: 10px; display:none; align-items: center; gap: 10px;">
+                                        <img id="aigcIconPreview" src="" style="width:50px; height:50px; border-radius:6px; border:1px solid var(--border-color); object-fit: cover;">
+                                        <span style="font-size:11px; color:var(--text-muted);">已选图片预览</span>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-top: 12px;">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">提示词模板</label>
+                                    <textarea id="aigcStylePrompt" class="form-control" required style="height:120px;" placeholder="提示词指令，例如：生成一段关于黄山的诗意导游词..."></textarea>
+                                </div>
+                                <div class="form-group" style="margin-top: 12px;">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">初始状态</label>
+                                    <select id="aigcStyleStatus" class="form-control">
+                                        <option value="启用">启用</option>
+                                        <option value="禁用">禁用</option>
+                                    </select>
+                                </div>
+                                <div style="margin-top: 20px; display:flex; gap:8px;">
+                                    <button type="submit" class="btn btn-primary" id="aigcSubmitBtn">确认添加</button>
+                                    <button type="button" class="btn" style="display:none;" id="aigcCancelBtn" onclick="resetAigcStyleForm()">取消编辑</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 8: AIGC PRESETS (二级树状结构) -->
+                <div id="aigcPresetTab" class="tab-content">
+                    <div class="workspace-header" style="margin-bottom: 20px;">
+                        <div class="workspace-title-section">
+                            <h1>AIGC提示词预设配置</h1>
+                            <p>配置和管理AI场景下的双层提示词结构。第一级为场景预设，第二级为详细提示词，支持级联级管理。</p>
+                        </div>
+                    </div>
+
+                    <div class="crud-container">
+                        <!-- Left Section: Scene and Prompt nested list -->
+                        <div class="config-panel">
+                            <div class="config-section-title">现有提示词预设树形列表</div>
+                            <div class="tree-container" id="aigcPresetsWrapper">
+                                <!-- Dynamic nested tree list -->
+                            </div>
+                        </div>
+
+                        <!-- Right Section: Dual forms panel -->
+                        <div class="config-panel" style="align-self: flex-start;">
+                            <!-- Tab switches for form mode -->
+                            <div style="display: flex; border-bottom: 2px solid #f1f5f9; margin-bottom: 16px; gap: 12px; padding-bottom: 8px;">
+                                <a href="javascript:void(0)" id="presetSceneFormBtn" style="font-weight: 700; font-size: 13px; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 6px; text-decoration: none;" onclick="switchPresetFormMode('scene')">场景预设</a>
+                                <a href="javascript:void(0)" id="presetPromptFormBtn" style="font-weight: 600; font-size: 13px; color: var(--text-light); padding-bottom: 6px; text-decoration: none;" onclick="switchPresetFormMode('prompt')">详细提示词</a>
+                            </div>
+
+                            <!-- FORM 1: SCENE FORM -->
+                            <form id="aigcPresetSceneForm" onsubmit="saveAigcPresetScene(event)">
+                                <input type="hidden" id="editPresetSceneId" value="-1">
+                                <div class="config-section-title" id="presetSceneTitle" style="margin-bottom: 12px; font-size: 13.5px; border:none; padding:0;">新增场景预设</div>
+                                <div class="form-group">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">场景名称</label>
+                                    <input type="text" id="presetSceneName" class="form-control" required placeholder="例如：黄山雪景摄影">
+                                </div>
+                                <div class="form-group" style="margin-top: 12px;">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">风格类型</label>
+                                    <select id="presetSceneType" class="form-control" required>
+                                        <option value="AI生文">AI生文</option>
+                                        <option value="AI生图">AI生图</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-top: 12px;">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">启用状态</label>
+                                    <select id="presetSceneStatus" class="form-control">
+                                        <option value="启用">启用</option>
+                                        <option value="禁用">禁用</option>
+                                    </select>
+                                </div>
+                                <div style="margin-top: 20px; display:flex; gap:8px;">
+                                    <button type="submit" class="btn btn-primary" id="presetSceneSubmitBtn">确认添加场景</button>
+                                    <button type="button" class="btn" style="display:none;" id="presetSceneCancelBtn" onclick="resetPresetSceneForm()">取消编辑</button>
+                                </div>
+                            </form>
+
+                            <!-- FORM 2: PROMPT FORM -->
+                            <form id="aigcPresetPromptForm" onsubmit="saveAigcPresetPrompt(event)" style="display:none;">
+                                <input type="hidden" id="editPresetPromptId" value="-1">
+                                <div class="config-section-title" id="presetPromptTitle" style="margin-bottom: 12px; font-size: 13.5px; border:none; padding:0;">新增二级提示词</div>
+                                <div class="form-group">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">关联所属场景</label>
+                                    <select id="presetPromptParentId" class="form-control" required>
+                                        <!-- Dynamically generated scene options -->
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-top: 12px;">
+                                    <label style="font-weight:600; font-size:12px; margin-bottom: 6px; display:block;">提示词模板</label>
+                                    <textarea id="presetPromptContentInput" class="form-control" required style="height:140px;" placeholder="具体的提示词模板内容..."></textarea>
+                                </div>
+                                <div style="margin-top: 20px; display:flex; gap:8px;">
+                                    <button type="submit" class="btn btn-primary" id="presetPromptSubmitBtn">确认添加提示词</button>
+                                    <button type="button" class="btn" style="display:none;" id="presetPromptCancelBtn" onclick="resetPresetPromptForm()">取消编辑</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             </main>
         </div>
     </div>
@@ -589,8 +734,8 @@
         // Tab selection logic
         function switchTab(tab) {
             // Manage active classes on subbar
-            const navIds = ['tabAuditNav', 'tabLimitNav', 'tabAssetRejectNav', 'tabPostShieldNav', 'tabSplitNav'];
-            const contentIds = ['auditTab', 'limitTab', 'assetRejectTab', 'postShieldTab', 'splitTab'];
+            const navIds = ['tabAuditNav', 'tabLimitNav', 'tabAssetRejectNav', 'tabPostShieldNav', 'tabSplitNav', 'tabAigcStyleNav', 'tabAigcPresetNav'];
+            const contentIds = ['auditTab', 'limitTab', 'assetRejectTab', 'postShieldTab', 'splitTab', 'aigcStyleTab', 'aigcPresetTab'];
             
             navIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -618,6 +763,10 @@
                 loadShieldReasons();
             } else if (tab === 'split') {
                 loadSplitConfigForm();
+            } else if (tab === 'aigc-style') {
+                loadAigcStyles();
+            } else if (tab === 'aigc-preset') {
+                loadAigcPresets();
             }
         }
 
@@ -902,6 +1051,621 @@
             dbSave('hscms_split_config', config);
             showLockToast(`${type}分成配额参数保存生效！`, true);
             loadSplitConfigForm();
+        }
+
+        // ==========================================
+        // TAB 7: AIGC STYLE PRESETS
+        // ==========================================
+        let tempAigcIconBase64 = null;
+
+        function loadAigcStyles() {
+            const styles = dbGet('hscms_settings_aigc_styles', []);
+            const wrapper = document.getElementById('aigcStylesWrapper');
+            if (!wrapper) return;
+            wrapper.innerHTML = '';
+
+            if (styles.length === 0) {
+                wrapper.innerHTML = `<div style="text-align:center; color: var(--text-light); font-style:italic; padding: 20px 0;">当前暂无风格预设模板。</div>`;
+                return;
+            }
+
+            styles.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'reason-card';
+                card.style.display = 'flex';
+                card.style.flexDirection = 'column';
+                card.style.gap = '10px';
+                card.style.padding = '16px';
+                card.style.alignItems = 'stretch';
+                card.style.marginBottom = '12px';
+
+                // Badge color for different type
+                const typeBadgeColor = item.type === 'AI生图' ? '#3b82f6' : '#8b5cf6';
+                const statusBadgeColor = item.status === '启用' ? '#10b981' : '#64748b';
+
+                // Show icon if type is AI生图
+                let iconHtml = '';
+                if (item.type === 'AI生图') {
+                    if (item.icon) {
+                        iconHtml = `<img src="${item.icon}" style="width:40px; height:40px; border-radius:6px; border:1px solid #e2e8f0; object-fit:cover; flex-shrink:0;">`;
+                    } else {
+                        iconHtml = `<div style="width:40px; height:40px; border-radius:6px; background:#f1f5f9; border:1px solid #e2e8f0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px; font-weight:bold; flex-shrink:0;">无图标</div>`;
+                    }
+                } else {
+                    // Default icon placeholder for text gen
+                    iconHtml = `<div style="width:40px; height:40px; border-radius:6px; background:#f3e8ff; border:1px solid #e9d5ff; display:flex; align-items:center; justify-content:center; color:#8b5cf6; font-size:14px; font-weight:bold; flex-shrink:0;">文</div>`;
+                }
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div style="display:flex; gap:12px; align-items:center;">
+                            ${iconHtml}
+                            <div>
+                                <div style="font-weight:700; color:#1e293b; font-size:14px;">${item.name}</div>
+                                <div style="display:flex; gap:6px; margin-top:4px;">
+                                    <span style="font-size:10px; padding:2px 6px; border-radius:4px; color:white; background:${typeBadgeColor}; font-weight:600;">${item.type}</span>
+                                    <span style="font-size:10px; padding:2px 6px; border-radius:4px; color:white; background:${statusBadgeColor}; font-weight:600; cursor:pointer;" onclick="toggleAigcStyleStatusDirect(${idx})">${item.status}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <a href="javascript:void(0)" class="action-link" onclick="editAigcStyle(${idx})">编辑</a>
+                            <a href="javascript:void(0)" class="action-link danger" onclick="deleteAigcStyle(${idx})">删除</a>
+                        </div>
+                    </div>
+                    <div style="font-size:12px; color:#475569; background:#f8fafc; padding:8px 12px; border-radius:6px; border:1px solid #f1f5f9; white-space:pre-wrap; word-break:break-all; max-height: 80px; overflow-y: auto;">
+                        ${item.prompt}
+                    </div>
+                `;
+                wrapper.appendChild(card);
+            });
+        }
+
+        function toggleAigcStyleType() {
+            const type = document.getElementById('aigcStyleType').value;
+            const uploadGroup = document.getElementById('aigcIconUploadGroup');
+            if (type === 'AI生图') {
+                uploadGroup.style.display = 'block';
+            } else {
+                uploadGroup.style.display = 'none';
+                // Reset file input and preview when switching back to Text
+                document.getElementById('aigcStyleIconInput').value = '';
+                document.getElementById('aigcIconPreviewContainer').style.display = 'none';
+                document.getElementById('aigcIconPreview').src = '';
+                tempAigcIconBase64 = null;
+            }
+        }
+
+        function handleAigcIconSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('请选择有效的图片文件！');
+                e.target.value = '';
+                return;
+            }
+
+            if (file.size > 100 * 1024) {
+                alert('图片大小不能超过 100KB，以防止存储空间溢出！');
+                e.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                tempAigcIconBase64 = evt.target.result;
+                const preview = document.getElementById('aigcIconPreview');
+                const container = document.getElementById('aigcIconPreviewContainer');
+                preview.src = tempAigcIconBase64;
+                container.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function editAigcStyle(idx) {
+            const styles = dbGet('hscms_settings_aigc_styles', []);
+            const item = styles[idx];
+            if (!item) return;
+
+            document.getElementById('editAigcStyleIndex').value = idx;
+            document.getElementById('aigcStyleName').value = item.name;
+            document.getElementById('aigcStyleType').value = item.type;
+            document.getElementById('aigcStylePrompt').value = item.prompt;
+            document.getElementById('aigcStyleStatus').value = item.status;
+
+            toggleAigcStyleType();
+
+            if (item.type === 'AI生图') {
+                const preview = document.getElementById('aigcIconPreview');
+                const container = document.getElementById('aigcIconPreviewContainer');
+                if (item.icon) {
+                    tempAigcIconBase64 = item.icon;
+                    preview.src = item.icon;
+                    container.style.display = 'flex';
+                } else {
+                    tempAigcIconBase64 = null;
+                    preview.src = '';
+                    container.style.display = 'none';
+                }
+            }
+
+            document.getElementById('aigcStyleFormTitle').textContent = '修改风格预设';
+            document.getElementById('aigcSubmitBtn').textContent = '保存修改';
+            document.getElementById('aigcCancelBtn').style.display = 'inline-block';
+        }
+
+        function resetAigcStyleForm() {
+            document.getElementById('editAigcStyleIndex').value = "-1";
+            document.getElementById('aigcStyleName').value = '';
+            document.getElementById('aigcStyleType').value = 'AI生文';
+            document.getElementById('aigcStylePrompt').value = '';
+            document.getElementById('aigcStyleStatus').value = '启用';
+            document.getElementById('aigcStyleIconInput').value = '';
+            document.getElementById('aigcIconPreviewContainer').style.display = 'none';
+            document.getElementById('aigcIconPreview').src = '';
+            tempAigcIconBase64 = null;
+
+            toggleAigcStyleType();
+
+            document.getElementById('aigcStyleFormTitle').textContent = '新增风格预设';
+            document.getElementById('aigcSubmitBtn').textContent = '确认添加';
+            document.getElementById('aigcCancelBtn').style.display = 'none';
+        }
+
+        function saveAigcStyle(e) {
+            e.preventDefault();
+            const name = document.getElementById('aigcStyleName').value.trim();
+            const type = document.getElementById('aigcStyleType').value;
+            const prompt = document.getElementById('aigcStylePrompt').value.trim();
+            const status = document.getElementById('aigcStyleStatus').value;
+            const editIdx = parseInt(document.getElementById('editAigcStyleIndex').value);
+
+            if (!name || !prompt) {
+                alert('风格名称和提示词模板不能为空！');
+                return;
+            }
+
+            const styles = dbGet('hscms_settings_aigc_styles', []);
+
+            // Check duplicate name
+            if (editIdx < 0) {
+                if (styles.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+                    alert('已存在同名风格预设，请使用其他名称！');
+                    return;
+                }
+            } else {
+                if (styles.some((s, idx) => idx !== editIdx && s.name.toLowerCase() === name.toLowerCase())) {
+                    alert('已存在同名风格预设，请使用其他名称！');
+                    return;
+                }
+            }
+
+            if (type === 'AI生图' && !tempAigcIconBase64) {
+                alert('请为AI生图选择并上传一个图标！');
+                return;
+            }
+
+            // Prepare style object
+            const styleItem = {
+                name: name,
+                type: type,
+                prompt: prompt,
+                status: status,
+                icon: type === 'AI生图' ? tempAigcIconBase64 : null
+            };
+
+            if (editIdx >= 0) {
+                styles[editIdx] = styleItem;
+                showLockToast('风格预设已成功更新！', true);
+            } else {
+                styles.push(styleItem);
+                showLockToast('成功添加风格预设！', true);
+            }
+
+            dbSave('hscms_settings_aigc_styles', styles);
+            resetAigcStyleForm();
+            loadAigcStyles();
+        }
+
+        function deleteAigcStyle(idx) {
+            if (confirm('确认删除该AIGC风格预设吗？删除后将无法恢复。')) {
+                const styles = dbGet('hscms_settings_aigc_styles', []);
+                styles.splice(idx, 1);
+                dbSave('hscms_settings_aigc_styles', styles);
+                showLockToast('已删除该预设。', true);
+
+                // If editing the one deleted, reset form
+                const editIdx = parseInt(document.getElementById('editAigcStyleIndex').value);
+                if (editIdx === idx) {
+                    resetAigcStyleForm();
+                }
+
+                loadAigcStyles();
+            }
+        }
+
+        function toggleAigcStyleStatusDirect(idx) {
+            const styles = dbGet('hscms_settings_aigc_styles', []);
+            const item = styles[idx];
+            if (!item) return;
+
+            item.status = item.status === '启用' ? '禁用' : '启用';
+            styles[idx] = item;
+            dbSave('hscms_settings_aigc_styles', styles);
+
+            showLockToast(`风格预设“${item.name}”已${item.status}！`, true);
+            loadAigcStyles();
+
+            // Update form status if editing
+            const editIdx = parseInt(document.getElementById('editAigcStyleIndex').value);
+            if (editIdx === idx) {
+                document.getElementById('aigcStyleStatus').value = item.status;
+            }
+        }
+
+        // ==========================================
+        // TAB 8: AIGC PRESETS (二级树状结构)
+        // ==========================================
+        let currentPresetFormMode = 'scene'; // 'scene' or 'prompt'
+
+        function switchPresetFormMode(mode) {
+            currentPresetFormMode = mode;
+            const sceneForm = document.getElementById('aigcPresetSceneForm');
+            const promptForm = document.getElementById('aigcPresetPromptForm');
+            const sceneBtn = document.getElementById('presetSceneFormBtn');
+            const promptBtn = document.getElementById('presetPromptFormBtn');
+            
+            if (mode === 'scene') {
+                sceneForm.style.display = 'block';
+                promptForm.style.display = 'none';
+                sceneBtn.style.color = 'var(--primary-color)';
+                sceneBtn.style.borderBottom = '2px solid var(--primary-color)';
+                sceneBtn.style.fontWeight = '700';
+                promptBtn.style.color = 'var(--text-light)';
+                promptBtn.style.borderBottom = 'none';
+                promptBtn.style.fontWeight = '600';
+            } else {
+                sceneForm.style.display = 'none';
+                promptForm.style.display = 'block';
+                sceneBtn.style.color = 'var(--text-light)';
+                sceneBtn.style.borderBottom = 'none';
+                sceneBtn.style.fontWeight = '600';
+                promptBtn.style.color = 'var(--primary-color)';
+                promptBtn.style.borderBottom = '2px solid var(--primary-color)';
+                promptBtn.style.fontWeight = '700';
+                // 动态刷新场景下拉列表
+                populateParentSceneDropdown();
+            }
+        }
+
+        function populateParentSceneDropdown() {
+            const presets = dbGet('hscms_settings_aigc_presets', []);
+            const dropdown = document.getElementById('presetPromptParentId');
+            if (!dropdown) return;
+            dropdown.innerHTML = '';
+            
+            if (presets.length === 0) {
+                dropdown.innerHTML = '<option value="">-- 请先添加场景 --</option>';
+                return;
+            }
+            
+            presets.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = `${p.name} (${p.type})`;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        function loadAigcPresets() {
+            const presets = dbGet('hscms_settings_aigc_presets', []);
+            const wrapper = document.getElementById('aigcPresetsWrapper');
+            if (!wrapper) return;
+            wrapper.innerHTML = '';
+
+            if (presets.length === 0) {
+                wrapper.innerHTML = `<div style="text-align:center; color: var(--text-light); font-style:italic; padding: 20px 0;">当前暂无提示词预设。</div>`;
+                return;
+            }
+
+            presets.forEach(p => {
+                const node = document.createElement('div');
+                node.className = 'tree-node';
+                node.style.marginBottom = '16px';
+
+                // Badges colors
+                const typeBadgeColor = p.type === 'AI生图' ? '#3b82f6' : '#8b5cf6';
+                const statusBadgeColor = p.status === '启用' ? '#10b981' : '#64748b';
+
+                // Prompts lists
+                let promptsHtml = '';
+                if (!p.prompts || p.prompts.length === 0) {
+                    promptsHtml = `<div style="color:var(--text-light); font-style:italic; font-size:12px; padding:8px 0 8px 12px;">暂无二级提示词。</div>`;
+                } else {
+                    promptsHtml = `<div class="specs-list" style="display:flex; flex-direction:column; gap:8px;">`;
+                    p.prompts.forEach(pr => {
+                        promptsHtml += `
+                            <div class="spec-item" style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 12px; transition:all 0.2s;">
+                                <div style="flex:1; padding-right:16px; font-size:12.5px; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:320px;" title="${pr.content}">
+                                    ${pr.content}
+                                </div>
+                                <div class="spec-actions" style="display:flex; gap:8px; flex-shrink:0;">
+                                    <a href="javascript:void(0)" class="action-link" style="font-size:12px;" onclick="editAigcPresetPrompt(${p.id}, ${pr.id})">编辑</a>
+                                    <a href="javascript:void(0)" class="action-link danger" style="font-size:12px;" onclick="deleteAigcPresetPrompt(${p.id}, ${pr.id})">删除</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    promptsHtml += `</div>`;
+                }
+
+                node.innerHTML = `
+                    <div class="tree-node-header" style="background:#f8fafc; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color);">
+                        <div class="tree-node-title" style="display:flex; align-items:center; gap:8px;">
+                            <span class="tree-node-name" style="font-weight:700; color:#1e293b; font-size:14px;">${p.name}</span>
+                            <span style="font-size:10px; padding:2px 6px; border-radius:4px; color:white; background:${typeBadgeColor}; font-weight:600;">${p.type}</span>
+                            <span style="font-size:10px; padding:2px 6px; border-radius:4px; color:white; background:${statusBadgeColor}; font-weight:600; cursor:pointer;" onclick="toggleAigcPresetSceneStatusDirect(${p.id})">${p.status}</span>
+                        </div>
+                        <div class="tree-node-actions" style="display:flex; gap:10px;">
+                            <a href="javascript:void(0)" class="action-link" style="font-weight:600;" onclick="triggerAddPromptForScene(${p.id})">+ 提示词</a>
+                            <a href="javascript:void(0)" class="action-link" onclick="editAigcPresetScene(${p.id})">编辑</a>
+                            <a href="javascript:void(0)" class="action-link danger" onclick="deleteAigcPresetScene(${p.id})">删除</a>
+                        </div>
+                    </div>
+                    <div class="tree-node-body" style="padding:16px; background:#ffffff;">
+                        ${promptsHtml}
+                    </div>
+                `;
+                node.style.border = '1px solid var(--border-color)';
+                node.style.borderRadius = '8px';
+                node.style.overflow = 'hidden';
+                node.style.background = '#ffffff';
+                wrapper.appendChild(node);
+            });
+            
+            // 刷新动态下拉列表
+            populateParentSceneDropdown();
+        }
+
+        function triggerAddPromptForScene(sceneId) {
+            switchPresetFormMode('prompt');
+            document.getElementById('presetPromptParentId').value = sceneId;
+            resetPresetPromptForm();
+            document.getElementById('presetPromptParentId').value = sceneId; // 再次重设确保选中
+        }
+
+        function toggleAigcPresetSceneStatusDirect(id) {
+            const presets = dbGet('hscms_settings_aigc_presets', []);
+            const idx = presets.findIndex(p => p.id === id);
+            if (idx === -1) return;
+
+            presets[idx].status = presets[idx].status === '启用' ? '禁用' : '启用';
+            dbSave('hscms_settings_aigc_presets', presets);
+            showLockToast(`场景“${presets[idx].name}”已${presets[idx].status}！`, true);
+            loadAigcPresets();
+        }
+
+        function editAigcPresetScene(id) {
+            const presets = dbGet('hscms_settings_aigc_presets', []);
+            const item = presets.find(p => p.id === id);
+            if (!item) return;
+
+            switchPresetFormMode('scene');
+            document.getElementById('editPresetSceneId').value = item.id;
+            document.getElementById('presetSceneName').value = item.name;
+            document.getElementById('presetSceneType').value = item.type;
+            document.getElementById('presetSceneStatus').value = item.status;
+
+            document.getElementById('presetSceneTitle').textContent = '修改场景预设';
+            document.getElementById('presetSceneSubmitBtn').textContent = '保存修改';
+            document.getElementById('presetSceneCancelBtn').style.display = 'inline-block';
+        }
+
+        function resetPresetSceneForm() {
+            document.getElementById('editPresetSceneId').value = "-1";
+            document.getElementById('presetSceneName').value = '';
+            document.getElementById('presetSceneType').value = 'AI生文';
+            document.getElementById('presetSceneStatus').value = '启用';
+
+            document.getElementById('presetSceneTitle').textContent = '新增场景预设';
+            document.getElementById('presetSceneSubmitBtn').textContent = '确认添加场景';
+            document.getElementById('presetSceneCancelBtn').style.display = 'none';
+        }
+
+        function saveAigcPresetScene(e) {
+            e.preventDefault();
+            const name = document.getElementById('presetSceneName').value.trim();
+            const type = document.getElementById('presetSceneType').value;
+            const status = document.getElementById('presetSceneStatus').value;
+            const editId = parseInt(document.getElementById('editPresetSceneId').value);
+
+            if (!name) {
+                alert('场景名称不能为空！');
+                return;
+            }
+
+            const presets = dbGet('hscms_settings_aigc_presets', []);
+
+            // 排重校验
+            if (editId < 0) {
+                if (presets.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+                    alert('已存在同名的场景预设，请使用其他名称！');
+                    return;
+                }
+                const newId = presets.length > 0 ? Math.max(...presets.map(p => p.id)) + 1 : 1;
+                presets.push({
+                    id: newId,
+                    name: name,
+                    type: type,
+                    status: status,
+                    prompts: []
+                });
+                showLockToast('成功添加场景预设！', true);
+            } else {
+                const idx = presets.findIndex(p => p.id === editId);
+                if (idx === -1) return;
+                
+                if (presets.some((p, i) => i !== idx && p.name.toLowerCase() === name.toLowerCase())) {
+                    alert('已存在同名的场景预设，请使用其他名称！');
+                    return;
+                }
+                
+                presets[idx].name = name;
+                presets[idx].type = type;
+                presets[idx].status = status;
+                showLockToast('场景预设已成功更新！', true);
+            }
+
+            dbSave('hscms_settings_aigc_presets', presets);
+            resetPresetSceneForm();
+            loadAigcPresets();
+        }
+
+        function deleteAigcPresetScene(id) {
+            const presets = dbGet('hscms_settings_aigc_presets', []);
+            const item = presets.find(p => p.id === id);
+            if (!item) return;
+
+            let confirmText = `确认删除场景预设“${item.name}”吗？`;
+            if (item.prompts && item.prompts.length > 0) {
+                confirmText = `警告：删除场景“${item.name}”将一并删除其底下的 ${item.prompts.length} 个二级提示词！是否继续？`;
+            }
+
+            if (confirm(confirmText)) {
+                const newPresets = presets.filter(p => p.id !== id);
+                dbSave('hscms_settings_aigc_presets', newPresets);
+                showLockToast('场景及关联提示词已成功删除。', true);
+
+                // 如果正在编辑的被删除了，重置表单
+                const currentEditId = parseInt(document.getElementById('editPresetSceneId').value);
+                if (currentEditId === id) {
+                    resetPresetSceneForm();
+                }
+
+                loadAigcPresets();
+            }
+        }
+
+        function editAigcPresetPrompt(parentSceneId, promptId) {
+            const presets = dbGet('hscms_settings_aigc_presets', []);
+            const scene = presets.find(p => p.id === parentSceneId);
+            if (!scene) return;
+            const pr = scene.prompts.find(p => p.id === promptId);
+            if (!pr) return;
+
+            switchPresetFormMode('prompt');
+            document.getElementById('editPresetPromptId').value = pr.id;
+            document.getElementById('presetPromptParentId').value = parentSceneId;
+            document.getElementById('presetPromptContentInput').value = pr.content;
+
+            document.getElementById('presetPromptTitle').textContent = '修改二级提示词';
+            document.getElementById('presetPromptSubmitBtn').textContent = '保存修改';
+            document.getElementById('presetPromptCancelBtn').style.display = 'inline-block';
+        }
+
+        function resetPresetPromptForm() {
+            document.getElementById('editPresetPromptId').value = "-1";
+            document.getElementById('presetPromptContentInput').value = '';
+
+            document.getElementById('presetPromptTitle').textContent = '新增二级提示词';
+            document.getElementById('presetPromptSubmitBtn').textContent = '确认添加提示词';
+            document.getElementById('presetPromptCancelBtn').style.display = 'none';
+        }
+
+        function saveAigcPresetPrompt(e) {
+            e.preventDefault();
+            const parentSceneId = parseInt(document.getElementById('presetPromptParentId').value);
+            const content = document.getElementById('presetPromptContentInput').value.trim();
+            const editId = parseInt(document.getElementById('editPresetPromptId').value);
+
+            if (isNaN(parentSceneId)) {
+                alert('请先选择或创建一个所属场景！');
+                return;
+            }
+            if (!content) {
+                alert('提示词内容不能为空！');
+                return;
+            }
+
+            const presets = dbGet('hscms_settings_aigc_presets', []);
+            const targetSceneIdx = presets.findIndex(p => p.id === parentSceneId);
+            if (targetSceneIdx === -1) {
+                alert('未找到所属场景，请重新选择！');
+                return;
+            }
+
+            if (editId < 0) {
+                // 新增二级提示词
+                let allPromptIds = [];
+                presets.forEach(p => {
+                    if (p.prompts) {
+                        allPromptIds.push(...p.prompts.map(pr => pr.id));
+                    }
+                });
+                const newPromptId = allPromptIds.length > 0 ? Math.max(...allPromptIds) + 1 : 101;
+                
+                if (!presets[targetSceneIdx].prompts) presets[targetSceneIdx].prompts = [];
+                presets[targetSceneIdx].prompts.push({
+                    id: newPromptId,
+                    content: content
+                });
+                showLockToast('成功添加二级提示词！', true);
+            } else {
+                // 保存修改的二级提示词
+                let found = false;
+                for (let sIdx = 0; sIdx < presets.length; sIdx++) {
+                    const prIdx = presets[sIdx].prompts ? presets[sIdx].prompts.findIndex(pr => pr.id === editId) : -1;
+                    if (prIdx !== -1) {
+                        found = true;
+                        
+                        // 校验是否跨场景移动了
+                        if (presets[sIdx].id === parentSceneId) {
+                            // 同场景修改
+                            presets[sIdx].prompts[prIdx].content = content;
+                        } else {
+                            // 跨场景移动
+                            const [movedPrompt] = presets[sIdx].prompts.splice(prIdx, 1);
+                            movedPrompt.content = content;
+                            
+                            if (!presets[targetSceneIdx].prompts) presets[targetSceneIdx].prompts = [];
+                            presets[targetSceneIdx].prompts.push(movedPrompt);
+                        }
+                        break;
+                    }
+                }
+                
+                if (found) {
+                    showLockToast('提示词已成功更新！', true);
+                } else {
+                    alert('未找到该提示词记录，保存失败。');
+                    return;
+                }
+            }
+
+            dbSave('hscms_settings_aigc_presets', presets);
+            resetPresetPromptForm();
+            loadAigcPresets();
+        }
+
+        function deleteAigcPresetPrompt(parentSceneId, promptId) {
+            if (confirm('确认删除该二级提示词吗？')) {
+                const presets = dbGet('hscms_settings_aigc_presets', []);
+                const sceneIdx = presets.findIndex(p => p.id === parentSceneId);
+                if (sceneIdx === -1) return;
+
+                presets[sceneIdx].prompts = presets[sceneIdx].prompts.filter(pr => pr.id !== promptId);
+                dbSave('hscms_settings_aigc_presets', presets);
+                showLockToast('提示词已成功删除。', true);
+
+                // 如果正在编辑的提示词被删了，重置表单
+                const currentEditPromptId = parseInt(document.getElementById('editPresetPromptId').value);
+                if (currentEditPromptId === promptId) {
+                    resetPresetPromptForm();
+                }
+
+                loadAigcPresets();
+            }
         }
     </script>
 </body>
